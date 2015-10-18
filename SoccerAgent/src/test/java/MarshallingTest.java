@@ -8,6 +8,7 @@ import java.util.Scanner;
  */
 public class MarshallingTest {
     private Scanner scanner;
+    
 
     @Test
     public void marshallingMessageTest() {
