@@ -26,8 +26,7 @@ public class SeeMessageUnmarshaller extends MessageUnmarshaller{
     }
 
     private void createLine() {
-        Line line = new Line(getElementParams(),getElementParams());
-        System.out.println(line.toString());
+        getSensorFrame().addObservableObject(new Line(getElementParams(),getElementParams()));
     }
 
     private void createPlayer(){
@@ -43,24 +42,20 @@ public class SeeMessageUnmarshaller extends MessageUnmarshaller{
                 player = new Player(pp[0], "", getElementParams());
             }
         }
-        System.out.println(player);
+        getSensorFrame().addObservableObject(player);
     }
 
     private void createBall(){
         //go up to the end of element name in order to skip ')' and move to parameters
         getElementParams();
-
-        Ball ball = new Ball(getElementParams());
-        System.out.println(ball);
+        getSensorFrame().addObservableObject(new Ball(getElementParams()));
     }
 
     private void createGoal(){
-        Goal goal = new Goal(getElementParams(),getElementParams());
-        System.out.println(goal.toString());
+        getSensorFrame().addObservableObject(new Goal(getElementParams(),getElementParams()));
     }
 
     private void createFlag(){
-        Flag flag = new Flag(getElementParams(),getElementParams());
-        System.out.println(flag);
+        getSensorFrame().addObservableObject(new Flag(getElementParams(),getElementParams()));
     }
 }

@@ -13,9 +13,7 @@ public class MessageUnmarshallerDispatcher{
         scanner = scanner.skip(Pattern.compile("\\(+"));
         String messageType = scanner.next();
         if(messageType.equals("see")){
-            System.out.println("---------------------------------------------------------------");
-            System.out.println(message);
-            new SeeMessageUnmarshaller().unmarshalMessage(scanner);
+            SensorFrame frame = (new SeeMessageUnmarshaller()).unmarshalMessage(scanner);
         }
     }
 }

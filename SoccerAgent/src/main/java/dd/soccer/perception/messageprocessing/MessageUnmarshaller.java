@@ -8,12 +8,13 @@ import java.util.regex.Pattern;
  */
 public abstract class MessageUnmarshaller {
     private Scanner scanner;
-    private Integer cycle;
+    private SensorFrame sensorFrame;
 
-    public void unmarshalMessage(Scanner scanner){
+    public SensorFrame unmarshalMessage(Scanner scanner){
         this.scanner = scanner;
-        cycle = Integer.parseInt(scanner.next());
+        sensorFrame = new SensorFrame(Integer.parseInt(scanner.next()));
         unmarshal();
+        return sensorFrame;
     }
 
     protected abstract void unmarshal();
@@ -27,6 +28,10 @@ public abstract class MessageUnmarshaller {
         String type = scanner.findInLine(Pattern.compile("[\\w\\s\\-\\.]*"));
         scanner = scanner.skip(Pattern.compile("\\)+"));
         return type.trim();
+    }
+
+    public SensorFrame getSensorFrame() {
+        return sensorFrame;
     }
 
     public boolean hasNextElement(){

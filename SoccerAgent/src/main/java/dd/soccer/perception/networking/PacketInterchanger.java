@@ -26,7 +26,8 @@ public class PacketInterchanger {
             byte[] buf = new byte[MSG_SIZE];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             gate.getSocket().receive(packet);
-            return new String(packet.getData(), 0, packet.getLength());
+            //minus one to remove null code from the received message string
+            return new String(packet.getData(), 0, packet.getLength() - 1);
         } catch (SocketTimeoutException e) {
             throw e;
         }

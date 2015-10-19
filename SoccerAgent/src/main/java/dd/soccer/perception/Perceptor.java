@@ -13,12 +13,10 @@ import java.net.UnknownHostException;
 public class Perceptor {
 
     private Communicator communicator;
-    private MessageUnmarshaller unmarshaller;
     private Thread t;
 
     public Perceptor() throws SocketException, UnknownHostException {
         communicator = new Communicator();
-        //unmarshaller = new MessageUnmarshaller();
     }
 
     public void cycle() throws NoCommunicationException {
@@ -26,7 +24,10 @@ public class Perceptor {
             String inputMessage = communicator.getInputMessage();
             if (inputMessage != null) {
                 MessageUnmarshallerDispatcher.unmarshal(inputMessage);
-                //unmarshaller.unmarshalMessage(inputMessage);
+                /*
+                There is should be some code that transmit sensor frames to SAS.
+                Is sensor frame should be split on lists of objects of different types?
+                 */
             }
         } else {
             throw new NoCommunicationException();

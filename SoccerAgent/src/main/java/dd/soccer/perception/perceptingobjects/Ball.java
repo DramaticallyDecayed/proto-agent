@@ -12,7 +12,7 @@ public class Ball extends ObservableObject {
     }
 
     public String toString(){
-        return "Ball "
+        return "Ball"
                 + " distance: " + getDistance()
                 + " direction: " + getDirection();
     }
