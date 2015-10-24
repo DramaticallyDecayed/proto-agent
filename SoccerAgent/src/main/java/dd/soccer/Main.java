@@ -1,7 +1,7 @@
 package dd.soccer;
 
 import dd.protosas.computation.Level;
-import dd.protosas.computation.levelnode.Node;
+import dd.protosas.computation.levelnode.IdentNode;
 import dd.protosas.computability.NodeSpecification;
 import dd.soccer.sas.computability.PlayerIdentificationNode;
 import dd.soccer.sas.presentation.IdentifiedPlayerIdent;
@@ -43,7 +43,7 @@ public class Main {
         Level level_0 = new Level(0);
 
         level_0.addSpec(new NodeSpecification(new String[]{ Player.NAME }, IdentifiedPlayerIdent.NAME) {
-            @Override public Node createNode() {
+            @Override public IdentNode createNode() {
                 return new PlayerIdentificationNode(this);
             }
         });

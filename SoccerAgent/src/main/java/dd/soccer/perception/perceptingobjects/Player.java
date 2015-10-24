@@ -3,7 +3,7 @@ package dd.soccer.perception.perceptingobjects;
 /**
  * Created by Sergey on 18.10.2015.
  */
-public class Player extends ObservableObject {
+public class Player extends ObservableSoccerObject {
 
     //TODO: no reason to store name - better to store sign IFF (identification, friend or foe)
     private String commandName;

@@ -1,12 +1,12 @@
 package dd.soccer.sas.presentation;
 
 
-import dd.protosas.presentation.Element;
+import commonmodel.ElementState;
 
 /**
  * Created by Sergey on 12.10.2015.
  */
-public class SpaceObject  extends Element {
+public class SpaceObject  extends ElementState {
     private Double x;
     private Double y;
 

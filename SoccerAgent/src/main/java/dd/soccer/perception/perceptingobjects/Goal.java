@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Sergey on 18.10.2015.
  */
-public class Goal extends ObservableObject{
+public class Goal extends ObservableSoccerObject {
 
     enum GoalType {
         LEFT("l"),

@@ -1,12 +1,15 @@
 package dd.protosas.presentation;
 
+
+import commonmodel.ElementState;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Sergey on 25.09.2015.
  */
-public class ElementIdent <E extends Element> {
+public class ElementIdent <E extends ElementState> {
 
     private String name;
     private E element;
@@ -19,7 +22,7 @@ public class ElementIdent <E extends Element> {
 
     public ElementIdent(E element) {
         this.element = element;
-        this.name = element.getName();
+        this.name = element.getClass().getName();
     }
 
     public void updateElement(E element) {

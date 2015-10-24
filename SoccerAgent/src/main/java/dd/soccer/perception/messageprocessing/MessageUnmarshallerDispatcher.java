@@ -1,5 +1,9 @@
 package dd.soccer.perception.messageprocessing;
 
+import dd.protoperception.SensorFrame;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -8,12 +12,14 @@ import java.util.regex.Pattern;
  */
 public class MessageUnmarshallerDispatcher{
 
-    public static void unmarshal(String message) {
+    public static List<SensorFrame> unmarshal(String message) {
+        List<SensorFrame> sensorFrames = new ArrayList<>();
         Scanner scanner = new Scanner(message);
         scanner = scanner.skip(Pattern.compile("\\(+"));
         String messageType = scanner.next();
         if(messageType.equals("see")){
-            SensorFrame frame = (new SeeMessageUnmarshaller()).unmarshalMessage(scanner);
+            sensorFrames.add((new SeeMessageUnmarshaller()).unmarshalMessage(scanner));
         }
+        return sensorFrames;
     }
 }

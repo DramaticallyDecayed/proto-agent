@@ -1,5 +1,7 @@
 package dd.soccer.perception.messageprocessing;
 
+import dd.protoperception.SensorFrame;
+
 import java.util.Scanner;
 import java.util.regex.Pattern;
 

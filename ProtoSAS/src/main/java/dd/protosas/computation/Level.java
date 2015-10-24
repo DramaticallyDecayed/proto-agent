@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import dd.protosas.presentation.ElementIdent;
-import dd.protosas.computation.levelnode.Node;
+import dd.protosas.computation.levelnode.IdentNode;
 import dd.protosas.computability.NodeSpecification;
 
 /**
@@ -13,7 +13,7 @@ import dd.protosas.computability.NodeSpecification;
  */
 public class Level {
     private Dispatcher dispatcher;
-    private Map<NodeSpecification, Node> existentNodes = new HashMap<>();
+    private Map<NodeSpecification, IdentNode> existentNodes = new HashMap<>();
     private int height;
 
     public Level(int height) {
@@ -31,7 +31,7 @@ public class Level {
 
     public void process(){
         dispatcher.process();
-        for(Node node : existentNodes.values()){
+        for(IdentNode node : existentNodes.values()){
             node.process();
         }
     }

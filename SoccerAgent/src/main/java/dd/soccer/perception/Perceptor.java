@@ -1,11 +1,12 @@
 package dd.soccer.perception;
 
-import dd.soccer.perception.messageprocessing.MessageUnmarshaller;
+import dd.protoperception.SensorFrame;
 import dd.soccer.perception.messageprocessing.MessageUnmarshallerDispatcher;
 import dd.soccer.perception.networking.Communicator;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 /**
  * Created by Sergey on 14.10.2015.
@@ -19,19 +20,16 @@ public class Perceptor {
         communicator = new Communicator();
     }
 
-    public void cycle() throws NoCommunicationException {
+    public List<SensorFrame> cycle() throws NoCommunicationException {
         if (t.isAlive()) {
             String inputMessage = communicator.getInputMessage();
             if (inputMessage != null) {
-                MessageUnmarshallerDispatcher.unmarshal(inputMessage);
-                /*
-                There is should be some code that transmit sensor frames to SAS.
-                Is sensor frame should be split on lists of objects of different types?
-                 */
+                return MessageUnmarshallerDispatcher.unmarshal(inputMessage);
             }
         } else {
             throw new NoCommunicationException();
         }
+        return null;
     }
 
     public void start(){

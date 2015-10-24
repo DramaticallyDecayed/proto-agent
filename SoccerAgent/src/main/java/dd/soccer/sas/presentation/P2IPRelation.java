@@ -1,14 +1,14 @@
 package dd.soccer.sas.presentation;
 
 
-import dd.protosas.presentation.Element;
+import commonmodel.ElementState;
 
 /**
  * P2IPRelation - player to identified player relation
  *
  * Created by Sergey on 05.10.2015.
  */
-public class P2IPRelation extends Element {
+public class P2IPRelation extends ElementState {
 
     private final static String NAME = "player to identified player relation";
     private IdentifiedPlayerIdent identifiedPlayer;

@@ -1,19 +1,23 @@
 package dd.soccer.perception.perceptingobjects;
 
+import commonmodel.ElementState;
+
 /**
- * Created by Sergey on 18.10.2015.
+ * Created by Sergey on 23.10.2015.
  */
-public class ObservableObject {
+public class ObservableSoccerObject extends ElementState {
+
     private double distance;
     private double direction;
 
-    public ObservableObject(String paramsString){
+    public ObservableSoccerObject(String paramsString) {
         String[] paramStringArray = paramsString.split(" ");
         distance = Double.parseDouble(paramStringArray[0]);
         direction = Double.parseDouble(paramStringArray[1]);
     }
 
-    public ObservableObject(){}
+    public ObservableSoccerObject() {
+    }
 
     public double getDistance() {
         return distance;
@@ -29,5 +33,11 @@ public class ObservableObject {
 
     public void setDirection(double direction) {
         this.direction = direction;
+    }
+
+
+    @Override
+    public String getName() {
+        return this.getClass().getName();
     }
 }

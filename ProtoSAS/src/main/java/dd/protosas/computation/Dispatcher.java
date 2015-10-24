@@ -1,7 +1,7 @@
 package dd.protosas.computation;
 
 import dd.protosas.presentation.ElementIdent;
-import dd.protosas.computation.levelnode.Node;
+import dd.protosas.computation.levelnode.IdentNode;
 import dd.protosas.computability.NodeSpecification;
 
 import java.util.*;
@@ -11,11 +11,11 @@ import java.util.*;
  */
 public class Dispatcher {
     private Queue<ElementIdent> newElemIdents = new LinkedList<>();
-    private Map<NodeSpecification, Node> existentNodes;
+    private Map<NodeSpecification, IdentNode> existentNodes;
     private TreeMap<String, List<NodeSpecification>> new2PossibleMapper = new TreeMap<>();
 
 
-    public Dispatcher(Map<NodeSpecification, Node> existentNodes){
+    public Dispatcher(Map<NodeSpecification, IdentNode> existentNodes){
         this.existentNodes = existentNodes;
     }
 
@@ -44,10 +44,10 @@ public class Dispatcher {
             ElementIdent ident = newElemIdents.poll();
             for (NodeSpecification spec : new2PossibleMapper.get(ident.getName())) {
                 if (existentNodes.containsKey(spec)) {
-                    Node node = existentNodes.get(spec);
+                    IdentNode node = existentNodes.get(spec);
                     node.notifyOnBaseInput(ident);
                 } else {
-                    Node node = spec.createNode();
+                    IdentNode node = spec.createNode();
                     existentNodes.put(spec, node);
                     node.notifyOnBaseInput(ident);
                 }

@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Sergey on 18.10.2015.
  */
-public class Line extends ObservableObject {
+public class Line extends ObservableSoccerObject {
 
     enum LineType{
         LEFT("l"),

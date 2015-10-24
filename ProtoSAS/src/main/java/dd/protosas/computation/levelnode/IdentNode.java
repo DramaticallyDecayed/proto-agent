@@ -19,23 +19,24 @@ import java.util.*;
  * when we transmit from creation phase to update phase. So in order to not check all the time if an
  * object has been created or not.
  */
-public class Node {
-    private final NodeSpecification nodeSpec;
-    private Queue<ElementIdent> baseNotifies = new LinkedList<ElementIdent>();
+public class IdentNode implements INode {
+
+    private Queue<ElementIdent> baseNotifies = new LinkedList<>();
     private NodeRegister register = new NodeRegister();
     private final NodeProcessor processor;
 
-    public Node(NodeSpecification nodeSpec, NodeProcessor processor) {
-        this.nodeSpec = nodeSpec;
+    public IdentNode(NodeSpecification nodeSpec, NodeProcessor processor) {
         register.initialize(nodeSpec);
         this.processor = processor;
         processor.initialize(register);
     }
 
+    @Override
     public void notifyOnBaseInput(ElementIdent ident) {
         baseNotifies.add(ident);
     }
 
+    @Override
     public void process() {
         if (updateRegister()) {
             if (register.haveToBeUpdated()) {

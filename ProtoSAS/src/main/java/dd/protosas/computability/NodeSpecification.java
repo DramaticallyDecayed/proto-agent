@@ -1,6 +1,6 @@
 package dd.protosas.computability;
 
-import dd.protosas.computation.levelnode.Node;
+import dd.protosas.computation.levelnode.IdentNode;
 
 /**
  * Created by Sergey on 25.09.2015.
@@ -61,5 +61,5 @@ public abstract class NodeSpecification {
         return base;
     }
 
-    public abstract Node createNode();
+    public abstract IdentNode createNode();
 }

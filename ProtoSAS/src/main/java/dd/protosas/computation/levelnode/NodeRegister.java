@@ -15,7 +15,6 @@ public class NodeRegister {
     private List<ElementIdent> children = new ArrayList<>();
     private NodeSpecification nodeSpec;
 
-
     public void initialize(NodeSpecification nodeSpec) {
         this.nodeSpec = nodeSpec;
         for (String base : nodeSpec.getBase()) {

@@ -13,6 +13,7 @@
         <module>ProtoSAS</module>
         <module>ProtoPerception</module>
         <module>SoccerAgent</module>
+        <module>ProtoCommonModel</module>
     </modules>
 
     <dependencies>

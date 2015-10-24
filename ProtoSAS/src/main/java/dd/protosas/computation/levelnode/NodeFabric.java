@@ -7,7 +7,7 @@ import dd.protosas.computability.NodeSpecification;
  */
 public class NodeFabric {
 
-    public static Node createNode(NodeSpecification spec) {
+    public static IdentNode createNode(NodeSpecification spec) {
         return null;
     }
 }
