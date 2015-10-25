@@ -15,8 +15,8 @@ public class Executor {
 
     private CommandGenerator commandGenerator;
 
-    public Executor(Communicator communicator) throws FileNotFoundException, InterruptedException {
-        commandGenerator = new CommandGenerator(communicator);
+    public Executor(Communicator communicator, String commandFile) throws FileNotFoundException, InterruptedException {
+        commandGenerator = new CommandGenerator(communicator, commandFile);
         commandGenerator.generateCommand();
         commandGenerator.generateCommand();
     }

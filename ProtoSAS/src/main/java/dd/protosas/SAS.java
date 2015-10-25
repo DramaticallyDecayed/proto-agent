@@ -25,8 +25,11 @@ public class SAS {
         for(SensorFrame sf : list){
             for(ElementState es : sf.getElementStates()){
                 ElementIdent ei = new ElementIdent(es);
+                baseLevel.push(ei);
             }
         }
+
+        baseLevel.process();
 
     }
 }

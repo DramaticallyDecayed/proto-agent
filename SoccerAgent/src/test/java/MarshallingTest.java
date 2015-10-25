@@ -1,6 +1,10 @@
+import commonmodel.ElementState;
+import dd.protoperception.SensorFrame;
 import dd.soccer.perception.messageprocessing.MessageUnmarshallerDispatcher;
+import dd.soccer.perception.perceptingobjects.Line;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -12,9 +16,23 @@ public class MarshallingTest {
 
     @Test
     public void marshallingMessageTest() {
-        String message = "(see 0 ((flag c) 57.4 -31) ((flag c b) 49.4 4) ((flag r t) 120.3 -32) ((flag r b) 101.5 2) ((flag g r b) 104.6 -12) ((goal r) 105.6 -16) ((flag g r t) 107.8 -20) ((flag p r b) 85.6 -6) ((flag p r c) 90 -19) ((flag p r t) 98.5 -30) ((flag p l b) 16.3 -37 0 0) ((ball) 60.3 -31) ((line r) 101.5 89))";
-        MessageUnmarshallerDispatcher.unmarshal(message);
-
+        String message = "(see 0 " +
+                "((flag c) 14 -3 0 0) " +
+                "((flag l t) 74.4 23) " +
+                "((flag l b) 74.4 -31) " +
+                "((flag g l b) 66.7 -9) " +
+                "((goal l) 66.7 -3) " +
+                "((flag g l t) 66.7 2) " +
+                "((flag p l b) 54.1 -25) " +
+                "((flag p l c) 49.9 -3) " +
+                "((flag p l t) 54.1 18) " +
+                "((ball) 13.5 -3 0 0) " +
+                "((player foofoe 3) 16.4 -11 0 0) " +
+                "((line l) 66.7 86))";
+        List<SensorFrame> sensorFrameList = MessageUnmarshallerDispatcher.unmarshal(message);
+        for(ElementState es : sensorFrameList.get(0).getElementStates()){
+            System.out.println(es);
+        }
     }
 
 

@@ -20,7 +20,7 @@ public class Player extends ObservableSoccerObject {
         String[] paramStringArray = paramsString.split(" ");
 
         setDistance(Double.parseDouble(paramStringArray[0]));
-        setDistance(Double.parseDouble(paramStringArray[1]));
+        setDirection(Double.parseDouble(paramStringArray[1]));
     }
 
     public String toString() {

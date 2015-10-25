@@ -14,12 +14,15 @@ public class NodeRegister {
     private TreeMap<String, List<ElementIdent>> baseInput = new TreeMap<String, List<ElementIdent>>();
     private List<ElementIdent> children = new ArrayList<>();
     private NodeSpecification nodeSpec;
+    private int baseCapacity;
 
     public void initialize(NodeSpecification nodeSpec) {
         this.nodeSpec = nodeSpec;
+        //TODO: should we initiate all keys in advance or wait for real data?
         for (String base : nodeSpec.getBase()) {
             baseInput.put(base, null);
         }
+        baseCapacity = nodeSpec.getBase().length;
     }
 
     public List<ElementIdent> getChildren(){
@@ -34,8 +37,10 @@ public class NodeRegister {
         return baseInput;
     }
 
+
+    //TODO: this method should not called after it first success until the base damage
     public boolean isComplete() {
-        return baseInput.values().size() >= nodeSpec.base.length;
+        return baseCapacity == 0;
     }
 
     public boolean haveToBeUpdated() {
@@ -45,6 +50,7 @@ public class NodeRegister {
     public void update(ElementIdent ident) {
         if(baseInput.get(ident.getName()) == null){
             baseInput.put(ident.getName(), new ArrayList<ElementIdent>());
+            baseCapacity--;
         }
         baseInput.get(ident.getName()).add(ident);
     }

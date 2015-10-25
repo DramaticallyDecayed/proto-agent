@@ -42,6 +42,13 @@ public class Dispatcher {
     public void process() {
         while (!newElemIdents.isEmpty()) {
             ElementIdent ident = newElemIdents.poll();
+
+            //TODO: remove it later cos we will know all possible elements...
+
+            if(!new2PossibleMapper.containsKey(ident.getName())){
+                continue;
+            }
+
             for (NodeSpecification spec : new2PossibleMapper.get(ident.getName())) {
                 if (existentNodes.containsKey(spec)) {
                     IdentNode node = existentNodes.get(spec);

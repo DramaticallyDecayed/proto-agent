@@ -15,9 +15,9 @@ public class CommandGenerator {
     private Communicator communicator;
     private Scanner commandsReader;
 
-    public CommandGenerator(Communicator communicator) throws FileNotFoundException {
+    public CommandGenerator(Communicator communicator, String commandFile) throws FileNotFoundException {
         this.communicator = communicator;
-        File commands = new File("commands");
+        File commands = new File(commandFile);
         commandsReader = new Scanner(commands);
     }
 
