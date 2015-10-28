@@ -7,8 +7,8 @@ import dd.protosas.computation.levelnode.IdentNode;
  */
 public abstract class NodeSpecification {
 
-    public final String[] base;
-    public final String derivative;
+    private final String[] base;
+    private final String derivative;
     private final int hash;
 
     public NodeSpecification(String[] base, String derivative) {

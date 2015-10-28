@@ -11,7 +11,11 @@ import java.util.*;
  */
 public class Dispatcher {
     private Queue<ElementIdent> newElemIdents = new LinkedList<>();
+
+    /*node specifications mapped to ident node presents all possible nodes for the level*/
     private Map<NodeSpecification, IdentNode> existentNodes;
+
+    /*bases (from all possible nodes) mapped on node specification - defines what notifies what nodes activate*/
     private TreeMap<String, List<NodeSpecification>> new2PossibleMapper = new TreeMap<>();
 
 

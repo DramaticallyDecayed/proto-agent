@@ -42,7 +42,7 @@ public class Main {
         PlayerSensor playerSensor = new PlayerSensor();
         Level level_0 = new Level(0);
 
-        level_0.addSpec(new NodeSpecification(new String[]{ Player.NAME }, IdentifiedPlayerIdent.NAME) {
+        level_0.addSpec(new NodeSpecification(new String[]{ Player.class.getName()}, IdentifiedPlayerIdent.class.getName()) {
             @Override public IdentNode createNode() {
                 return new PlayerIdentificationNode(this);
             }

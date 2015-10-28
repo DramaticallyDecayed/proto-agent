@@ -3,7 +3,7 @@ package dd.soccer.perception.perceptingobjects;
 /**
  * Created by Sergey on 18.10.2015.
  */
-public class Ball extends ObservableSoccerObject {
+public class Ball extends NavigatingLandmark {
 
     public Ball(String paramsString){
         String[] paramStringArray = paramsString.split(" ");

@@ -29,6 +29,7 @@ public class IdentNode implements INode {
         register.initialize(nodeSpec);
         this.processor = processor;
         processor.initialize(register);
+        System.out.println("IdentNode created!");
     }
 
     @Override

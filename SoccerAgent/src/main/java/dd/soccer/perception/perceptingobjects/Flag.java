@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Sergey on 18.10.2015.
  */
-public class Flag extends ObservableSoccerObject {
+public class Flag extends NavigatingLandmark {
     enum FlagType{
         LEFT_TOP("l t"),
         CENTER_TOP("c t"),

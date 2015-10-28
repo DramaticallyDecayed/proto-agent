@@ -19,6 +19,8 @@ public class MessageUnmarshallerDispatcher{
         String messageType = scanner.next();
         if(messageType.equals("see")){
             sensorFrames.add((new SeeMessageUnmarshaller()).unmarshalMessage(scanner));
+        } else if(messageType.equals("sense_body")){
+            (new SenseBodyMessageUnmarshaller()).unmarshalMessage(scanner);
         }
         return sensorFrames;
     }

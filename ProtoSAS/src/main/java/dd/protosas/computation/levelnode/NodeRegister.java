@@ -11,7 +11,8 @@ import java.util.TreeMap;
  * Created by Sergey on 09.10.2015.
  */
 public class NodeRegister {
-    private TreeMap<String, List<ElementIdent>> baseInput = new TreeMap<String, List<ElementIdent>>();
+    /*current base used to produce derivative; updated when change notified*/
+    private TreeMap<String, List<ElementIdent>> baseInput = new TreeMap<>();
     private List<ElementIdent> children = new ArrayList<>();
     private NodeSpecification nodeSpec;
     private int baseCapacity;

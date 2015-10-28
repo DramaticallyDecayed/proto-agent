@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Sergey on 18.10.2015.
  */
-public class Goal extends ObservableSoccerObject {
+public class Goal extends NavigatingLandmark {
 
     enum GoalType {
         LEFT("l"),
