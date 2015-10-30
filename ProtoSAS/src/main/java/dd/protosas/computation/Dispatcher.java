@@ -46,6 +46,7 @@ public class Dispatcher {
     public void process() {
         while (!newElemIdents.isEmpty()) {
             ElementIdent ident = newElemIdents.poll();
+            //System.out.println("Disp " + ident.getElement());
 
             //TODO: remove it later cos we will know all possible elements...
 

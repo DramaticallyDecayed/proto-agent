@@ -26,15 +26,15 @@ public class NodeRegister {
         baseCapacity = nodeSpec.getBase().length;
     }
 
-    public List<ElementIdent> getChildren(){
+    public List<ElementIdent> getChildren() {
         return children;
     }
 
-    public void addChild(ElementIdent child){
+    public void addChild(ElementIdent child) {
         children.add(child);
     }
 
-    public TreeMap<String, List<ElementIdent>> getBaseInput(){
+    public TreeMap<String, List<ElementIdent>> getBaseInput() {
         return baseInput;
     }
 
@@ -49,10 +49,16 @@ public class NodeRegister {
     }
 
     public void update(ElementIdent ident) {
-        if(baseInput.get(ident.getName()) == null){
+        if (baseInput.get(ident.getName()) == null) {
             baseInput.put(ident.getName(), new ArrayList<ElementIdent>());
             baseCapacity--;
         }
         baseInput.get(ident.getName()).add(ident);
+    }
+
+    public void clearResterRecord() {
+        for (List list : baseInput.values()) {
+            list.clear();
+        }
     }
 }

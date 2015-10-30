@@ -15,7 +15,6 @@ public class ElementIdent <E extends ElementState> {
     private E element;
     private List<ElementIdent> subsribers = new ArrayList<>();
 
-
     public ElementIdent(String name) {
         this.name = name;
     }

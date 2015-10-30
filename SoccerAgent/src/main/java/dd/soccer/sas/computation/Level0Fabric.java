@@ -4,10 +4,9 @@ import dd.protosas.computability.NodeSpecification;
 import dd.protosas.computation.Level;
 import dd.protosas.computation.levelnode.IdentNode;
 import dd.protosas.computation.levelnode.NodeProcessor;
-import dd.soccer.perception.perceptingobjects.Flag;
-import dd.soccer.perception.perceptingobjects.Line;
-import dd.soccer.sas.presentation.Player;
-import dd.soccer.sas.presentation.soccerobjects.Ego;
+import dd.protosas.presentation.ElementIdent;
+import dd.soccer.perception.perceptingobjects.BodyState;
+import dd.soccer.sas.presentation.soccerobjects.EgoState;
 
 /**
  * Created by Sergey on 26.10.2015.
@@ -18,19 +17,23 @@ public class Level0Fabric {
         Level level0 = new Level(0);
 
 
-        String[] base = new String[]{Flag.class.getName(),Line.class.getName(),Player.class.getName()};
-        String derivative = Ego.class.getName();
+        String[] base = new String[]{BodyState.class.getName()};
+        String derivative = EgoState.class.getName();
 
         NodeProcessor nodeProcessor = new NodeProcessor() {
 
             @Override
             public void create() {
-                System.out.println("Trying to create EGO");
+                BodyState bodyState = (BodyState) getRegister().getBaseInput().get(BodyState.class.getName()).get(0).getElement();
+                getRegister().addChild(new ElementIdent(new EgoState(bodyState)));
             }
 
             @Override
             public void update() {
-
+                ElementIdent child = getRegister().getChildren().get(0);
+                BodyState bodyState = (BodyState) getRegister().getBaseInput().get(BodyState.class.getName()).get(0).getElement();
+                child.updateElement(new EgoState(bodyState));
+                getRegister().clearResterRecord();
             }
         };
 

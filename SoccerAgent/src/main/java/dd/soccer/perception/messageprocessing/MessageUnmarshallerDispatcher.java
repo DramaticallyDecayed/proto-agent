@@ -20,7 +20,7 @@ public class MessageUnmarshallerDispatcher{
         if(messageType.equals("see")){
             sensorFrames.add((new SeeMessageUnmarshaller()).unmarshalMessage(scanner));
         } else if(messageType.equals("sense_body")){
-            (new SenseBodyMessageUnmarshaller()).unmarshalMessage(scanner);
+            sensorFrames.add((new SenseBodyMessageUnmarshaller()).unmarshalMessage(scanner));
         }
         return sensorFrames;
     }

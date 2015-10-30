@@ -36,7 +36,7 @@ public class MarshallingTest {
 
 
         //(sense_body 27 (view_mode high normal) (stamina 7980 1) (speed 0.18) (kick 0) (dash 4) (turn 1) (say 0))
-
+        System.out.println("----------------------------------------------------------------");
         message = "(sense_body 0 " +
                 "(view_mode high normal) " +
                 "(stamina 8000 1) " +
@@ -46,6 +46,9 @@ public class MarshallingTest {
                 "(turn 1) " +
                 "(say 0))";
         sensorFrameList = MessageUnmarshallerDispatcher.unmarshal(message);
+        for(ElementState es : sensorFrameList.get(0).getElementStates()){
+            System.out.println(es);
+        }
     }
 
 
