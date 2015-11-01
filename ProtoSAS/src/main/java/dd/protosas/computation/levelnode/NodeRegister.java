@@ -57,8 +57,6 @@ public class NodeRegister {
     }
 
     public void clearResterRecord() {
-        for (List list : baseInput.values()) {
-            list.clear();
-        }
+        baseInput.values().forEach(java.util.List::clear);
     }
 }
