@@ -12,6 +12,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.FileUtils;
 import dd.soccer.perception.perceptingobjects.BodyState;
+import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
 import org.junit.Test;
 import org.topbraid.spin.arq.ARQFactory;
 import org.topbraid.spin.inference.SPINInferences;
@@ -54,8 +55,10 @@ public class TopBraidIntegrationTest {
         String ns = baseModel.getNsPrefixMap().get("");
 
         System.out.println("-=============================================-");
+
+
         OntClass senseBody = ontModel.getOntClass(ns + BodyState.class.getSimpleName());
-        ontModel.createIndividual("some_body_state", senseBody);
+        //ontModel.createIndividual("some_body_state", senseBody);
 
 
         // Run all inferences
@@ -84,6 +87,9 @@ public class TopBraidIntegrationTest {
         ResultSetFormatter.out(System.out, results, query);
         qe.close();
 
+
+        senseBody = ontModel.getOntClass(ns + NavigatingLandmark.class.getSimpleName());
+        ontModel.createIndividual("some_body_state", senseBody);
 
         System.out.println("Check that no the same triples are generated....");
         // Run all inferences

@@ -28,9 +28,6 @@
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
 .
-:BodyState_1
-  rdf:type :BodyState ;
-.
 :CalculationDependency
   rdf:type owl:Class ;
   spin:rule [
@@ -74,57 +71,6 @@
                   ) ;
                 sp:where (
                     [
-                      rdf:type sp:Optional ;
-                      sp:elements (
-                          [
-                            rdf:type sp:SubQuery ;
-                            sp:query [
-                                rdf:type sp:Select ;
-                                sp:resultVariables (
-                                    [
-                                      sp:varName "ncalc"^^xsd:string ;
-                                    ]
-                                  ) ;
-                                sp:where (
-                                    [
-                                      sp:object :ModelClass ;
-                                      sp:predicate rdfs:subClassOf ;
-                                      sp:subject [
-                                          sp:varName "nc"^^xsd:string ;
-                                        ] ;
-                                    ]
-                                    [
-                                      rdf:type sp:Filter ;
-                                      sp:expression [
-                                          rdf:type sp:notExists ;
-                                          sp:elements (
-                                              [
-                                                sp:object [
-                                                    sp:varName "nc"^^xsd:string ;
-                                                  ] ;
-                                                sp:predicate rdf:type ;
-                                                sp:subject [
-                                                    sp:varName "ni"^^xsd:string ;
-                                                  ] ;
-                                              ]
-                                            ) ;
-                                        ] ;
-                                    ]
-                                    [
-                                      sp:object [
-                                          sp:varName "nc"^^xsd:string ;
-                                        ] ;
-                                      sp:predicate :base ;
-                                      sp:subject [
-                                          sp:varName "ncalc"^^xsd:string ;
-                                        ] ;
-                                    ]
-                                  ) ;
-                              ] ;
-                          ]
-                        ) ;
-                    ]
-                    [
                       sp:object :ModelClass ;
                       sp:predicate rdfs:subClassOf ;
                       sp:subject [
@@ -149,6 +95,13 @@
                         ] ;
                     ]
                     [
+                      sp:object :CalculationDependency ;
+                      sp:predicate rdf:type ;
+                      sp:subject [
+                          sp:varName "calc"^^xsd:string ;
+                        ] ;
+                    ]
+                    [
                       sp:object [
                           sp:varName "c"^^xsd:string ;
                         ] ;
@@ -158,33 +111,14 @@
                         ] ;
                     ]
                     [
-                      rdf:type sp:Bind ;
-                      sp:expression [
-                          rdf:type sp:if ;
-                          sp:arg1 [
-                              rdf:type sp:bound ;
-                              sp:arg1 [
-                                  sp:varName "ncalc"^^xsd:string ;
-                                ] ;
-                            ] ;
-                          sp:arg2 [
-                              sp:varName "ncalc"^^xsd:string ;
-                            ] ;
-                          sp:arg3 "" ;
-                        ] ;
-                      sp:variable [
-                          sp:varName "nn"^^xsd:string ;
-                        ] ;
-                    ]
-                    [
                       rdf:type sp:Filter ;
                       sp:expression [
-                          rdf:type sp:notIn ;
+                          rdf:type sp:not ;
                           sp:arg1 [
-                              sp:varName "calc"^^xsd:string ;
-                            ] ;
-                          sp:arg2 [
-                              sp:varName "nn"^^xsd:string ;
+                              rdf:type :test ;
+                              sp:arg1 [
+                                  sp:varName "calc"^^xsd:string ;
+                                ] ;
                             ] ;
                         ] ;
                     ]
@@ -291,7 +225,7 @@
 :CalculationDependency_2
   rdf:type :CalculationDependency ;
   :base :EgoState ;
-  :base :NavigatableState ;
+  :base :NavigatingLandmark ;
   :derivative :EgoAbsState ;
 .
 :CamputabilityClass
@@ -306,14 +240,11 @@
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
 .
-:EgoState_1
-  rdf:type :EgoState ;
-.
 :ModelClass
   rdf:type owl:Class ;
   rdfs:subClassOf owl:Thing ;
 .
-:NavigatableState
+:NavigatingLandmark
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
 .
@@ -330,4 +261,50 @@
   rdf:type owl:ObjectProperty ;
   rdfs:domain :CamputabilityClass ;
   rdfs:range :ModelClass ;
+.
+:test
+  rdf:type spin:Function ;
+  spin:body [
+      rdf:type sp:Ask ;
+      sp:where (
+          [
+            sp:object :ModelClass ;
+            sp:predicate rdfs:subClassOf ;
+            sp:subject [
+                sp:varName "nc"^^xsd:string ;
+              ] ;
+          ]
+          [
+            rdf:type sp:Filter ;
+            sp:expression [
+                rdf:type sp:notExists ;
+                sp:elements (
+                    [
+                      sp:object [
+                          sp:varName "nc"^^xsd:string ;
+                        ] ;
+                      sp:predicate rdf:type ;
+                      sp:subject [
+                          sp:varName "ni"^^xsd:string ;
+                        ] ;
+                    ]
+                  ) ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "nc"^^xsd:string ;
+              ] ;
+            sp:predicate :base ;
+            sp:subject spin:_arg1 ;
+          ]
+        ) ;
+    ] ;
+  spin:constraint [
+      rdf:type spl:Argument ;
+      spl:predicate sp:arg1 ;
+      spl:valueType rdfs:Resource ;
+    ] ;
+  spin:returnType :CalculationDependency ;
+  rdfs:subClassOf spin:Functions ;
 .
