@@ -28,6 +28,9 @@
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
 .
+:BodyState_1
+  rdf:type :BodyState ;
+.
 :CalculationDependency
   rdf:type owl:Class ;
   spin:rule [
@@ -71,30 +74,6 @@
                   ) ;
                 sp:where (
                     [
-                      sp:object :ModelClass ;
-                      sp:predicate rdfs:subClassOf ;
-                      sp:subject [
-                          sp:varName "c"^^xsd:string ;
-                        ] ;
-                    ]
-                    [
-                      rdf:type sp:Filter ;
-                      sp:expression [
-                          rdf:type sp:exists ;
-                          sp:elements (
-                              [
-                                sp:object [
-                                    sp:varName "c"^^xsd:string ;
-                                  ] ;
-                                sp:predicate rdf:type ;
-                                sp:subject [
-                                    sp:varName "i"^^xsd:string ;
-                                  ] ;
-                              ]
-                            ) ;
-                        ] ;
-                    ]
-                    [
                       sp:object :CalculationDependency ;
                       sp:predicate rdf:type ;
                       sp:subject [
@@ -102,23 +81,38 @@
                         ] ;
                     ]
                     [
-                      sp:object [
-                          sp:varName "c"^^xsd:string ;
+                      rdf:type sp:Bind ;
+                      sp:expression [
+                          rdf:type :CountBases ;
+                          arg:arg [
+                              sp:varName "calc"^^xsd:string ;
+                            ] ;
                         ] ;
-                      sp:predicate :base ;
-                      sp:subject [
-                          sp:varName "calc"^^xsd:string ;
+                      sp:variable [
+                          sp:varName "x1"^^xsd:string ;
+                        ] ;
+                    ]
+                    [
+                      rdf:type sp:Bind ;
+                      sp:expression [
+                          rdf:type :CountBaseClasses ;
+                          arg:arg [
+                              sp:varName "calc"^^xsd:string ;
+                            ] ;
+                        ] ;
+                      sp:variable [
+                          sp:varName "x2"^^xsd:string ;
                         ] ;
                     ]
                     [
                       rdf:type sp:Filter ;
                       sp:expression [
-                          rdf:type sp:not ;
+                          rdf:type sp:eq ;
                           sp:arg1 [
-                              rdf:type :test ;
-                              sp:arg1 [
-                                  sp:varName "calc"^^xsd:string ;
-                                ] ;
+                              sp:varName "x1"^^xsd:string ;
+                            ] ;
+                          sp:arg2 [
+                              sp:varName "x2"^^xsd:string ;
                             ] ;
                         ] ;
                     ]
@@ -144,8 +138,23 @@
               ] ;
           ]
           [
+            rdf:type sp:TriplePath ;
             sp:object [
                 sp:varName "bc"^^xsd:string ;
+              ] ;
+            sp:path [
+                rdf:type sp:ModPath ;
+                sp:modMax -2 ;
+                sp:modMin 0 ;
+                sp:subPath rdfs:subClassOf ;
+              ] ;
+            sp:subject [
+                sp:varName "sc"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "sc"^^xsd:string ;
               ] ;
             sp:predicate rdf:type ;
             sp:subject [
@@ -157,7 +166,7 @@
             sp:expression [
                 rdf:type afn:namespace ;
                 sp:arg1 [
-                    sp:varName "bc"^^xsd:string ;
+                    sp:varName "sc"^^xsd:string ;
                   ] ;
               ] ;
             sp:variable [
@@ -203,7 +212,7 @@
                     ]
                     [
                       sp:object [
-                          sp:varName "bc"^^xsd:string ;
+                          sp:varName "sc"^^xsd:string ;
                         ] ;
                       sp:predicate :base ;
                       sp:subject [
@@ -232,6 +241,124 @@
   rdf:type owl:Class ;
   rdfs:subClassOf owl:Thing ;
 .
+:CountBaseClasses
+  rdf:type spin:Function ;
+  spin:body [
+      rdf:type sp:Select ;
+      sp:resultVariables (
+          [
+            rdf:type sp:Count ;
+            sp:expression [
+                sp:varName "base"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+      sp:where (
+          [
+            sp:object [
+                sp:varName "base"^^xsd:string ;
+              ] ;
+            sp:predicate :base ;
+            sp:subject [
+                sp:varName "arg"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+    ] ;
+  spin:constraint [
+      rdf:type spl:Argument ;
+      spl:predicate arg:arg ;
+    ] ;
+  rdfs:subClassOf spin:Functions ;
+.
+:CountBases
+  rdf:type spin:Function ;
+  spin:body [
+      rdf:type sp:Select ;
+      sp:resultVariables (
+          [
+            rdf:type sp:Count ;
+            sp:expression [
+                sp:varName "base"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+      sp:where (
+          [
+            sp:object [
+                sp:varName "base"^^xsd:string ;
+              ] ;
+            sp:predicate :base ;
+            sp:subject [
+                sp:varName "arg"^^xsd:string ;
+              ] ;
+          ]
+          [
+            rdf:type sp:Filter ;
+            sp:expression [
+                rdf:type sp:gt ;
+                sp:arg1 [
+                    rdf:type :CountForBases ;
+                    arg:arg [
+                        sp:varName "base"^^xsd:string ;
+                      ] ;
+                  ] ;
+                sp:arg2 0 ;
+              ] ;
+          ]
+        ) ;
+    ] ;
+  spin:constraint [
+      rdf:type spl:Argument ;
+      spl:predicate arg:arg ;
+    ] ;
+  rdfs:subClassOf spin:Functions ;
+.
+:CountForBases
+  rdf:type spin:Function ;
+  spin:body [
+      rdf:type sp:Select ;
+      sp:resultVariables (
+          [
+            rdf:type sp:Count ;
+            sp:expression [
+                sp:varName "i"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+      sp:where (
+          [
+            rdf:type sp:TriplePath ;
+            sp:object [
+                sp:varName "arg"^^xsd:string ;
+              ] ;
+            sp:path [
+                rdf:type sp:ModPath ;
+                sp:modMax -2 ;
+                sp:modMin 0 ;
+                sp:subPath rdfs:subClassOf ;
+              ] ;
+            sp:subject [
+                sp:varName "sc"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "sc"^^xsd:string ;
+              ] ;
+            sp:predicate rdf:type ;
+            sp:subject [
+                sp:varName "i"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+    ] ;
+  spin:constraint [
+      rdf:type spl:Argument ;
+      spl:predicate arg:arg ;
+    ] ;
+  rdfs:subClassOf spin:Functions ;
+.
 :EgoAbsState
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
@@ -240,6 +367,81 @@
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
 .
+:EgoState_1
+  rdf:type :EgoState ;
+.
+:FindBindedCalcDep
+  rdf:type spin:Function ;
+  spin:body [
+      rdf:type sp:Select ;
+      sp:resultVariables (
+          [
+            sp:varName "calc"^^xsd:string ;
+          ]
+        ) ;
+      sp:where (
+          [
+            sp:object :CalculationDependency ;
+            sp:predicate rdf:type ;
+            sp:subject [
+                sp:varName "calc"^^xsd:string ;
+              ] ;
+          ]
+          [
+            rdf:type sp:Bind ;
+            sp:expression [
+                rdf:type :CountBases ;
+                arg:arg [
+                    sp:varName "calc"^^xsd:string ;
+                  ] ;
+              ] ;
+            sp:variable [
+                sp:varName "x1"^^xsd:string ;
+              ] ;
+          ]
+          [
+            rdf:type sp:Bind ;
+            sp:expression [
+                rdf:type :CountBaseClasses ;
+                arg:arg [
+                    sp:varName "calc"^^xsd:string ;
+                  ] ;
+              ] ;
+            sp:variable [
+                sp:varName "x2"^^xsd:string ;
+              ] ;
+          ]
+          [
+            rdf:type sp:Filter ;
+            sp:expression [
+                rdf:type sp:eq ;
+                sp:arg1 [
+                    sp:varName "x1"^^xsd:string ;
+                  ] ;
+                sp:arg2 [
+                    sp:varName "x2"^^xsd:string ;
+                  ] ;
+              ] ;
+          ]
+        ) ;
+    ] ;
+  rdfs:subClassOf spin:Functions ;
+.
+:Flag
+  rdf:type owl:Class ;
+  rdfs:subClassOf :NavigatingLandmark ;
+.
+:Goal
+  rdf:type owl:Class ;
+  rdfs:subClassOf :NavigatingLandmark ;
+.
+:Line
+  rdf:type owl:Class ;
+  rdfs:subClassOf :NavigatingLandmark ;
+.
+:Line_1
+  rdf:type :Line ;
+.
 :ModelClass
   rdf:type owl:Class ;
   rdfs:subClassOf owl:Thing ;
@@ -247,6 +449,9 @@
 :NavigatingLandmark
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
+.
+:NavigatingLandmark_1
+  rdf:type :NavigatingLandmark ;
 .
 :Node
   rdf:type owl:Class ;
@@ -268,8 +473,14 @@
       rdf:type sp:Ask ;
       sp:where (
           [
+            rdf:type sp:TriplePath ;
             sp:object :ModelClass ;
-            sp:predicate rdfs:subClassOf ;
+            sp:path [
+                rdf:type sp:ModPath ;
+                sp:modMax -2 ;
+                sp:modMin 0 ;
+                sp:subPath rdfs:subClassOf ;
+              ] ;
             sp:subject [
                 sp:varName "nc"^^xsd:string ;
               ] ;
@@ -293,10 +504,25 @@
           ]
           [
             sp:object [
-                sp:varName "nc"^^xsd:string ;
+                sp:varName "nbc"^^xsd:string ;
               ] ;
             sp:predicate :base ;
             sp:subject spin:_arg1 ;
+          ]
+          [
+            rdf:type sp:TriplePath ;
+            sp:object [
+                sp:varName "nbc"^^xsd:string ;
+              ] ;
+            sp:path [
+                rdf:type sp:ModPath ;
+                sp:modMax -2 ;
+                sp:modMin 0 ;
+                sp:subPath rdfs:subClassOf ;
+              ] ;
+            sp:subject [
+                sp:varName "nc"^^xsd:string ;
+              ] ;
           ]
         ) ;
     ] ;
@@ -305,6 +531,15 @@
       spl:predicate sp:arg1 ;
       spl:valueType rdfs:Resource ;
     ] ;
+  spin:constraint [
+      rdf:type spl:Argument ;
+      spl:predicate sp:arg2 ;
+      spl:valueType rdfs:Resource ;
+    ] ;
   spin:returnType :CalculationDependency ;
   rdfs:subClassOf spin:Functions ;
+.
+arg:arg
+  rdf:type rdf:Property ;
+  rdfs:subPropertyOf sp:arg ;
 .
