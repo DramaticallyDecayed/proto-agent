@@ -58,7 +58,7 @@ public class TopBraidIntegrationTest {
 
 
         OntClass senseBody = ontModel.getOntClass(ns + BodyState.class.getSimpleName());
-        //ontModel.createIndividual("some_body_state", senseBody);
+        ontModel.createIndividual("some_body_state", senseBody);
 
 
         // Run all inferences
@@ -73,19 +73,7 @@ public class TopBraidIntegrationTest {
         System.out.println(newTriples.size());
 
 
-        System.out.println("Check that new triples in the model...");
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT\n" +
-                "*\n" +
-                "WHERE {\n" +
-                "\t?i a :Node.\n" +
-                "}");
-
-        Query query = ARQFactory.get().createQuery(ontModel, sb.toString());
-        QueryExecution qe = ARQFactory.get().createQueryExecution(query, ontModel);
-        ResultSet results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results, query);
-        qe.close();
+        showNodes(ontModel);
 
 
         senseBody = ontModel.getOntClass(ns + NavigatingLandmark.class.getSimpleName());
@@ -95,8 +83,37 @@ public class TopBraidIntegrationTest {
         // Run all inferences
         SPINInferences.run(ontModel, newTriples, null, null, false, null);
         System.out.println("Inferred triples: " + newTriples.size());
+        showStatements(newTriples);
 
 
+    }
+
+    private void showStatements(Model newTriples){
+        System.out.println("--------------------------------------------------------");
+        StmtIterator stmtIterator = newTriples.listStatements();
+        while(stmtIterator.hasNext()){
+            System.out.println(stmtIterator.nextStatement());
+        }
+        System.out.println("--------------------------------------------------------");
+    }
+
+    private void showNodes(OntModel ontModel){
+        System.out.println("--------------------------------------------------------");
+        System.out.println("Check that new triples in the model...");
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT\n" +
+                "DISTINCT ?node\n" +
+                "WHERE {\n" +
+                "\t?i a :Node.\n" +
+                "\t?node :isNodeActive true . \n" +
+                "}");
+
+        Query query = ARQFactory.get().createQuery(ontModel, sb.toString());
+        QueryExecution qe = ARQFactory.get().createQueryExecution(query, ontModel);
+        ResultSet results = qe.execSelect();
+        ResultSetFormatter.out(System.out, results, query);
+        qe.close();
+        System.out.println("--------------------------------------------------------");
     }
 
 }
