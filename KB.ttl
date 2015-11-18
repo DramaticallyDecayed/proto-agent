@@ -19,6 +19,7 @@
 
 <http://dd.com/SASKBTest>
   rdf:type owl:Ontology ;
+  spin:imports <http://topbraid.org/spin/owlrl-all> ;
   owl:imports <http://spinrdf.org/sp> ;
   owl:imports <http://spinrdf.org/spl> ;
   owl:imports <http://topbraid.org/sparqlmotionfunctions> ;
@@ -26,7 +27,7 @@
 .
 :BodyState
   rdf:type owl:Class ;
-  rdfs:subClassOf :ModelClass ;
+  rdfs:subClassOf :ModelObject ;
 .
 :CalculationDependency
   rdf:type owl:Class ;
@@ -119,7 +120,7 @@
 :CalculationDependency_2
   rdf:type :CalculationDependency ;
   :base :EgoState ;
-  :base :NavigatingLandmark ;
+  :base :SeeNavigation ;
   :derivative :EgoAbsState ;
 .
 :CamputabilityClass
@@ -246,11 +247,14 @@
 .
 :EgoAbsState
   rdf:type owl:Class ;
-  rdfs:subClassOf :ModelClass ;
+  rdfs:subClassOf :ModelObject ;
 .
 :EgoState
   rdf:type owl:Class ;
-  rdfs:subClassOf :ModelClass ;
+  rdfs:subClassOf :ModelObject ;
+.
+:EgoState_1
+  rdf:type :EgoState ;
 .
 :FindBindedCalcDep
   rdf:type spin:Function ;
@@ -312,6 +316,9 @@
 :Flag
   rdf:type owl:Class ;
   rdfs:subClassOf :NavigatingLandmark ;
+.
+:Flag_1
+  rdf:type :Flag ;
 .
 :GetCalcDepForModel
   rdf:type spin:Function ;
@@ -566,24 +573,50 @@
     ] ;
   rdfs:subClassOf owl:Thing ;
 .
-:NavigatingLandmark
+:ModelObject
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelClass ;
+.
+:ModelRelation
+  rdf:type owl:Class ;
+  rdfs:subClassOf :ModelClass ;
+.
+:NavigatingLandmark
+  rdf:type owl:Class ;
+  rdfs:subClassOf :ModelObject ;
 .
 :Node
   rdf:type owl:Class ;
   rdfs:subClassOf :CamputabilityClass ;
 .
+:See
+  rdf:type owl:Class ;
+  rdfs:subClassOf :ModelRelation ;
+.
+:SeeNavigation
+  rdf:type owl:Class ;
+  rdfs:subClassOf :See ;
+  owl:equivalentClass [
+      rdf:type owl:Restriction ;
+      owl:onProperty :see ;
+      owl:someValuesFrom :NavigatingLandmark ;
+    ] ;
+.
+:See_1
+  rdf:type :See ;
+.
+:See_2
+  rdf:type :See ;
+  :see :Flag_1 ;
+.
 :base
   rdf:type owl:ObjectProperty ;
   rdfs:domain :CamputabilityClass ;
-  rdfs:domain :Node ;
   rdfs:range :ModelClass ;
 .
 :derivative
   rdf:type owl:ObjectProperty ;
   rdfs:domain :CamputabilityClass ;
-  rdfs:domain :Node ;
   rdfs:range :ModelClass ;
 .
 :isNodeActive
@@ -591,10 +624,20 @@
   rdfs:domain :Node ;
   rdfs:range xsd:boolean ;
 .
+:level
+  rdf:type owl:DatatypeProperty ;
+  rdfs:domain :ModelClass ;
+  rdfs:range xsd:integer ;
+.
 :node
   rdf:type owl:ObjectProperty ;
   rdfs:domain :CalculationDependency ;
   rdfs:range :Node ;
+.
+:see
+  rdf:type owl:ObjectProperty ;
+  rdfs:domain :See ;
+  rdfs:range :ModelObject ;
 .
 arg:arg
   rdf:type rdf:Property ;
