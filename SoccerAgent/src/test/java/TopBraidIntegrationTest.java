@@ -1,22 +1,19 @@
 import ch.qos.logback.classic.Level;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.compose.MultiUnion;
-import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.impl.StmtIteratorImpl;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
-import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.Filter;
-import com.hp.hpl.jena.vocabulary.RDF;
 import dd.soccer.perception.perceptingobjects.BodyState;
-import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
+import dd.soccer.sas.presentation.soccerrelations.SeeNavigation;
 import org.junit.Before;
 import org.junit.Test;
-import org.topbraid.spin.arq.ARQFactory;
+import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.topbraid.spin.inference.DefaultSPINRuleComparator;
 import org.topbraid.spin.inference.SPINInferences;
 import org.topbraid.spin.inference.SPINRuleComparator;
@@ -26,18 +23,21 @@ import org.topbraid.spin.util.JenaUtil;
 import org.topbraid.spin.util.SPINQueryFinder;
 import org.topbraid.spin.vocabulary.SPIN;
 
-;import java.util.List;
+import java.util.List;
 import java.util.Map;
+
+;
 
 /**
  * Created by Sergey on 04.11.2015.
  */
 public class TopBraidIntegrationTest {
 
-    private Model baseModel;
+
+    private BareModelInterchanger interchanger;
     private OntModel ontModel;
     private Model newTriples;
-    private String ns;
+
 
     @Before
     public void doBefore(){
@@ -49,34 +49,42 @@ public class TopBraidIntegrationTest {
     }
 
     private void loadMainModel(){
-        baseModel = ModelFactory.createDefaultModel();
-        System.out.println("Loading domain ontology...");
-        baseModel.read("D:\\code\\IdeaProjects\\ProtoAgent\\KB.ttl", FileUtils.langTurtle);
-        ontModel = JenaUtil.createOntologyModel(OntModelSpec.OWL_MEM, baseModel);
-        ns = baseModel.getNsPrefixMap().get("");
-        SPINModuleRegistry.get().registerAll(ontModel, null);
+        interchanger = new BareModelInterchanger();
+        ontModel = interchanger.getOntModel();
     }
 
     private void createModelForNewTriples(){
         newTriples = ModelFactory.createDefaultModel();
         ontModel.addSubModel(newTriples);
-        newTriples.setNsPrefixes(baseModel.getNsPrefixMap());
+        newTriples.setNsPrefixes(ontModel.getNsPrefixMap());
     }
 
     private void insertTestEntity(){
-        OntClass senseBody = ontModel.getOntClass(ns + BodyState.class.getSimpleName());
-        ontModel.createIndividual("some_body_state", senseBody);
+        interchanger.insertIndividual(BodyState.class, "some_body_state");
     }
 
     @Test
     public void testWOOWLRL(){
-        insertTestEntity();
+
         long start = System.currentTimeMillis();
-        SPINInferences.run(ontModel, newTriples, null, null, false, null);
+
+        insertTestEntity();
+        interchanger.runInference();
+        showNodes(interchanger.getNewTriples());
+        interchanger.commitInference();
+
+
+        interchanger.insertIndividual(SeeNavigation.class, "some_navi");
+        interchanger.runInference();
+        showNodes(interchanger.getNewTriples());
+        interchanger.commitInference();
+
+
         long end = System.currentTimeMillis();
         System.out.println("Inferred triples: " + newTriples.size() + " during " + (end-start));
         showNodes(ontModel);
         findSpecialSee(ontModel);
+        QuieringUtils.showModelStatements(newTriples);
     }
 
     private Map<Resource,List<CommandWrapper>> cls2Query;
@@ -123,12 +131,15 @@ public class TopBraidIntegrationTest {
     @Test
     public void testOnSaveAndRepeat(){
         insertTestEntity();
+        showNodes(newTriples);
         SPINInferences.run(ontModel, newTriples, null, null, false, null);
         System.out.println("Inferred triples: " + newTriples.size());
+        showNodes(newTriples);
         ontModel.add(newTriples);
         newTriples.removeAll();
         SPINInferences.run(ontModel, newTriples, null, null, false, null);
         System.out.println("Inferred triples: " + newTriples.size());
+        showNodes(newTriples);
     }
 
     @Test
@@ -140,8 +151,11 @@ public class TopBraidIntegrationTest {
     public void testOnTeamWork(){
         insertTestEntity();
         long start = System.currentTimeMillis();
-        findSpecialSee(useJenaReasoner(ontModel));
-        //findSpecialSee(anotherResoner(ontModel));
+        System.out.println("size before OWL RL " + ontModel.size());
+        //findSpecialSee(useJenaReasoner(ontModel));
+        findSpecialSee(anotherResoner(ontModel));
+        //findSpecialSee(pelletReasoner(ontModel));
+        System.out.println("size after OWL RL " + ontModel.size());
         SPINInferences.run(ontModel, newTriples, null, null, false, null);
         long end = System.currentTimeMillis();
         System.out.println("Inferred triples: " + newTriples.size() + " during " + (end-start));
@@ -149,13 +163,25 @@ public class TopBraidIntegrationTest {
         findSpecialSee(ontModel);
     }
 
-    private  OntModel useJenaReasoner(OntModel ontModel){
+    private Model pelletReasoner(OntModel ontModel){
+        InfModel pModel = ModelFactory.createInfModel(PelletReasonerFactory.theInstance().create(), ontModel);
+        ExtendedIterator<Statement> stmts = pModel.listStatements().filterDrop( new Filter<Statement>() {
+            @Override
+            public boolean accept(Statement o) {
+                return ontModel.contains( o );
+            }
+        });
+        Model deductions = ModelFactory.createDefaultModel().add( new StmtIteratorImpl( stmts ));
+        return deductions;
+    }
+
+    private Model useJenaReasoner(OntModel ontModel){
         Reasoner reasoner = ReasonerRegistry.getOWLMicroReasoner();
         reasoner = reasoner.bindSchema(ontModel);
         OntModelSpec ontModelSpec = OntModelSpec.OWL_LITE_MEM;
         ontModelSpec.setReasoner(reasoner);
         long start = System.currentTimeMillis();
-        OntModel model = ModelFactory.createOntologyModel(ontModelSpec, ontModel);
+        InfModel model = ModelFactory.createOntologyModel(ontModelSpec, ontModel);
         long end = System.currentTimeMillis();
         System.out.println((end-start));
         return model;
@@ -166,58 +192,42 @@ public class TopBraidIntegrationTest {
         long start = System.currentTimeMillis();
         InfModel pModel = ModelFactory.createInfModel(reasoner, ontModel);
         long end = System.currentTimeMillis();
+//        ExtendedIterator<Statement> stmts = pModel.listStatements().filterDrop( new Filter<Statement>() {
+//            @Override
+//            public boolean accept(Statement o) {
+//                return ontModel.contains( o );
+//            }
+//        });
+//        Model deductions = ModelFactory.createDefaultModel().add( new StmtIteratorImpl( stmts ));
         System.out.println((end-start));
+//        System.out.println(deductions.size());
+//        return deductions;
         return pModel;
 
     }
 
     private void findSpecialSee(Model model){
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT ?i ?sc \n" +
+        QuieringUtils.showQueryResults(
+                model,
+                "PREFIX : <http://dd.com/SASKBTest#> " +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" +
+                "SELECT ?i ?sc \n" +
                 "WHERE { \n" +
                 "\t?sc (rdfs:subClassOf)* :ModelRelation .\n" +
                 "\t?i a ?sc .\n" +
-                "}");
-        Query query = ARQFactory.get().createQuery(model, sb.toString());
-        QueryExecution qe = ARQFactory.get().createQueryExecution(query, model);
-        ResultSet rs = qe.execSelect();
-
-
-        while (rs.hasNext()) {
-            QuerySolution row = rs.nextSolution();
-            Statement s = ResourceFactory.createStatement(row.getResource("i"), RDF.type, row.getResource("sc"));
-            ontModel.add(s);
-        }
-        ResultSetFormatter.out(System.out, rs, query);
-        qe.close();
+                "}"
+        );
     }
 
-    private void showStatements(Model newTriples){
-        System.out.println("--------------------------------------------------------");
-        StmtIterator stmtIterator = newTriples.listStatements();
-        while(stmtIterator.hasNext()){
-            System.out.println(stmtIterator.nextStatement());
-        }
-        System.out.println("--------------------------------------------------------");
-    }
-
-    private void showNodes(OntModel ontModel){
-        System.out.println("--------------------------------------------------------");
-        System.out.println("Check that new triples in the model...");
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT\n" +
-                "DISTINCT ?node\n" +
+    private void showNodes(Model ontModel){
+        QuieringUtils.showQueryResults(
+                ontModel,
+                "SELECT\n" +
+                "?node\n" +
                 "WHERE {\n" +
-                "\t?i a :Node.\n" +
                 "\t?node :isNodeActive true . \n" +
-                "}");
-
-        Query query = ARQFactory.get().createQuery(ontModel, sb.toString());
-        QueryExecution qe = ARQFactory.get().createQueryExecution(query, ontModel);
-        ResultSet results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results, query);
-        qe.close();
-        System.out.println("--------------------------------------------------------");
+                "}"
+        );
     }
 
     private static OntModel loadModelWithImports(String url) {

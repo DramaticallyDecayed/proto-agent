@@ -46,6 +46,10 @@
             <version>1.4.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.ansell.jjtraveler</groupId>
+            <artifactId>jjtraveler</artifactId>
+        </dependency>
 
     </dependencies>
 
