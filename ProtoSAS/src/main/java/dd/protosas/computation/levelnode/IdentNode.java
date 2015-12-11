@@ -2,6 +2,9 @@ package dd.protosas.computation.levelnode;
 
 import dd.protosas.computability.NodeSpecification;
 import dd.protosas.presentation.ElementIdent;
+import dd.soccer.common.Publisher;
+import dd.soccer.common.Subscriber;
+import dd.soccer.common.Topic;
 
 import java.util.*;
 
@@ -19,7 +22,7 @@ import java.util.*;
  * when we transmit from creation phase to update phase. So in order to not check all the time if an
  * object has been created or not.
  */
-public class IdentNode implements INode {
+public class IdentNode implements INode, Subscriber {
 
     private Queue<ElementIdent> baseNotifies = new LinkedList<>();
     private NodeRegister register = new NodeRegister();
@@ -67,4 +70,13 @@ public class IdentNode implements INode {
         processor.create();
     }
 
+    @Override
+    public void inform() {
+        System.out.println("STUB! Out of order!");
+    }
+
+    @Override
+    public void inform(Publisher publisher, Topic topic) {
+        System.out.println("STUB! Out of order!");
+    }
 }

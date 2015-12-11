@@ -1,6 +1,8 @@
 package dd.soccer.perception;
 
 import dd.protoperception.SensorFrame;
+import dd.soccer.common.Publisher;
+import dd.soccer.common.Publishing;
 import dd.soccer.perception.messageprocessing.MessageUnmarshallerDispatcher;
 import dd.soccer.perception.networking.Communicator;
 
@@ -11,7 +13,7 @@ import java.util.List;
 /**
  * Created by Sergey on 14.10.2015.
  */
-public class Perceptor {
+public class Perceptor implements Publishing{
 
     private Communicator communicator;
     private Thread t;
@@ -39,5 +41,16 @@ public class Perceptor {
 
     public Communicator getCommunicator() {
         return communicator;
+    }
+
+
+    private Publisher publisher = new Publisher();
+    @Override
+    public Publisher publisher() {
+        return publisher;
+    }
+
+    public Publisher getPublisher(){
+        return publisher;
     }
 }

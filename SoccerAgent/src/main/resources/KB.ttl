@@ -24,12 +24,89 @@
   owl:imports <http://topbraid.org/sparqlmotionfunctions> ;
   owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
 .
+:BindCalculationDependency
+  rdf:type owl:Class ;
+  spin:rule [
+      rdf:type sp:Construct ;
+      sp:templates (
+          [
+            sp:object spin:_this ;
+            sp:predicate :base ;
+            sp:subject [
+                sp:varName "node"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+      sp:where (
+          [
+            rdf:type sp:TriplePath ;
+            sp:object :CalculationDependency ;
+            sp:path [
+                rdf:type sp:ModPath ;
+                sp:modMax -2 ;
+                sp:modMin 0 ;
+                sp:subPath rdfs:subClassOf ;
+              ] ;
+            sp:subject [
+                sp:varName "ccalc"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "ccalc"^^xsd:string ;
+              ] ;
+            sp:predicate rdf:type ;
+            sp:subject [
+                sp:varName "calc"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "bc"^^xsd:string ;
+              ] ;
+            sp:predicate :base ;
+            sp:subject [
+                sp:varName "calc"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "bclass"^^xsd:string ;
+              ] ;
+            sp:predicate rdf:type ;
+            sp:subject spin:_this ;
+          ]
+          [
+            rdf:type sp:TriplePath ;
+            sp:object [
+                sp:varName "bc"^^xsd:string ;
+              ] ;
+            sp:path [
+                rdf:type sp:ModPath ;
+                sp:modMax -2 ;
+                sp:modMin 0 ;
+                sp:subPath rdfs:subClassOf ;
+              ] ;
+            sp:subject [
+                sp:varName "bclass"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "node"^^xsd:string ;
+              ] ;
+            sp:predicate :node ;
+            sp:subject [
+                sp:varName "calc"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+    ] ;
+  rdfs:subClassOf :InferenceStage ;
+.
 :BodyState
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelObject ;
-.
-:BodyState_1
-  rdf:type :BodyState ;
 .
 :CalculationDependency
   rdf:type owl:Class ;
@@ -328,15 +405,6 @@
             sp:object [
                 sp:varName "arg"^^xsd:string ;
               ] ;
-            sp:predicate rdfs:subClassOf ;
-            sp:subject [
-                sp:varName "sc"^^xsd:string ;
-              ] ;
-          ]
-          [
-            sp:object [
-                sp:varName "sc"^^xsd:string ;
-              ] ;
             sp:predicate rdf:type ;
             sp:subject [
                 sp:varName "i"^^xsd:string ;
@@ -357,9 +425,6 @@
 :EgoState
   rdf:type owl:Class ;
   rdfs:subClassOf :ModelObject ;
-.
-:EgoState_1
-  rdf:type :EgoState ;
 .
 :FindBindedCalcDep
   rdf:type spin:Function ;
@@ -474,9 +539,6 @@
   rdf:type owl:Class ;
   rdfs:subClassOf :NavigatingLandmark ;
 .
-:Flag_1
-  rdf:type :Flag ;
-.
 :GetCalcDepForModel
   rdf:type spin:Function ;
   spin:body [
@@ -538,6 +600,10 @@
 :Goal
   rdf:type owl:Class ;
   rdfs:subClassOf :NavigatingLandmark ;
+.
+:InferenceStage
+  rdf:type owl:Class ;
+  rdfs:subClassOf owl:Thing ;
 .
 :Level
   rdf:type owl:Class ;
@@ -780,7 +846,6 @@
 .
 :Node_0_1
   rdf:type :Node ;
-  :derivative :BodyState_1 ;
   :isNodeActive "true"^^xsd:boolean ;
   :levelId 0 ;
   :nodeId 0 ;
@@ -801,10 +866,6 @@
       owl:onProperty :see ;
       owl:someValuesFrom :NavigatingLandmark ;
     ] ;
-.
-:SeeNavigation_1
-  rdf:type :SeeNavigation ;
-  :see :Flag_1 ;
 .
 :SeePlayers
   rdf:type owl:Class ;
@@ -849,7 +910,7 @@
                   ) ;
                 sp:where (
                     [
-                      sp:object :CalculationDependency ;
+                      sp:object :Splitter ;
                       sp:predicate rdf:type ;
                       sp:subject [
                           sp:varName "calc"^^xsd:string ;
@@ -915,15 +976,6 @@
                 sp:varName "id"^^xsd:string ;
               ] ;
           ]
-          [
-            sp:object [
-                sp:varName "active"^^xsd:string ;
-              ] ;
-            sp:predicate :isNodeActive ;
-            sp:subject [
-                sp:varName "node"^^xsd:string ;
-              ] ;
-          ]
         ) ;
     ] ;
   rdfs:subClassOf :CalculationDependency ;
@@ -976,17 +1028,7 @@
   rdfs:domain :Node ;
   rdfs:range xsd:integer ;
 .
-:node_CalculationDependency_1
-  :derivative :EgoState_1 ;
-  :isNodeActive "true"^^xsd:boolean ;
-.
-:node_CalculationDependency_3
-  :isNodeActive "true"^^xsd:boolean ;
-  :levelId 0 ;
-.
 :node_Splitter_1
-  :derivative :SeeNavigation_1 ;
-  :isNodeActive "true"^^xsd:boolean ;
   :levelId 0 ;
 .
 :see

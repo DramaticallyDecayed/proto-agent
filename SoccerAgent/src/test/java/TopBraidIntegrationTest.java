@@ -3,17 +3,16 @@ import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.compose.MultiUnion;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.rdf.model.impl.StmtIteratorImpl;
+import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.Filter;
 import dd.soccer.perception.perceptingobjects.BodyState;
-import dd.soccer.sas.presentation.soccerrelations.SeeNavigation;
+import dd.soccer.sas.presentation.soccerrelations.See;
 import org.junit.Before;
 import org.junit.Test;
-import org.mindswap.pellet.jena.PelletReasonerFactory;
 import org.topbraid.spin.inference.DefaultSPINRuleComparator;
 import org.topbraid.spin.inference.SPINInferences;
 import org.topbraid.spin.inference.SPINRuleComparator;
@@ -26,7 +25,7 @@ import org.topbraid.spin.vocabulary.SPIN;
 import java.util.List;
 import java.util.Map;
 
-;
+
 
 /**
  * Created by Sergey on 04.11.2015.
@@ -54,9 +53,10 @@ public class TopBraidIntegrationTest {
     }
 
     private void createModelForNewTriples(){
-        newTriples = ModelFactory.createDefaultModel();
-        ontModel.addSubModel(newTriples);
-        newTriples.setNsPrefixes(ontModel.getNsPrefixMap());
+        newTriples = interchanger.getNewTriples();
+//        newTriples = ModelFactory.createDefaultModel();
+//        ontModel.addSubModel(newTriples);
+//        newTriples.setNsPrefixes(ontModel.getNsPrefixMap());
     }
 
     private void insertTestEntity(){
@@ -71,20 +71,23 @@ public class TopBraidIntegrationTest {
         insertTestEntity();
         interchanger.runInference();
         showNodes(interchanger.getNewTriples());
+        System.out.println("AFTER BODY STATE " + newTriples.size());
         interchanger.commitInference();
 
 
-        interchanger.insertIndividual(SeeNavigation.class, "some_navi");
+        interchanger.insertIndividual(See.class, "some_see");
         interchanger.runInference();
         showNodes(interchanger.getNewTriples());
         interchanger.commitInference();
+
+        System.out.println("AFTER SEE_NAVIGATION");
 
 
         long end = System.currentTimeMillis();
         System.out.println("Inferred triples: " + newTriples.size() + " during " + (end-start));
         showNodes(ontModel);
         findSpecialSee(ontModel);
-        QuieringUtils.showModelStatements(newTriples);
+
     }
 
     private Map<Resource,List<CommandWrapper>> cls2Query;
@@ -161,18 +164,6 @@ public class TopBraidIntegrationTest {
         System.out.println("Inferred triples: " + newTriples.size() + " during " + (end-start));
         showNodes(ontModel);
         findSpecialSee(ontModel);
-    }
-
-    private Model pelletReasoner(OntModel ontModel){
-        InfModel pModel = ModelFactory.createInfModel(PelletReasonerFactory.theInstance().create(), ontModel);
-        ExtendedIterator<Statement> stmts = pModel.listStatements().filterDrop( new Filter<Statement>() {
-            @Override
-            public boolean accept(Statement o) {
-                return ontModel.contains( o );
-            }
-        });
-        Model deductions = ModelFactory.createDefaultModel().add( new StmtIteratorImpl( stmts ));
-        return deductions;
     }
 
     private Model useJenaReasoner(OntModel ontModel){

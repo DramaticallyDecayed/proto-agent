@@ -13,8 +13,13 @@ public class BareModelInterchanger {
 
     public BareModelInterchanger(){
         ontModel = (OntModel)  new BareModelLoader().loadKBModel();
-        newTriples = ModelLoadingUtinls.createModel4InferredValues(ontModel);
+        addModel4Inference();
         ns = ontModel.getNsPrefixMap().get("");
+    }
+
+    private void addModel4Inference(){
+        newTriples = ModelLoadingUtinls.createModel4InferredValues(ontModel);
+        ontModel.addSubModel(newTriples);
     }
 
     public void insertIndividual(Class dmClass, String name){
