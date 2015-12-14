@@ -34,10 +34,4 @@ public class ObservableSoccerObject extends ElementState {
     public void setDirection(double direction) {
         this.direction = direction;
     }
-
-
-    @Override
-    public String getName() {
-        return this.getClass().getName();
-    }
 }

@@ -1,5 +1,7 @@
 package dd.protosas.computation.levelnode;
 
+import common.Dependency;
+import commonmodel.ElementState;
 import dd.protosas.computability.NodeSpecification;
 import dd.protosas.presentation.ElementIdent;
 
@@ -8,33 +10,34 @@ import java.util.List;
 import java.util.TreeMap;
 
 /**
+ * TODO: it can be implemented through concrete fields getters and setters on code generation
  * Created by Sergey on 09.10.2015.
  */
 public class NodeRegister {
+
     /*current base used to produce derivative; updated when change notified*/
-    private TreeMap<String, List<ElementIdent>> baseInput = new TreeMap<>();
-    private List<ElementIdent> children = new ArrayList<>();
-    private NodeSpecification nodeSpec;
+    private TreeMap<Dependency, List<ElementState>> baseInput = new TreeMap<>();
+    private List<ElementState> derivative = new ArrayList<>();
     private int baseCapacity;
 
     public void initialize(NodeSpecification nodeSpec) {
-        this.nodeSpec = nodeSpec;
+
         //TODO: should we initiate all keys in advance or wait for real data?
-        for (String base : nodeSpec.getBase()) {
+        for (Dependency base : nodeSpec.getBase()) {
             baseInput.put(base, null);
         }
         baseCapacity = nodeSpec.getBase().length;
     }
 
-    public List<ElementIdent> getChildren() {
-        return children;
+    public List<ElementState> getDerivative() {
+        return derivative;
     }
 
-    public void addChild(ElementIdent child) {
-        children.add(child);
+    public void addDerivative(ElementState derivative) {
+        this.derivative.add(derivative);
     }
 
-    public TreeMap<String, List<ElementIdent>> getBaseInput() {
+    public TreeMap<Dependency, List<ElementState>> getBaseInput() {
         return baseInput;
     }
 
@@ -45,15 +48,15 @@ public class NodeRegister {
     }
 
     public boolean haveToBeUpdated() {
-        return isComplete() && !children.isEmpty();
+        return isComplete() && !derivative.isEmpty();
     }
 
-    public void update(ElementIdent ident) {
-        if (baseInput.get(ident.getName()) == null) {
-            baseInput.put(ident.getName(), new ArrayList<ElementIdent>());
+    public void update(ElementState state) {
+        if (baseInput.get(state.getRepresentDependecy()) == null) {
+            baseInput.put(state.getRepresentDependecy(), new ArrayList<ElementState>());
             baseCapacity--;
         }
-        baseInput.get(ident.getName()).add(ident);
+        baseInput.get(state.getRepresentDependecy()).add(state);
     }
 
     public void clearResterRecord() {

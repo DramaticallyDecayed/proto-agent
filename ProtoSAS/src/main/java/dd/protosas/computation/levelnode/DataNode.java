@@ -22,8 +22,4 @@ public class DataNode implements INode {
         processor.create();
     }
 
-    @Override
-    public void notifyOnBaseInput(ElementIdent ident) {
-        register.addChild(ident);
-    }
 }

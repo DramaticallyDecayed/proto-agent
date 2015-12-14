@@ -1,5 +1,6 @@
 package dd.soccer;
 
+import common.Dependency;
 import dd.protosas.computation.Level;
 import dd.protosas.computation.levelnode.IdentNode;
 import dd.protosas.computability.NodeSpecification;
@@ -21,15 +22,15 @@ import dd.soccer.sas.presentation.Player;
  * 3. Only within CN's process frame the corresponding element identity can be rewritten. All other CNs
  * only read the shared element identity's current view. The problem is how to actualize this shared copy
  * of element identity's view at CNs that use it.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * TODO: process flow
  * 1. Somehow use generators to organize iterative element processing
- * <p/>
+ * <p>
  * TODO:control flow
- * <p/>
- * <p/>
- * <p/>
+ * <p>
+ * <p>
+ * <p>
  * TODO: ideas
  * 1. CN - is a unit of calculation process, whereas ElementIdent can be considered as a functional
  * representation, a kind of an element proxy, that really rewrites element's state. Element itself
@@ -42,8 +43,11 @@ public class Main {
         PlayerSensor playerSensor = new PlayerSensor();
         Level level_0 = new Level(0);
 
-        level_0.addSpec(new NodeSpecification(new String[]{ Player.class.getName()}, IdentifiedPlayerIdent.class.getName()) {
-            @Override public IdentNode createNode() {
+        level_0.addSpec(new NodeSpecification(
+                new Dependency[]{new Dependency(Player.class)},
+                new Dependency(IdentifiedPlayerIdent.class)) {
+            @Override
+            public IdentNode createNode() {
                 return new PlayerIdentificationNode(this);
             }
         });

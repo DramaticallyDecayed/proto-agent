@@ -6,8 +6,7 @@ import dd.protosas.presentation.ElementIdent;
  */
 public class PlayerIdent extends ElementIdent<Player> {
 
-    public PlayerIdent(String name) {
-        super(Player.NAME);
+    public PlayerIdent() {
     }
 
     public PlayerIdent(Player element) {

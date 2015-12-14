@@ -11,8 +11,7 @@ public class GroupElementIdent<EI extends ElementIdent> extends ElementIdent imp
 
     private List<EI> idents = new ArrayList<EI>();
 
-    public GroupElementIdent(String name) {
-        super(name);
+    public GroupElementIdent() {
     }
 
 

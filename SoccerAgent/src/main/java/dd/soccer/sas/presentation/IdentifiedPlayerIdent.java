@@ -11,7 +11,6 @@ public class IdentifiedPlayerIdent extends ElementIdent<Player> {
     public static final String NAME = "identified player";
 
     public IdentifiedPlayerIdent() {
-        super(NAME);
     }
 
     public void updateElement(Player element) {

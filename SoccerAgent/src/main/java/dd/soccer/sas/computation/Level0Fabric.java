@@ -1,5 +1,7 @@
 package dd.soccer.sas.computation;
 
+import common.Dependency;
+import commonmodel.ElementState;
 import dd.protosas.computability.NodeSpecification;
 import dd.protosas.computation.Level;
 import dd.protosas.computation.levelnode.IdentNode;
@@ -18,11 +20,11 @@ public class Level0Fabric {
         Level level0 = new Level(0);
 
 
-        String[] base = new String[]{
-                BodyState.class.getName(),
+        Dependency[] base = new Dependency[]{
+                new Dependency(BodyState.class)
                 //here must be some additional classes but firstly switch off complete function
         };
-        String derivative = EgoState.class.getName();
+        Dependency derivative = new Dependency(EgoState.class);
 
         NodeProcessor nodeProcessor = new NodeProcessor() {
 
@@ -34,13 +36,13 @@ public class Level0Fabric {
                     egoModelProcessor = new EgoModelProcessor(new Level(0));
                 }
 
-                BodyState bodyState = (BodyState) getRegister().getBaseInput().get(BodyState.class.getName()).get(0).getElement();
+                BodyState bodyState = (BodyState) getRegister().getBaseInput().get(BodyState.class.getName()).get(0);
                 egoModelProcessor.push(bodyState);
 
                 egoModelProcessor.cycle();
 
                 if (egoModelProcessor.getOutstate() != null) {
-                    getRegister().addChild(egoModelProcessor.getOutstate());
+                    getRegister().addDerivative(egoModelProcessor.getOutstate());
                 }
 
                 getRegister().clearResterRecord();
@@ -49,14 +51,14 @@ public class Level0Fabric {
             @Override
             public void update() {
 
-                ElementIdent child = getRegister().getChildren().get(0);
-                BodyState bodyState = (BodyState) getRegister().getBaseInput().get(BodyState.class.getName()).get(0).getElement();
+                ElementState child = getRegister().getDerivative().get(0);
+                BodyState bodyState = (BodyState) getRegister().getBaseInput().get(BodyState.class.getName()).get(0);
 
                 egoModelProcessor.push(bodyState);
 
                 egoModelProcessor.cycle();
 
-                child.updateElement(egoModelProcessor.getOutstate().getElement());
+                getRegister().update(egoModelProcessor.getOutstate());
 
                 getRegister().clearResterRecord();
 

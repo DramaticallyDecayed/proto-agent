@@ -1,8 +1,8 @@
 package dd.soccer.perception;
 
 import dd.protoperception.SensorFrame;
-import dd.soccer.common.Publisher;
-import dd.soccer.common.Publishing;
+import common.Publisher;
+import common.Publishing;
 import dd.soccer.perception.messageprocessing.MessageUnmarshallerDispatcher;
 import dd.soccer.perception.networking.Communicator;
 

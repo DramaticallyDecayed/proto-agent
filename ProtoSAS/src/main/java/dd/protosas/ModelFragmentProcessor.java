@@ -20,8 +20,7 @@ public class ModelFragmentProcessor {
 
     public void cycle() {
         for (ElementState es : (List<ElementState>) pushedObjs) {
-            ElementIdent ei = new ElementIdent(es);
-            baseLevel.push(ei);
+            baseLevel.push(es);
         }
         baseLevel.process();
         pushedObjs.clear();

@@ -1,5 +1,7 @@
 package dd.soccer.sas.computation;
 
+import common.Dependency;
+import commonmodel.ElementState;
 import dd.protosas.presentation.ElementIdent;
 import dd.protosas.computation.levelnode.NodeProcessor;
 import dd.soccer.sas.presentation.PlayerIdent;
@@ -19,21 +21,20 @@ public class PlayerIdentification extends NodeProcessor {
 
     @Override
     public void update() {
-        List<ElementIdent> playerElementIdents = getRegister().getBaseInput().get(Player.NAME);
-        List<ElementIdent> knownPlayers = getRegister().getChildren();
+        List<ElementState> playerElementIdents = getRegister().getBaseInput().get(new Dependency(Player.class));
+        List<ElementState> knownPlayers = getRegister().getDerivative();
 
-        for (ElementIdent ei : playerElementIdents) {
-            Player p = (Player)ei.getElement();
+        for (ElementState ei : playerElementIdents) {
+            Player p = (Player)ei;
 
             boolean updated = false;
             if (knownPlayers.isEmpty()) {
                 knownPlayers.add(createPlayer(p));
             } else {
-                for (ElementIdent ident : knownPlayers) {
-                    int num = ((Player)ident.getElement()).getNumber();
+                for (ElementState state : knownPlayers) {
+                    int num = ((Player)state).getNumber();
                     if (num == p.getNumber()) {
                         updated = true;
-                        ident.updateElement(ei.getElement());
                         break;
                     }
                 }
@@ -44,8 +45,8 @@ public class PlayerIdentification extends NodeProcessor {
         }
     }
 
-    private PlayerIdent createPlayer(Player newPlayer){
-        return new PlayerIdent(newPlayer, "Creat player: " + newPlayer.getNumber());
+    private Player createPlayer(Player newPlayer){
+        return new Player(newPlayer.getNumber());
     }
 
 

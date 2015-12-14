@@ -1,21 +1,19 @@
 package commonmodel;
 
+import common.Dependency;
+
 /**
  * Created by Sergey on 23.10.2015.
  */
 public class ElementState {
 
-    private final String name;
+    private final Dependency representDependecy;
 
-    public ElementState(String name) {
-        this.name = name;
-    }
-
-    public ElementState(){
-        this.name = this.getClass().getName();
+    public ElementState() {
+        representDependecy = new Dependency(getClass());
     }
     
-    public String getName() {
-        return name;
+    public Dependency getRepresentDependecy() {
+        return representDependecy;
     }
 }

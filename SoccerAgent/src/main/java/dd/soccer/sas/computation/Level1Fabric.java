@@ -1,5 +1,7 @@
 package dd.soccer.sas.computation;
 
+import common.Dependency;
+import commonmodel.ElementState;
 import dd.protosas.computability.NodeSpecification;
 import dd.protosas.computation.Level;
 import dd.protosas.computation.levelnode.IdentNode;
@@ -22,18 +24,18 @@ public class Level1Fabric {
         Level level1 = new Level(1);
 
 
-        String[] base = new String[]{Ball.class.getName(),Player.class.getName()};
-        String derivative = BallOwner.class.getName();
+        Dependency[] base = new Dependency[]{new Dependency(Ball.class),new Dependency(Player.class)};
+        Dependency derivative = new Dependency(BallOwner.class);
 
 
         NodeProcessor nodeProcessor = new NodeProcessor() {
             @Override
             public void create() {
-                Ball ball = (Ball) getRegister().getBaseInput().get(Ball.class.getName()).get(0).getElement();
-                List<ElementIdent> players = getRegister().getBaseInput().get(Player.class.getName());
+                Ball ball = (Ball) getRegister().getBaseInput().get(Ball.class.getName()).get(0);
+                List<ElementState> players = getRegister().getBaseInput().get(Player.class.getName());
                 TreeMap<Double, Player> playersToBall = new TreeMap<>();
-                for(ElementIdent ei : players){
-                    Player p = (Player) ei.getElement();
+                for(ElementState ei : players){
+                    Player p = (Player) ei;
                     playersToBall.put(calculateDistance(ball,p),p);
                 }
 
@@ -42,8 +44,7 @@ public class Level1Fabric {
                 }
 
                 BallOwner ballOwner = new BallOwner(playersToBall.firstEntry().getValue(), ball);
-                ElementIdent<BallOwner> elementIdent = new ElementIdent<BallOwner>(ballOwner);
-                getRegister().addChild(elementIdent);
+                getRegister().addDerivative(ballOwner);
                 System.out.println(playersToBall.firstEntry().getValue() + "\n" + ball);
             }
 

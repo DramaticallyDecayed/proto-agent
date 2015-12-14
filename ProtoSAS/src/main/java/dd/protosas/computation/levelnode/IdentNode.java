@@ -1,12 +1,14 @@
 package dd.protosas.computation.levelnode;
 
+import common.Transmitter;
+import commonmodel.ElementState;
 import dd.protosas.computability.NodeSpecification;
 import dd.protosas.presentation.ElementIdent;
-import dd.soccer.common.Publisher;
-import dd.soccer.common.Subscriber;
-import dd.soccer.common.Topic;
+
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Sergey on 25.09.2015.
@@ -22,22 +24,20 @@ import java.util.*;
  * when we transmit from creation phase to update phase. So in order to not check all the time if an
  * object has been created or not.
  */
-public class IdentNode implements INode, Subscriber {
+public class IdentNode implements INode {
 
-    private Queue<ElementIdent> baseNotifies = new LinkedList<>();
+    private Logger logger = Logger.getLogger(IdentNode.class.getName());
+
     private NodeRegister register = new NodeRegister();
     private final NodeProcessor processor;
+    private Transmitter transmitter;
 
     public IdentNode(NodeSpecification nodeSpec, NodeProcessor processor) {
         register.initialize(nodeSpec);
         this.processor = processor;
         processor.initialize(register);
-        System.out.println("IdentNode created!");
-    }
-
-    @Override
-    public void notifyOnBaseInput(ElementIdent ident) {
-        baseNotifies.add(ident);
+        transmitter = new Transmitter();
+        logger.log(Level.INFO, "Create IdentNode");
     }
 
     @Override
@@ -52,31 +52,27 @@ public class IdentNode implements INode, Subscriber {
     }
 
     private boolean updateRegister() {
-        if (baseNotifies.isEmpty()) {
+        if (transmitter.hasSomthing()) {
             return false;
         }
-        while (!baseNotifies.isEmpty()) {
-            ElementIdent ident = baseNotifies.poll();
-            register.update(ident);
+        while (transmitter.hasSomthing()) {
+            ElementState state = transmitter.poll();
+            register.update(state);
         }
         return true;
     }
 
-    protected void updateChild(){
+    protected void updateChild() {
         processor.update();
     }
 
-    protected void createChild(){
+    protected void createChild() {
         processor.create();
     }
 
-    @Override
-    public void inform() {
-        System.out.println("STUB! Out of order!");
+    public Transmitter getTransmitter() {
+        return transmitter;
     }
 
-    @Override
-    public void inform(Publisher publisher, Topic topic) {
-        System.out.println("STUB! Out of order!");
-    }
+
 }

@@ -21,8 +21,7 @@ public class SAS extends ModelFragmentProcessor {
     public void cycle() {
         for(SensorFrame sf : (List<SensorFrame>)getPushedObjs()){
             for(ElementState es : sf.getElementStates()){
-                ElementIdent ei = new ElementIdent(es);
-                getBaseLevel().push(ei);
+                getBaseLevel().push(es);
             }
         }
         getBaseLevel().process();

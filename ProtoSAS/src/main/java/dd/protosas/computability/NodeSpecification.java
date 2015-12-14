@@ -1,5 +1,6 @@
 package dd.protosas.computability;
 
+import common.Dependency;
 import dd.protosas.computation.levelnode.IdentNode;
 
 /**
@@ -7,11 +8,11 @@ import dd.protosas.computation.levelnode.IdentNode;
  */
 public abstract class NodeSpecification {
 
-    private final String[] base;
-    private final String derivative;
+    private final Dependency[] base;
+    private final Dependency derivative;
     private final int hash;
 
-    public NodeSpecification(String[] base, String derivative) {
+    public NodeSpecification(Dependency[] base, Dependency derivative) {
         this.base = base;
         this.derivative = derivative;
         hash = computeHash();
@@ -57,7 +58,7 @@ public abstract class NodeSpecification {
         return hash;
     }
 
-    public String[] getBase(){
+    public Dependency[] getBase(){
         return base;
     }
 

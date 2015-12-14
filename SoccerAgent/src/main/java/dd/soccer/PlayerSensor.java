@@ -1,5 +1,6 @@
 package dd.soccer;
 
+import commonmodel.ElementState;
 import dd.protosas.presentation.ElementIdent;
 import dd.soccer.sas.presentation.PlayerIdent;
 import dd.soccer.sas.presentation.Player;
@@ -17,16 +18,16 @@ public class PlayerSensor {
     private final int POSSIBLE_PLAYER_NUMBERS = SENSE_FRAME_SIZE + 1;
 
 
-    public List<ElementIdent> sense(){
+    public List<ElementState> sense(){
         int currentSenseFrameSize = r.nextInt(SENSE_FRAME_SIZE);
         return generatePlayers(currentSenseFrameSize);
     }
 
-    private List<ElementIdent> generatePlayers(int size){
-        List<ElementIdent> players = new ArrayList<>();
+    private List<ElementState> generatePlayers(int size){
+        List<ElementState> players = new ArrayList<>();
         boolean[] numbers = new boolean[POSSIBLE_PLAYER_NUMBERS];
         for(int i = 0; i < size; i++){
-            players.add(new PlayerIdent(generatePlayer(numbers)));
+            players.add(generatePlayer(numbers));
         }
         return players;
     }

@@ -16,6 +16,5 @@ public class P2IPRelation extends ElementState {
 
 
     public P2IPRelation() {
-        super(NAME);
     }
 }

@@ -10,8 +10,8 @@ public class SpaceObject  extends ElementState {
     private Double x;
     private Double y;
 
-    public SpaceObject(String name, Double x, Double y){
-        super(name);
+    public SpaceObject(Double x, Double y){
+
         this.x = x;
         this.y = y;
     }

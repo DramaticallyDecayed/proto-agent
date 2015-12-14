@@ -1,6 +1,6 @@
-package dd.soccer.common;
+package common;
 
-import dd.protosas.presentation.ElementIdent;
+import commonmodel.ElementState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,17 +10,28 @@ import java.util.Map;
 /**
  * Created by Sergey on 11.12.2015.
  */
-public class Publisher<Post extends ElementIdent> {
+public class Publisher<Post extends ElementState> {
 
     private Post post;
-    Map<Topic, List<Subscriber>> register = new HashMap<>();
+    Map<Dependency, List<Subscriber>> register = new HashMap<>();
 
-    public void subscribe(Topic topic, Subscriber subscriber) {
+    public void subscribe(Dependency topic, Subscriber subscriber) {
         List<Subscriber> subscribers = getSubscribers(topic, subscriber);
         subscribe(topic, subscribers, subscriber);
     }
 
-    public void publish(Topic topic) {
+    public void unsubscribe(Dependency topic, Subscriber subscriber) {
+        List<Subscriber> subscribers = getSubscribers(topic, subscriber);
+        unsubscribe(subscribers, subscriber);
+    }
+
+    private void unsubscribe(List<Subscriber> subscribers, Subscriber subscriber) {
+        if(subscribers != null){
+            subscribers.remove(subscriber);
+        }
+    }
+
+    public void publish(Dependency topic) {
         List<Subscriber> subscribers = register.get(topic);
         if (subscribers != null && !subscribers.isEmpty()) {
             for (Subscriber subscriber : subscribers) {
@@ -29,7 +40,7 @@ public class Publisher<Post extends ElementIdent> {
         }
     }
 
-    public void detailedPublish(Topic topic) {
+    public void detailedPublish(Dependency topic) {
         List<Subscriber> subscribers = register.get(topic);
         if (subscribers != null && !subscribers.isEmpty()) {
             for (Subscriber subscriber : subscribers) {
@@ -38,7 +49,7 @@ public class Publisher<Post extends ElementIdent> {
         }
     }
 
-    private List<Subscriber> getSubscribers(Topic topic, Subscriber subscriber) {
+    private List<Subscriber> getSubscribers(Dependency topic, Subscriber subscriber) {
         List<Subscriber> subscribers = register.get(topic);
         if (haveSomeSubscribers(subscribers)) {
             subscribers = createNewSubscribersList(subscriber);
@@ -57,7 +68,7 @@ public class Publisher<Post extends ElementIdent> {
         return subscribers == null;
     }
 
-    private void subscribe(Topic topic, List<Subscriber> subscribers, Subscriber subscriber) {
+    private void subscribe(Dependency topic, List<Subscriber> subscribers, Subscriber subscriber) {
         register.put(topic, subscribers);
     }
 

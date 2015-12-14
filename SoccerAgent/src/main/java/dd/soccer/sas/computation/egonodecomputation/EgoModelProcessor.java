@@ -10,7 +10,7 @@ import dd.protosas.presentation.ElementIdent;
  */
 public class EgoModelProcessor extends ModelFragmentProcessor {
 
-    private ElementIdent outstate;
+    private ElementState outstate;
 
     public EgoModelProcessor(Level baseLevel) {
         super(baseLevel);
@@ -18,12 +18,12 @@ public class EgoModelProcessor extends ModelFragmentProcessor {
 
     public void cycle() {
         if (!getPushedObjs().isEmpty()) {
-            outstate = new ElementIdent((ElementState) getPushedObjs().get(0));
+            outstate = (ElementState) getPushedObjs().get(0);
         }
         getPushedObjs().clear();
     }
 
-    public ElementIdent getOutstate() {
+    public ElementState getOutstate() {
         return outstate;
     }
 
