@@ -37,25 +37,29 @@ public class IdentNode implements INode {
         this.processor = processor;
         processor.initialize(register);
         transmitter = new Transmitter();
-        logger.log(Level.INFO, "Create IdentNode");
+        logger.info("Create IdentNode");
     }
 
     @Override
     public void process() {
         if (updateRegister()) {
             if (register.haveToBeUpdated()) {
+                logger.info("update node");
                 updateChild();
             } else if (register.isComplete()) {
+                logger.info("create node's child");
                 createChild();
             }
         }
     }
 
     private boolean updateRegister() {
-        if (transmitter.hasSomthing()) {
+
+        if (!transmitter.hasSomething()) {
             return false;
         }
-        while (transmitter.hasSomthing()) {
+
+        while (transmitter.hasSomething()) {
             ElementState state = transmitter.poll();
             register.update(state);
         }

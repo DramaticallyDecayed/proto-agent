@@ -43,6 +43,7 @@ public class NodeRegister {
 
 
     //TODO: this method should not called after it first success until the base damage
+    //TODO: here should be more comprehended check
     public boolean isComplete() {
         return baseCapacity == 0;
     }
@@ -53,7 +54,7 @@ public class NodeRegister {
 
     public void update(ElementState state) {
         if (baseInput.get(state.getRepresentDependecy()) == null) {
-            baseInput.put(state.getRepresentDependecy(), new ArrayList<ElementState>());
+            baseInput.put(state.getRepresentDependecy(), new ArrayList<>());
             baseCapacity--;
         }
         baseInput.get(state.getRepresentDependecy()).add(state);

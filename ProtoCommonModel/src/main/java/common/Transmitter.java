@@ -10,7 +10,6 @@ import java.util.Queue;
  */
 public class Transmitter extends Publisher implements Subscriber {
 
-    private Queue<ElementState> baseNotifies = new LinkedList<>();
     private Queue<Dependency> topicNotifies = new LinkedList<>();
     private Queue<Publisher> publishersNotifies = new LinkedList<>();
 
@@ -18,31 +17,19 @@ public class Transmitter extends Publisher implements Subscriber {
     private Dependency currentTopic;
     private Publisher currentPublisher;
 
-    public boolean hasSomthing(){
-        return !baseNotifies.isEmpty();
+    public boolean hasSomething(){
+        return !publishersNotifies.isEmpty();
     }
 
     public ElementState poll(){
-        currentBase = baseNotifies.poll();
         currentTopic = topicNotifies.poll();
         currentPublisher = publishersNotifies.poll();
+        currentBase = currentPublisher.getPost();
         return currentBase;
     }
 
-    public Queue<ElementState> getBaseNotifies(){
-        return baseNotifies;
-    }
-
     @Override
-    public void inform(ElementState elementState) {
-        baseNotifies.add(elementState);
-        topicNotifies.add(null);
-        publishersNotifies.add(null);
-    }
-
-    @Override
-    public void inform(Publisher publisher, Dependency topic, ElementState elementState) {
-        baseNotifies.add(elementState);
+    public void inform(Publisher publisher, Dependency topic) {
         topicNotifies.add(topic);
         publishersNotifies.add(publisher);
     }

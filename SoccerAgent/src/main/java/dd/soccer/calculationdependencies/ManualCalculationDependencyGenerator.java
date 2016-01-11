@@ -23,38 +23,39 @@ public class ManualCalculationDependencyGenerator {
 
         NodeProcessor navigationObjIdentifierProcessor = new NodeProcessor() {
 
-            Logger logger = Logger.getLogger("Navigation objIdentifier processor");
+            private Logger logger = Logger.getLogger("navigationObjIdentifierProcessor");
 
             @Override
             public void create() {
-                logger.log(java.util.logging.Level.INFO, "here we create navigation object");
+                logger.info("here we create navigation object");
             }
 
             @Override
             public void update() {
-                logger.log(java.util.logging.Level.INFO, "here we update navigation object");
+                logger.info("here we update navigation object");
             }
         };
 
         Dependency[] base = new Dependency[]{
-                new Dependency(Flag.class)
+                new Dependency(NavigatingLandmark.class)
         };
 
         Dependency derivative = new Dependency(NavigatingLandmark.class);
 
         NodeSpecification spec = new NodeSpecification(base, derivative) {
+            private Logger logger = Logger.getLogger("navigationObjSpecification");
             @Override
             public IdentNode createNode() {
+                logger.info("create node");
                 return new IdentNode(this, navigationObjIdentifierProcessor);
             }
         };
 
-
         perceptor.getPublisher()
                 .subscribe(
-                        new Dependency(NavigatingLandmark.class),
+                        new Dependency(Flag.class),
                         level.getLevelTransmitter());
 
-
+        level.addSpec(spec);
     }
 }

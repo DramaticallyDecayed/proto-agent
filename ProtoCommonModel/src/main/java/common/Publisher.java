@@ -16,12 +16,12 @@ public class Publisher<Post extends ElementState> {
     Map<Dependency, List<Subscriber>> register = new HashMap<>();
 
     public void subscribe(Dependency topic, Subscriber subscriber) {
-        List<Subscriber> subscribers = getSubscribers(topic, subscriber);
-        subscribe(topic, subscribers, subscriber);
+        List<Subscriber> subscribers = getSubscribers(topic);
+        subscribe(subscribers, subscriber);
     }
 
     public void unsubscribe(Dependency topic, Subscriber subscriber) {
-        List<Subscriber> subscribers = getSubscribers(topic, subscriber);
+        List<Subscriber> subscribers = getSubscribers(topic);
         unsubscribe(subscribers, subscriber);
     }
 
@@ -31,36 +31,27 @@ public class Publisher<Post extends ElementState> {
         }
     }
 
-    public void publish(Dependency topic) {
-        List<Subscriber> subscribers = register.get(topic);
-        if (subscribers != null && !subscribers.isEmpty()) {
-            for (Subscriber subscriber : subscribers) {
-                subscriber.inform(getPost());
-            }
-        }
-    }
-
     public void detailedPublish(Dependency topic) {
         List<Subscriber> subscribers = register.get(topic);
         if (subscribers != null && !subscribers.isEmpty()) {
             for (Subscriber subscriber : subscribers) {
-                subscriber.inform(this, topic, getPost());
+                subscriber.inform(this, topic);
             }
         }
     }
 
-    private List<Subscriber> getSubscribers(Dependency topic, Subscriber subscriber) {
+    private List<Subscriber> getSubscribers(Dependency topic) {
         List<Subscriber> subscribers = register.get(topic);
         if (haveSomeSubscribers(subscribers)) {
-            subscribers = createNewSubscribersList(subscriber);
+            subscribers = createNewSubscribersList();
+            register.put(topic, subscribers);
         }
         return subscribers;
     }
 
-    private List<Subscriber> createNewSubscribersList(Subscriber subscriber) {
+    private List<Subscriber> createNewSubscribersList() {
         List<Subscriber> subscribers;
         subscribers = new ArrayList<>();
-        subscribers.add(subscriber);
         return subscribers;
     }
 
@@ -68,8 +59,8 @@ public class Publisher<Post extends ElementState> {
         return subscribers == null;
     }
 
-    private void subscribe(Dependency topic, List<Subscriber> subscribers, Subscriber subscriber) {
-        register.put(topic, subscribers);
+    private void subscribe(List<Subscriber> subscribers, Subscriber subscriber) {
+        subscribers.add(subscriber);
     }
 
     public Post getPost() {

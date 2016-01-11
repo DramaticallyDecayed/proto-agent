@@ -12,8 +12,9 @@ public class Dependency implements Comparable {
     }
 
     @Override
-    public boolean equals(Object classAsDependency) {
-        return this.classAsDependency.equals(classAsDependency);
+    public boolean equals(Object dependency) {
+
+        return this.classAsDependency.equals(((Dependency)dependency).classAsDependency);
     }
 
     @Override

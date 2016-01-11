@@ -9,11 +9,15 @@ import dd.protosas.computation.levelnode.IdentNode;
 import dd.protosas.computability.NodeSpecification;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by Sergey on 25.09.2015.
  */
 public class Dispatcher {
+
+    private Logger logger = Logger.getLogger(Dispatcher.class.getName());
+
     private Queue<ElementState> newElemStates = new LinkedList<>();
     private Transmitter levelTransmitter;
 
@@ -28,6 +32,8 @@ public class Dispatcher {
         this.existentNodes = existentNodes;
         this.levelTransmitter = levelTransmitter;
     }
+
+
 
     public void addNodeSpecification(NodeSpecification possibleNode) {
         for (Dependency base : possibleNode.getBase()) {
@@ -50,25 +56,32 @@ public class Dispatcher {
     }
 
     public void process() {
-        while (levelTransmitter.hasSomthing()) {
+        while (levelTransmitter.hasSomething()) {
+
+
+
             ElementState state = levelTransmitter.poll();
 
-            //TODO: remove it later cos we will know all possible elements...
+            logger.info("Has something to process: " + state.toString());
 
+            //TODO: remove it later cos we will know all possible elements...
+            //TODO: if this check will be left then it is necessary to implement some more flexible check mechanism
             if(!new2PossibleMapper.containsKey(new Dependency(state.getClass()))){
                 continue;
             }
 
             for (NodeSpecification spec : new2PossibleMapper.get(new Dependency(state.getClass()))) {
                 IdentNode node;
+
                 if (existentNodes.containsKey(spec)) {
                     node = existentNodes.get(spec);
-                    node.getTransmitter().inform(state);
+                    node.getTransmitter().inform(levelTransmitter.getCurrentPublisher(), levelTransmitter.getCurrentTopic());
                 } else {
                     node = spec.createNode();
                     existentNodes.put(spec, node);
-                    node.getTransmitter().inform(state);
+                    node.getTransmitter().inform(levelTransmitter.getCurrentPublisher(), levelTransmitter.getCurrentTopic());
                 }
+
                 Publisher publisher = levelTransmitter.getCurrentPublisher();
                 Dependency topic = levelTransmitter.getCurrentTopic();
                 publisher.unsubscribe(topic, levelTransmitter);
