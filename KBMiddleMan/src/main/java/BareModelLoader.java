@@ -1,6 +1,5 @@
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.util.FileUtils;
 import org.topbraid.spin.system.SPINModuleRegistry;
 
 /**
@@ -9,10 +8,10 @@ import org.topbraid.spin.system.SPINModuleRegistry;
 public class BareModelLoader implements KBLoader{
 
     @Override
-    public Model loadKBModel() {
+    public Model loadKBModel(String path, String type) {
         OntModel ontModel = ModelLoadingUtinls.loadModelWithImports(
-                "D:\\code\\IdeaProjects\\ProtoAgent\\SoccerAgent\\src\\main\\resources\\KB.ttl",
-                FileUtils.langTurtle
+                path,
+                type
         );
         SPINModuleRegistry.get().registerAll(ontModel, null);
         return ontModel;

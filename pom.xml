@@ -15,6 +15,7 @@
         <module>ProtoPerception</module>
         <module>SoccerAgent</module>
         <module>KBMiddleMan</module>
+        <module>Owl2JavaTranslator</module>
     </modules>
 
     <dependencies>

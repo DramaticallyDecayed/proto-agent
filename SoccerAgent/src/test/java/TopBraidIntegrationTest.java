@@ -9,6 +9,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
+import com.hp.hpl.jena.util.FileUtils;
 import dd.soccer.perception.perceptingobjects.BodyState;
 import dd.soccer.sas.presentation.soccerrelations.See;
 import org.junit.Before;
@@ -48,7 +49,7 @@ public class TopBraidIntegrationTest {
     }
 
     private void loadMainModel(){
-        interchanger = new BareModelInterchanger();
+        interchanger = new BareModelInterchanger("D:\\code\\IdeaProjects\\ProtoAgent\\SoccerAgent\\src\\main\\resources\\KB.ttl", FileUtils.langTurtle);
         ontModel = interchanger.getOntModel();
     }
 

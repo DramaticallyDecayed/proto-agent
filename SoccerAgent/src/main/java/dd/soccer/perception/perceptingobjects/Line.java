@@ -14,7 +14,7 @@ public class Line extends NavigatingLandmark{
         BOTTOM("b"),
         RIGHT("r");
 
-        private LineType(String type){
+        LineType(String type){
             this.type = type;
         }
         private String type;

@@ -11,8 +11,8 @@ public class BareModelInterchanger {
     private Model newTriples;
     private String ns;
 
-    public BareModelInterchanger(){
-        ontModel = (OntModel)  new BareModelLoader().loadKBModel();
+    public BareModelInterchanger(String path, String type){
+        ontModel = (OntModel)  new BareModelLoader().loadKBModel(path, type);
         addModel4Inference();
         ns = ontModel.getNsPrefixMap().get("");
     }

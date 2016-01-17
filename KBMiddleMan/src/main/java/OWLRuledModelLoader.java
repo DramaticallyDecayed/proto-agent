@@ -16,7 +16,7 @@ import org.topbraid.spin.vocabulary.SPIN;
 public class OWLRuledModelLoader implements KBLoader{
 
     @Override
-    public Model loadKBModel(){
+    public Model loadKBModel(String path, String type){
 //        OntModel ontModel = (OntModel)(new BareModelLoader()).loadKBModel();
 //        OntModel owlrlModel = ModelLoadingUtinls.loadModelWithImports(
 //                "http://topbraid.org/spin/owlrl-all",
