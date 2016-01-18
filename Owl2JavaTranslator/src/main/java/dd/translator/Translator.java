@@ -7,7 +7,6 @@ import com.hp.hpl.jena.util.FileUtils;
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QuieringUtils;
-import dd.protosas.computation.Level;
 import dd.protosas.computation.LightweightLevel;
 import dd.protosas.computation.LightweightNode;
 import dd.soccer.perception.perceptingobjects.BodyState;
@@ -34,18 +33,18 @@ public class Translator {
         JCodeModel cm = new JCodeModel();
         String packageName = "dd.protosas.generated";
 
-        for(Integer levelNum : map.values()) {
+        for (Integer levelNum : map.values()) {
             try {
                 JDefinedClass levelClass = cm._class(packageName + ".Level_" + levelNum);
                 levelClass._extends(LightweightLevel.class);
                 JMethod defaultConstructor = levelClass.constructor(0);
                 defaultConstructor.body().invoke("super").arg(JExpr.lit(levelNum));
-            }catch (JClassAlreadyExistsException e){
+            } catch (JClassAlreadyExistsException e) {
                 System.out.println("Skip existent class...");
             }
         }
 
-        for(String cd : map.keySet()) {
+        for (String cd : map.keySet()) {
             Integer levelNum = map.get(cd);
             JDefinedClass nodeClass = cm._class(packageName + ".Node_" + cd);
             nodeClass._extends(LightweightNode.class);
@@ -55,21 +54,50 @@ public class Translator {
         }
 
 
+        for (String cd : map.keySet()) {
+
+            JDefinedClass dc = cm._getClass(packageName + ".Node_" + cd);
+
+            DependecySpecification ds = constructCDs(bmi.getOntModel(), cd);
+            if (ds.getBase().isEmpty()) {
+                for (String str : ds.getDerivative()) {
+                    String className = "dd.soccer.perception.perceptingobjects." + str;
+                    try {
+                        Class c = Class.forName(className);
+                        JClass fieldCommonClass = cm.ref(List.class);
+                        JClass narrowedFieldCommonClass = fieldCommonClass.narrow(c);
+
+                        String name = str + "List";
+                        String finalName = name.substring(0, 1).toLowerCase() + name.substring(1);
+
+                        JClass fieldClass = cm.ref(ArrayList.class);
+                        JClass narrowedFieldClass = fieldClass.narrow(c);
+
+                        JFieldVar var = dc.field(4, narrowedFieldCommonClass, finalName, JExpr._new(narrowedFieldClass));
+
+                        dc.method(JMod.PUBLIC, narrowedFieldCommonClass, "get" + name)
+                                .body()
+                                ._return(var);
+                        JMethod setter = dc.method(JMod.PUBLIC,cm.VOID, "set" + name);
+                        JVar param = setter.param(narrowedFieldClass, finalName);
+                        setter.body().assign(JExpr._this().ref(var), JExpr.ref(finalName));
+
+                        dc.method(JMod.PUBLIC, cm.VOID, "process");
+
+                        System.out.println(c);
+                    } catch (ClassNotFoundException e) {
+                        System.out.println("do not find class " + className);
+                    }
+                }
+            } else {
+
+            }
+        }
+
+
         File file = new File(".\\Owl2JavaTranslator\\target\\generated-classes");
         file.mkdirs();
         cm.build(file);
-
-        for(String cd : map.keySet()) {
-            DependecySpecification ds = constructCDs(bmi.getOntModel(), cd);
-            for(String str : ds.getBase()){
-                String className = "dd.soccer.perception.perceptingobjects." + str;
-                try {
-                    System.out.println(Class.forName(className));
-                } catch (ClassNotFoundException e) {
-                    System.out.println("do not find class " + className);
-                }
-            }
-        }
 
     }
 
@@ -110,7 +138,7 @@ public class Translator {
         DependecySpecification ds = new DependecySpecification();
         for (; resultSet.hasNext(); ) {
             QuerySolution qs = resultSet.next();
-            if(qs.getResource("base") != null){
+            if (qs.getResource("base") != null) {
                 ds.addBase(qs.getResource("base").getLocalName());
             }
             ds.addDerivative(qs.getResource("derivative").getLocalName());

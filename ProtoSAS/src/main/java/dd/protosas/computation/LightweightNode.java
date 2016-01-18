@@ -7,5 +7,6 @@ package dd.protosas.computation;
  *
  * @see LightweightLevel
  */
-public class LightweightNode {
+public abstract class LightweightNode {
+    public abstract void process();
 }
