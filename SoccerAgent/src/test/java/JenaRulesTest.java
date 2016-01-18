@@ -5,6 +5,7 @@ import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
 import com.hp.hpl.jena.reasoner.rulesys.Rule;
 import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
+import dd.ontologyinterchanger.ModelLoadingUtinls;
 import org.junit.Test;
 
 import java.nio.file.Path;

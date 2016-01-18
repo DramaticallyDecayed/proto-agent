@@ -10,6 +10,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
 import com.hp.hpl.jena.util.FileUtils;
+import dd.ontologyinterchanger.BareModelInterchanger;
+import dd.ontologyinterchanger.QuieringUtils;
 import dd.soccer.perception.perceptingobjects.BodyState;
 import dd.soccer.sas.presentation.soccerrelations.See;
 import org.junit.Before;

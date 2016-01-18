@@ -1,6 +1,9 @@
+package dd.ontologyinterchanger;
+
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
+import dd.ontologyinterchanger.BareInferenceRunner;
 
 /**
  * Created by Sergey on 22.11.2015.

@@ -1,3 +1,5 @@
+package dd.ontologyinterchanger;
+
 import com.hp.hpl.jena.rdf.model.Model;
 
 /**

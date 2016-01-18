@@ -1,24 +1,17 @@
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.compose.MultiUnion;
-import com.hp.hpl.jena.ontology.OntModel;
+package dd.ontologyinterchanger;
+
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.util.FileUtils;
-import org.topbraid.spin.inference.DefaultSPINRuleComparator;
-import org.topbraid.spin.system.SPINModuleRegistry;
-import org.topbraid.spin.util.JenaUtil;
-import org.topbraid.spin.util.SPINQueryFinder;
-import org.topbraid.spin.vocabulary.SPIN;
+import dd.ontologyinterchanger.KBLoader;
 
 /**
  * Created by Sergey on 22.11.2015.
  */
-public class OWLRuledModelLoader implements KBLoader{
+public class OWLRuledModelLoader implements KBLoader {
 
     @Override
     public Model loadKBModel(String path, String type){
-//        OntModel ontModel = (OntModel)(new BareModelLoader()).loadKBModel();
-//        OntModel owlrlModel = ModelLoadingUtinls.loadModelWithImports(
+//        OntModel ontModel = (OntModel)(new dd.ontologyinterchanger.BareModelLoader()).loadKBModel();
+//        OntModel owlrlModel = dd.ontologyinterchanger.ModelLoadingUtinls.loadModelWithImports(
 //                "http://topbraid.org/spin/owlrl-all",
 //                FileUtils.langN3);
 //        SPINModuleRegistry.get().registerAll(owlrlModel, null);
