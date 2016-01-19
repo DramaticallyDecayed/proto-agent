@@ -16,4 +16,10 @@ public class LightweightLevel {
     public void addLightweightNode(LightweightNode node){
         nodeList.add(node);
     }
+
+    public void process(){
+        for(LightweightNode node : nodeList){
+            node.process();
+        }
+    }
 }

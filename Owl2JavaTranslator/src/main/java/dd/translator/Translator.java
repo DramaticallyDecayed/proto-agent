@@ -59,39 +59,51 @@ public class Translator {
             JDefinedClass dc = cm._getClass(packageName + ".Node_" + cd);
 
             DependecySpecification ds = constructCDs(bmi.getOntModel(), cd);
+
+
             if (ds.getBase().isEmpty()) {
-                for (String str : ds.getDerivative()) {
-                    String className = "dd.soccer.perception.perceptingobjects." + str;
-                    try {
-                        Class c = Class.forName(className);
-                        JClass fieldCommonClass = cm.ref(List.class);
-                        JClass narrowedFieldCommonClass = fieldCommonClass.narrow(c);
-
-                        String name = str + "List";
-                        String finalName = name.substring(0, 1).toLowerCase() + name.substring(1);
-
-                        JClass fieldClass = cm.ref(ArrayList.class);
-                        JClass narrowedFieldClass = fieldClass.narrow(c);
-
-                        JFieldVar var = dc.field(4, narrowedFieldCommonClass, finalName, JExpr._new(narrowedFieldClass));
-
-                        dc.method(JMod.PUBLIC, narrowedFieldCommonClass, "get" + name)
-                                .body()
-                                ._return(var);
-                        JMethod setter = dc.method(JMod.PUBLIC,cm.VOID, "set" + name);
-                        JVar param = setter.param(narrowedFieldClass, finalName);
-                        setter.body().assign(JExpr._this().ref(var), JExpr.ref(finalName));
-
-                        dc.method(JMod.PUBLIC, cm.VOID, "process");
-
-                        System.out.println(c);
-                    } catch (ClassNotFoundException e) {
-                        System.out.println("do not find class " + className);
-                    }
-                }
+                generateDerivativeStuff(cm, dc, ds);
+                continue;
             } else {
 
+                JMethod pullBases = dc.method(JMod.PUBLIC, cm.VOID, "pullBases");
+                for (String str : ds.getBase()) {
+
+                    String donorName = getDonor4Base(bmi.getOntModel(), cd, str);
+                    JDefinedClass donorClass = cm._getClass(packageName + ".Node_" + donorName);
+
+                    JFieldVar donor;
+                    if(!dc.fields().containsKey(donorName)) {
+                        donor = dc.field(JMod.PRIVATE, donorClass, donorName);
+                    }else{
+                        donor = dc.fields().get(donorName);
+                    }
+
+
+                    str = upperCaseFirstLetter(str);
+                    Class c = loadClassByName(str);
+
+                    JClass fieldCommonClass = cm.ref(List.class);
+                    JClass narrowedFieldCommonClass = fieldCommonClass.narrow(c);
+
+                    String name = str + "List";
+                    String finalName = lowerCaseFirstLetter(name);
+
+                    JClass fieldClass = cm.ref(ArrayList.class);
+
+                    JFieldVar var = dc.field(JMod.PRIVATE, narrowedFieldCommonClass, finalName);
+
+
+                        pullBases.body().assign(JExpr._this().ref(var),
+                                donor.invoke("get" + name));
+
+
+
+
+
+                }
             }
+            generateDerivativeStuff(cm, dc, ds);
         }
 
 
@@ -99,6 +111,62 @@ public class Translator {
         file.mkdirs();
         cm.build(file);
 
+    }
+
+    private static void generateDerivativeStuff(JCodeModel cm, JDefinedClass dc, DependecySpecification ds) {
+        for (String str : ds.getDerivative()) {
+
+
+            str = upperCaseFirstLetter(str);
+
+            Class c = loadClassByName(str);
+
+            JClass fieldCommonClass = cm.ref(List.class);
+            JClass narrowedFieldCommonClass = fieldCommonClass.narrow(c);
+
+            String name = str + "List";
+            String finalName = lowerCaseFirstLetter(name);
+
+            JClass fieldClass = cm.ref(ArrayList.class);
+            JClass narrowedFieldClass = fieldClass.narrow(c);
+
+            JFieldVar var = dc.field(JMod.PRIVATE, narrowedFieldCommonClass, finalName, JExpr._new(narrowedFieldClass));
+
+            dc.method(JMod.PUBLIC, narrowedFieldCommonClass, "get" + name)
+                    .body()
+                    ._return(var);
+            JMethod setter = dc.method(JMod.PUBLIC, cm.VOID, "set" + name);
+            JVar param = setter.param(narrowedFieldClass, finalName);
+            setter.body().assign(JExpr._this().ref(var), JExpr.ref(finalName));
+
+            dc.method(JMod.PUBLIC, cm.VOID, "process");
+            System.out.println(c);
+
+        }
+    }
+
+    private static String upperCaseFirstLetter(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    private static String lowerCaseFirstLetter(String str) {
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
+    }
+
+    private static Class loadClassByName(String str) {
+        Class c = null;
+        try {
+            String className = "dd.soccer.sas.presentation.entities." + str;
+            c = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            String className = "dd.soccer.perception.perceptingobjects." + str;
+            try {
+                c = Class.forName(className);
+            } catch (ClassNotFoundException e1) {
+                System.out.println("do not find class " + str);
+            }
+        }
+        return c;
     }
 
     private static Map<String, Integer> constructCD2LevelMapping(Model ontModel) {
@@ -144,6 +212,30 @@ public class Translator {
             ds.addDerivative(qs.getResource("derivative").getLocalName());
         }
         return ds;
+    }
+
+    private static String getDonor4Base(Model ontModel, String cdname, String baseName) {
+        ResultSet resultSet = QuieringUtils.getQueryResults(
+                ontModel,
+                "SELECT ?donor\n" +
+                        "WHERE {\n" +
+                        "BIND(:" + cdname + " AS ?cd).\n" +
+                        "BIND(:" + baseName + " AS ?base).\n" +
+                        "?donor core:hasDerivative ?base.\n" +
+                        "?cd core:level ?cdLevel .\n" +
+                        "?cdLevel core:number ?cdLevelNumber .\n" +
+                        "?donor core:level ?donorLevel .\n" +
+                        "?donorLevel core:number ?donorLevelNumber .\n" +
+                        "FILTER (?cdLevelNumber > ?donorLevelNumber) .\n" +
+                        "} ORDER BY DESC(?donorLevelNumber)  LIMIT 1"
+        );
+        if(resultSet.hasNext()) {
+            QuerySolution qs = resultSet.next();
+            if (qs.getResource("donor") != null) {
+                return qs.getResource("donor").getLocalName();
+            }
+        }
+        return null;
     }
 
 }
