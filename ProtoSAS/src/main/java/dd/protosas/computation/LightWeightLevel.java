@@ -1,7 +1,7 @@
 package dd.protosas.computation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is created for very simple prototype used for checking the idea of owl to sas program
@@ -11,15 +11,22 @@ import java.util.List;
  */
 public class LightweightLevel {
     private Integer levelNumber;
-    private List<LightweightNode> nodeList = new ArrayList<>();
+    private Map<Class, LightweightNode> nodeList = new HashMap<>();
 
-    public void addLightweightNode(LightweightNode node){
-        nodeList.add(node);
+    public LightweightLevel(Integer levelNumber){
+        this.levelNumber = levelNumber;
     }
 
-    public void process(){
-        for(LightweightNode node : nodeList){
-            node.process();
-        }
+    public void addLightweightNode(LightweightNode node) {
+        nodeList.put(node.getClass(), node);
+    }
+
+    public LightweightNode getLightweightNode(Class c){
+        return nodeList.get(c);
+    }
+
+    public void process() {
+        System.out.println("Process level #" + levelNumber);
+        nodeList.values().forEach(LightweightNode::process);
     }
 }
