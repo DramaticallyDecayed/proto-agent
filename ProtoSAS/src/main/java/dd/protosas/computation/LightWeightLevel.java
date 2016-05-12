@@ -26,7 +26,6 @@ public class LightweightLevel {
     }
 
     public void process() {
-        System.out.println("Process level #" + levelNumber);
         nodeList.values().forEach(LightweightNode::process);
     }
 }

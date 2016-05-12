@@ -22,6 +22,9 @@ public class MessageUnmarshallerDispatcher{
         } else if(messageType.equals("sense_body")){
             sensorFrames.add((new SenseBodyMessageUnmarshaller()).unmarshalMessage(scanner));
         }
+        if(sensorFrames == null){
+            System.out.println("!!!!!!!!!!!!!!!!!!");
+        }
         return sensorFrames;
     }
 }

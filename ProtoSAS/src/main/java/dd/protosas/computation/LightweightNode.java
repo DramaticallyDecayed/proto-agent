@@ -9,4 +9,5 @@ package dd.protosas.computation;
  */
 public abstract class LightweightNode {
     public abstract void process();
+    protected abstract void pullBases();
 }

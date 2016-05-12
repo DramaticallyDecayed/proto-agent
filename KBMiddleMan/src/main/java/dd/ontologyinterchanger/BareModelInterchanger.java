@@ -14,36 +14,41 @@ public class BareModelInterchanger {
     private Model newTriples;
     private String ns;
 
-    public BareModelInterchanger(String path, String type){
-        ontModel = (OntModel)  new BareModelLoader().loadKBModel(path, type);
+    public BareModelInterchanger(String path, String type) {
+        ontModel = (OntModel) new BareModelLoader().loadKBModel(path, type);
         addModel4Inference();
         ns = ontModel.getNsPrefixMap().get("");
     }
 
-    private void addModel4Inference(){
+    private void addModel4Inference() {
         newTriples = ModelLoadingUtinls.createModel4InferredValues(ontModel);
         ontModel.addSubModel(newTriples);
     }
 
-    public void insertIndividual(Class dmClass, String name){
+    public void insertIndividual(Class dmClass, String name) {
         OntClass ontclass = ontModel.getOntClass(ns + dmClass.getSimpleName());
-        ontModel.createIndividual(ns+name, ontclass);
+        ontModel.createIndividual(ns + name, ontclass);
     }
 
-    public void runInference(){
+    public void runInference() {
         BareInferenceRunner.run(ontModel, newTriples);
     }
 
-    public void commitInference(){
+    public void commitInference() {
         ontModel.add(newTriples);
         newTriples.removeAll();
     }
 
-    public OntModel getOntModel(){
+    public void commitModel(Model model) {
+        ontModel.add(model);
+    }
+
+
+    public OntModel getOntModel() {
         return ontModel;
     }
 
-    public Model getNewTriples(){
+    public Model getNewTriples() {
         return newTriples;
     }
 }

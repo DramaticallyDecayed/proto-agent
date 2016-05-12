@@ -25,8 +25,10 @@ public class Translator {
 
     public static void main(String... args) throws JClassAlreadyExistsException, IOException {
         SPINModuleRegistry.get().init();
-        BareModelInterchanger bmi = new BareModelInterchanger(Translator.class.getClassLoader().getResource("soccer.rdf").toString(), FileUtils.langTurtle);
-        bmi.insertIndividual(BodyState.class, "some_body_state");
+        BareModelInterchanger bmi = new BareModelInterchanger(
+                Translator.class.getClassLoader().getResource("soccer.rdf").toString(),
+                FileUtils.langTurtle);
+        //bmi.insertIndividual(BodyState.class, "some_body_state");
         bmi.runInference();
         Map<String, Integer> map = constructCD2LevelMapping(bmi.getOntModel());
 
@@ -215,7 +217,12 @@ public class Translator {
             try {
                 c = Class.forName(className);
             } catch (ClassNotFoundException e1) {
-                System.out.println("do not find class " + str);
+                className = "dd.soccer.sas.presentation.soccerrelations." + str;
+                try {
+                    c = Class.forName(className);
+                } catch (ClassNotFoundException e2) {
+                    System.out.println("do not find class " + str);
+                }
             }
         }
         return c;
@@ -224,11 +231,11 @@ public class Translator {
     private static Map<String, Integer> constructCD2LevelMapping(Model ontModel) {
         ResultSet resultSet = QuieringUtils.getQueryResults(
                 ontModel,
-                "SELECT ?cd ?levelNumber\n" +
-                        "WHERE {\n" +
-                        "    ?cd a core:CalculationDependency .\n" +
-                        "\t?cd core:level ?level .\n" +
-                        "\t?level core:number ?levelNumber.\n" +
+                "SELECT ?cd ?levelNumber " +
+                        "WHERE {" +
+                        "?cd a core:ComputationUnit ." +
+                        "?cd core:level ?level ." +
+                        "?level core:number ?levelNumber ." +
                         "} ORDER BY ?levelNumber"
         );
         Map<String, Integer> cd2levelMapping = new HashMap<>();

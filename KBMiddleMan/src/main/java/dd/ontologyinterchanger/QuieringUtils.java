@@ -1,5 +1,6 @@
 package dd.ontologyinterchanger;
 
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -40,6 +41,14 @@ public class QuieringUtils {
         Query query = ARQFactory.get().createQuery(ontModel, sb.toString());
         QueryExecution qe = ARQFactory.get().createQueryExecution(query, ontModel);
         return qe.execSelect();
+    }
+
+    public static Model constructQuery(Model ontModel, String queryString){
+        StringBuilder sb = new StringBuilder();
+        sb.append(queryString);
+        Query query = ARQFactory.get().createQuery(ontModel, sb.toString());
+        QueryExecution qe = ARQFactory.get().createQueryExecution(query, ontModel);
+        return qe.execConstruct();
     }
 
     public static void askAndUpdate(Model ontModel, String queryString) {

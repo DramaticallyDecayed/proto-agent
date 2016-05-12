@@ -6,10 +6,9 @@ import dd.protosas.computability.NodeSpecification;
 import dd.protosas.computation.Level;
 import dd.protosas.computation.levelnode.IdentNode;
 import dd.protosas.computation.levelnode.NodeProcessor;
-import dd.protosas.presentation.ElementIdent;
 import dd.soccer.perception.perceptingobjects.Ball;
 import dd.soccer.perception.perceptingobjects.Player;
-import dd.soccer.sas.presentation.soccerrelations.BallOwner;
+import dd.soccer.sas.presentation.soccerrelations.OwnsBall;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -25,7 +24,7 @@ public class Level1Fabric {
 
 
         Dependency[] base = new Dependency[]{new Dependency(Ball.class),new Dependency(Player.class)};
-        Dependency derivative = new Dependency(BallOwner.class);
+        Dependency derivative = new Dependency(OwnsBall.class);
 
 
         NodeProcessor nodeProcessor = new NodeProcessor() {
@@ -43,7 +42,7 @@ public class Level1Fabric {
                     System.out.println("key = " + k + " p: " + playersToBall.get(k));
                 }
 
-                BallOwner ballOwner = new BallOwner(playersToBall.firstEntry().getValue(), ball);
+                OwnsBall ballOwner = new OwnsBall(playersToBall.firstEntry().getValue(), ball);
                 getRegister().addDerivative(ballOwner);
                 System.out.println(playersToBall.firstEntry().getValue() + "\n" + ball);
             }
