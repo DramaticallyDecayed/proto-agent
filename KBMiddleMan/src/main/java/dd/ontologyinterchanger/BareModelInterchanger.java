@@ -1,9 +1,11 @@
 package dd.ontologyinterchanger;
 
+import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
-import dd.ontologyinterchanger.BareInferenceRunner;
+import com.hp.hpl.jena.util.FileUtils;
+import org.topbraid.spin.system.SPINModuleRegistry;
 
 /**
  * Created by Sergey on 22.11.2015.
@@ -15,9 +17,22 @@ public class BareModelInterchanger {
     private String ns;
 
     public BareModelInterchanger(String path, String type) {
+        SPINModuleRegistry.get().init();
         ontModel = (OntModel) new BareModelLoader().loadKBModel(path, type);
         addModel4Inference();
-        ns = ontModel.getNsPrefixMap().get("");
+        ns = getPrefixForXMLNS("");
+    }
+
+    public BareModelInterchanger(String path) {
+        SPINModuleRegistry.get().init();
+        ontModel = (OntModel) new BareModelLoader().loadKBModel(path,
+                FileUtils.langTurtle);
+        addModel4Inference();
+        ns = getPrefixForXMLNS("");
+    }
+
+    public String getPrefixForXMLNS(String xmlns) {
+        return ontModel.getNsPrefixMap().get(xmlns);
     }
 
     private void addModel4Inference() {
@@ -25,9 +40,18 @@ public class BareModelInterchanger {
         ontModel.addSubModel(newTriples);
     }
 
-    public void insertIndividual(Class dmClass, String name) {
+    public Individual insertIndividual(Class dmClass, String name) {
         OntClass ontclass = ontModel.getOntClass(ns + dmClass.getSimpleName());
-        ontModel.createIndividual(ns + name, ontclass);
+        return ontModel.createIndividual(ns + name, ontclass);
+    }
+
+    public Individual insertIndividual(String className, String instanceName) {
+        return insertIndividual(ns, className, instanceName);
+    }
+
+    public Individual insertIndividual(String importedNS, String className, String instanceName) {
+        OntClass ontclass = ontModel.getOntClass(importedNS + className);
+        return ontModel.createIndividual(this.ns + instanceName, ontclass);
     }
 
     public void runInference() {
