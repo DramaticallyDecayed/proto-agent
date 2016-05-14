@@ -10,7 +10,6 @@ import dd.ontologyinterchanger.QuieringUtils;
 import dd.protosas.computation.LevelHolder;
 import dd.protosas.computation.LightweightLevel;
 import dd.protosas.computation.LightweightNode;
-import dd.soccer.perception.perceptingobjects.BodyState;
 import org.topbraid.spin.system.SPINModuleRegistry;
 
 import java.io.File;

@@ -1,6 +1,9 @@
 package dd.translator.owlinterplay;
 
 import dd.ontologyinterchanger.BareModelInterchanger;
+import dd.ontologyinterchanger.SelectQueryHolder;
+
+import java.util.Map;
 
 /**
  * Created by Sergey on 10.05.2016.
@@ -19,14 +22,24 @@ public class TranslatorOntologyHandler {
     }
 
     private void prepareForTranslation() {
-        bmi.insertIndividual(importOntologyNS,"ElaborationGeneration", "elaborationGeneration");
-        bmi.insertIndividual(importOntologyNS,"NDReification", "ndReification");
-        bmi.insertIndividual(importOntologyNS,"ComputedClassGeneration", "computedClassGeneration");
+        bmi.insertIndividual(importOntologyNS, "ElaborationGeneration", "elaborationGeneration");
+        bmi.insertIndividual(importOntologyNS, "NDReification", "ndReification");
+        bmi.insertIndividual(importOntologyNS, "ComputedClassGeneration", "computedClassGeneration");
     }
 
     public void checkOntologyInference() {
         bmi.runInference();
         System.out.println(bmi.getNewTriples().size());
+        SelectQueryHolder sqh = (SelectQueryHolder) bmi.excuteQueryOnMain(
+                SelectQueryFabric.generateQueryForInterfaces());
+        for (Map<String, Object> slice : sqh) {
+            System.out.println(slice.get("c"));
+            SelectQueryHolder attr = (SelectQueryHolder) bmi.excuteQueryOnMain(
+                    SelectQueryFabric.collectClassAttributes((String)slice.get("c")));
+            for (Map<String, Object> attrSlice : attr) {
+                System.out.println(attrSlice);
+            }
+        }
     }
 
     private String getResourceName() {

@@ -75,4 +75,12 @@ public class BareModelInterchanger {
     public Model getNewTriples() {
         return newTriples;
     }
+
+    public QueryHolder excuteQueryOnMain(QueryHolder sqh) {
+        return sqh.executeQuery(ontModel);
+    }
+
+    public QueryHolder excuteQueryOnInferenced(QueryHolder sqh) {
+        return sqh.executeQuery(newTriples);
+    }
 }
