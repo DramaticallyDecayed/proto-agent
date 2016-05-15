@@ -43,4 +43,20 @@ public final class SelectQueryFabric {
                         "}"
         );
     }
+
+    public static SelectQueryHolder findCoreClass(String className) {
+        return new SelectQueryHolder(
+                "SELECT ?sc " +
+                        "WHERE {" +
+                        "OPTIONAL{" +
+                        "core2ed:Node rdfs:subClassOf* ?sc ." +
+                        "?sc rdfs:subClassOf core2ed:ModelEntity ." +
+                        "}" +
+                        "OPTIONAL{" +
+                        "core2ed:Node rdfs:subClassOf* ?sc ." +
+                        "?sc rdfs:subClassOf core2ed:DesignEntity ." +
+                        "}" +
+                        "}"
+        );
+    }
 }

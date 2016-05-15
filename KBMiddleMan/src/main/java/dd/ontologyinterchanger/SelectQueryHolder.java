@@ -7,6 +7,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * TODO: think about annotation usage for representing query variables and generation of the corresponding getters
@@ -81,6 +83,37 @@ public class SelectQueryHolder extends QueryHolder implements Iterable<Map<Strin
         }
     }
 
+    public Map<String, Object> firstSlice(){
+        return getSlice(0);
+    }
+
+    public List getDisk(String diskName){
+        List disk = new ArrayList<>(result.size());
+        disk.addAll(result.stream()
+                .map(objs -> objs[name2IndexMapping.get(diskName)])
+                .collect(Collectors.toList()));
+        return disk;
+    }
+
+    public Map<String, Object> getSlice(int sliceIndex){
+        Map<String, Object> resultSlice = new HashMap<>();
+        Object[] values = result.get(sliceIndex);
+        for (String name : name2IndexMapping.keySet()) {
+            resultSlice.put(name, values[name2IndexMapping.get(name)]);
+        }
+        return resultSlice;
+    }
+
+    public boolean isEmpty(){
+        return result.isEmpty();
+    }
+    public Stream<Object[]> asStream(){
+        return result.stream();
+    }
+
+    public Stream<Map.Entry<String, Object>> firstSliceAsStream(){
+        return getSlice(0).entrySet().stream();
+    }
 
     @Override
     public Iterator iterator() {
@@ -98,12 +131,7 @@ public class SelectQueryHolder extends QueryHolder implements Iterable<Map<Strin
 
         @Override
         public Map<String, Object> next() {
-            Map<String, Object> resultSlice = new HashMap<>();
-            Object[] values = result.get(currentIndex++);
-            for (String name : name2IndexMapping.keySet()) {
-                resultSlice.put(name, values[name2IndexMapping.get(name)]);
-            }
-            return resultSlice;
+            return getSlice(currentIndex++);
         }
     }
 }
