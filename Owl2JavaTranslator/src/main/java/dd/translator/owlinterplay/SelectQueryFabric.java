@@ -12,7 +12,7 @@ public final class SelectQueryFabric {
     /**
      * @return all classes that are implemented as interfaces
      */
-    public static SelectQueryHolder generateQueryForInterfaces() {
+    public static SelectQueryHolder collectInterfaces() {
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE { " +
@@ -43,17 +43,40 @@ public final class SelectQueryFabric {
                         "}"
         );
     }
+    //TODO: very similar to collectInterfaces -> somehow optimize?
+    public static SelectQueryHolder collectElaborations4Interface(String interfaceName){
+        return new SelectQueryHolder(
+                "SELECT ?ec " +
+                        "WHERE {" +
+                        "BIND(:" + interfaceName + " AS ?c) ." +
+                        "?c core2ed:elaboratedWith ?ec ." +
+                        "    ?c rdfs:subClassOf+ core2ed:WorldEntity ." +
+                        "MINUS{" +
+                        "?c rdfs:subClassOf core2ed:WorldEntity ." +
+                        "}" +
+                        "MINUS{" +
+                        "?c rdfs:subClassOf+ core2ed:Known ." +
+                        "}" +
+                        "MINUS{" +
+                        "?c rdfs:subClassOf+ core2ed:Percepted ." +
+                        "}" +
+                        "MINUS{" +
+                        "?c rdfs:subClassOf+ core2ed:Computed ." +
+                        "}" +
+                        "}"
+        );
+    }
 
     public static SelectQueryHolder findCoreClass(String className) {
         return new SelectQueryHolder(
                 "SELECT ?sc " +
                         "WHERE {" +
                         "OPTIONAL{" +
-                        "core2ed:Node rdfs:subClassOf* ?sc ." +
+                        ":" + className + " rdfs:subClassOf* ?sc ." +
                         "?sc rdfs:subClassOf core2ed:ModelEntity ." +
                         "}" +
                         "OPTIONAL{" +
-                        "core2ed:Node rdfs:subClassOf* ?sc ." +
+                        ":" + className + " rdfs:subClassOf* ?sc ." +
                         "?sc rdfs:subClassOf core2ed:DesignEntity ." +
                         "}" +
                         "}"

@@ -11,6 +11,7 @@ import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +30,7 @@ public class InterfaceGeneration {
                 .map(name -> ProgramGenerationUtils.composeName(name))
                 .map(name -> createInterface(name))
                 .map(jdc -> fillWithGetters(jdc))
+                .map(jdc -> elaborate(jdc))
                 .collect(Collectors.toList());
     }
 
@@ -41,13 +43,34 @@ public class InterfaceGeneration {
     }
 
     private JDefinedClass fillWithGetters(JDefinedClass jdc) {
-        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+        SelectQueryHolder sqh = executeQuery(
                 SelectQueryFabric.collectClassAttributes(jdc.name())
         );
+        return apply(jdc, sqh, x -> addGetter(jdc, x[0], x[1]));
+    }
+
+    private JDefinedClass elaborate(JDefinedClass jdc){
+        SelectQueryHolder sqh = executeQuery(
+                SelectQueryFabric.collectElaborations4Interface(jdc.name())
+        );
+        return apply(jdc, sqh, x -> elaborateInterface(jdc, x[0]));
+    }
+
+    private JDefinedClass apply(JDefinedClass jdc,
+                                SelectQueryHolder sqh,
+                                Function<Object[], JDefinedClass> function) {
         return sqh.isEmpty() ? jdc : sqh.asStream()
-                .map(x -> addGetter(jdc, x[0], x[1]))
+                .map(function)
                 .reduce((f1, f2) -> f2)
                 .get();
+    }
+
+
+    private JDefinedClass elaborateInterface(JDefinedClass interfaceClass, Object elaborationName){
+        JDefinedClass elaborationClass = psg
+                .getCm()
+                ._getClass(ProgramGenerationUtils.composeName(elaborationName.toString()));
+        return interfaceClass._implements(elaborationClass);
     }
 
 
@@ -59,6 +82,10 @@ public class InterfaceGeneration {
         } catch (OwlInterplayException e) {
             throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
         }
+    }
+
+    private SelectQueryHolder executeQuery(SelectQueryHolder sqh){
+        return TranslatorOntologyHandler.INSTANCE.executeQuery(sqh);
     }
 
 }

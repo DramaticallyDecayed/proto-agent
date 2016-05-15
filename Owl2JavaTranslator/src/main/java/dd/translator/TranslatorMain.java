@@ -22,7 +22,7 @@ public class TranslatorMain {
         InterfaceGeneration ig = new InterfaceGeneration(psg);
 
         SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.generateQueryForInterfaces());
+                SelectQueryFabric.collectInterfaces());
         for (Map<String, Object> slice : sqh) {
             System.out.println(slice.get("c"));
             SelectQueryHolder attr = TranslatorOntologyHandler.INSTANCE.executeQuery(
