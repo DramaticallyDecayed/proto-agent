@@ -12,7 +12,7 @@ public final class SelectQueryFabric {
     /**
      * @return all classes that are implemented as interfaces
      */
-    public static SelectQueryHolder collectInterfaces() {
+    public static SelectQueryHolder collectVirtualEntities() {
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE { " +
@@ -43,26 +43,12 @@ public final class SelectQueryFabric {
                         "}"
         );
     }
-    //TODO: very similar to collectInterfaces -> somehow optimize?
-    public static SelectQueryHolder collectElaborations4Interface(String interfaceName){
+
+    //TODO: very similar to collectVirtualEntities -> somehow optimize?
+    public static SelectQueryHolder collectElaborations4Interface(String interfaceName) {
         return new SelectQueryHolder(
-                "SELECT ?ec " +
-                        "WHERE {" +
-                        "BIND(:" + interfaceName + " AS ?c) ." +
-                        "?c core2ed:elaboratedWith ?ec ." +
-                        "    ?c rdfs:subClassOf+ core2ed:WorldEntity ." +
-                        "MINUS{" +
-                        "?c rdfs:subClassOf core2ed:WorldEntity ." +
-                        "}" +
-                        "MINUS{" +
-                        "?c rdfs:subClassOf+ core2ed:Known ." +
-                        "}" +
-                        "MINUS{" +
-                        "?c rdfs:subClassOf+ core2ed:Percepted ." +
-                        "}" +
-                        "MINUS{" +
-                        "?c rdfs:subClassOf+ core2ed:Computed ." +
-                        "}" +
+                "SELECT * {" +
+                        ":" + interfaceName + " core2ed:elaboratedWith ?c" +
                         "}"
         );
     }
@@ -78,6 +64,24 @@ public final class SelectQueryFabric {
                         "OPTIONAL{" +
                         ":" + className + " rdfs:subClassOf* ?sc ." +
                         "?sc rdfs:subClassOf core2ed:DesignEntity ." +
+                        "}" +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectEffecitiveEntities() {
+        return new SelectQueryHolder(
+                "SELECT * " +
+                        "WHERE {" +
+                        "    ?c rdfs:subClassOf+ core2ed:WorldEntity ." +
+                        "{" +
+                        "?c rdfs:subClassOf+ core2ed:Known ." +
+                        "}" +
+                        "UNION{" +
+                        "?c rdfs:subClassOf+ core2ed:Percepted ." +
+                        "}" +
+                        "UNION{" +
+                        "?c rdfs:subClassOf+ core2ed:Computed ." +
                         "}" +
                         "}"
         );
