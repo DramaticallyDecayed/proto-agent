@@ -5,8 +5,6 @@ import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.WrappedTranslatorException;
-import dd.translator.owlinterplay.OwlInterplayException;
-import dd.translator.owlinterplay.OwlTranlationUtils;
 import dd.translator.owlinterplay.SelectQueryFabric;
 
 import java.util.List;
@@ -62,15 +60,7 @@ public class InterfaceGeneration extends ProgramElelementGenerator{
     }
 
 
-    private JDefinedClass addGetter(JDefinedClass getterHolder, Object getterName, Object getterType) {
-        try {
-            return ProgramGenerationUtils.addGetter(getterHolder,
-                    getterName.toString(),
-                    OwlTranlationUtils.decodeStringType((String) getterType));
-        } catch (OwlInterplayException e) {
-            throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
-        }
-    }
+
 
 
 

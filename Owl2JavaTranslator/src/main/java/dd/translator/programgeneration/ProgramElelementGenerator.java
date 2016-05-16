@@ -2,6 +2,9 @@ package dd.translator.programgeneration;
 
 import com.sun.codemodel.JDefinedClass;
 import dd.ontologyinterchanger.SelectQueryHolder;
+import dd.translator.WrappedTranslatorException;
+import dd.translator.owlinterplay.OwlInterplayException;
+import dd.translator.owlinterplay.OwlTranlationUtils;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 
 import java.util.List;
@@ -35,5 +38,15 @@ public abstract class ProgramElelementGenerator {
                 .map(function)
                 .reduce((f1, f2) -> f2)
                 .get();
+    }
+
+    public JDefinedClass addGetter(JDefinedClass getterHolder, Object getterName, Object getterType) {
+        try {
+            return ProgramGenerationUtils.addGetter(getterHolder,
+                    getterName.toString(),
+                    OwlTranlationUtils.decodeStringType((String) getterType));
+        } catch (OwlInterplayException e) {
+            throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
+        }
     }
 }

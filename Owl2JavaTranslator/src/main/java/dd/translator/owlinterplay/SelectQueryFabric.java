@@ -47,7 +47,7 @@ public final class SelectQueryFabric {
     //TODO: very similar to collectVirtualEntities -> somehow optimize?
     public static SelectQueryHolder collectElaborations4Interface(String interfaceName) {
         return new SelectQueryHolder(
-                "SELECT * {" +
+                "SELECT ?c {" +
                         ":" + interfaceName + " core2ed:elaboratedWith ?c" +
                         "}"
         );
@@ -65,6 +65,17 @@ public final class SelectQueryFabric {
                         ":" + className + " rdfs:subClassOf* ?sc ." +
                         "?sc rdfs:subClassOf core2ed:DesignEntity ." +
                         "}" +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectAllParents(String className){
+        return new SelectQueryHolder(
+                "SELECT DISTINCT ?pc " +
+                        "WHERE {" +
+                        "?coreClasses rdfs:subClassOf core2ed:WorldEntity ." +
+                        ":" + className + " rdfs:subClassOf+ ?pc ." +
+                        "?pc rdfs:subClassOf+ ?coreClasses." +
                         "}"
         );
     }
