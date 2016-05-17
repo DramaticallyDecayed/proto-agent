@@ -1,7 +1,6 @@
 package dd.translator.programgeneration;
 
-import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JMod;
+import com.sun.codemodel.*;
 
 /**
  * Created by Sergey on 15.05.2016.
@@ -11,9 +10,13 @@ public final class ProgramGenerationUtils {
 
     }
 
-    public static JDefinedClass addGetter(JDefinedClass getterOwner, String getterName, Class getterType) {
-        getterOwner.method(JMod.NONE, getterType, "get" + makeFirsLetterUp(getterName));
-        return getterOwner;
+    public static JDefinedClass addSettersAndGetters4Interface(
+            JDefinedClass newInterface,
+            String paramName,
+            Class paramType) {
+        addGetter(newInterface, paramName, paramType, JMod.NONE);
+        addSetter(newInterface, paramName, paramType, JMod.NONE);
+        return newInterface;
     }
 
     public static String composeName(String className) {
@@ -34,5 +37,27 @@ public final class ProgramGenerationUtils {
 
     private static String makeFirsLetterUp(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static JDefinedClass addSettersAndGetters4Class(
+            JDefinedClass c,
+            String paramName,
+            Class paramType) {
+        addGetter(c, paramName, paramType, JMod.PUBLIC);
+        JMethod setter = addSetter(c, paramName, paramType, JMod.PUBLIC);
+
+        JFieldVar paramField = c.field(JMod.PRIVATE, paramType, paramName);
+        setter.body().assign(JExpr._this().ref(paramField), JExpr.ref(paramName));
+        return c;
+    }
+
+    private static JMethod addSetter(JDefinedClass structure, String paramName, Class paramType, int modifier) {
+        JMethod setter = structure.method(modifier, void.class, "set" + makeFirsLetterUp(paramName));
+        setter.param(paramType, paramName);
+        return setter;
+    }
+
+    private static void addGetter(JDefinedClass getterOwner, String getterName, Class getterType, int aPublic) {
+        getterOwner.method(aPublic, getterType, "get" + makeFirsLetterUp(getterName));
     }
 }

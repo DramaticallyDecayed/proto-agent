@@ -40,11 +40,21 @@ public abstract class ProgramElelementGenerator {
                 .get();
     }
 
-    public JDefinedClass addGetter(JDefinedClass getterHolder, Object getterName, Object getterType) {
+    public JDefinedClass addSetterAndGetter4Interface(JDefinedClass getterHolder, Object getterName, Object getterType) {
         try {
-            return ProgramGenerationUtils.addGetter(getterHolder,
+            return ProgramGenerationUtils.addSettersAndGetters4Interface(getterHolder,
                     getterName.toString(),
                     OwlTranlationUtils.decodeStringType((String) getterType));
+        } catch (OwlInterplayException e) {
+            throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
+        }
+    }
+
+    public JDefinedClass addSetterAndGetter4Class(JDefinedClass setterHolder, Object setterName, Object setterArgType) {
+        try {
+            return ProgramGenerationUtils.addSettersAndGetters4Class(setterHolder,
+                    setterName.toString(),
+                    OwlTranlationUtils.decodeStringType((String) setterArgType));
         } catch (OwlInterplayException e) {
             throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
         }

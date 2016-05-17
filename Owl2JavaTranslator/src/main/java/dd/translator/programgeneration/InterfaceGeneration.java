@@ -26,7 +26,21 @@ public class InterfaceGeneration extends ProgramElelementGenerator{
                 .map(name -> createInterface(name))
                 .map(jdc -> fillWithGetters(jdc))
                 .map(jdc -> elaborate(jdc))
+                .map(jdc -> subclass(jdc))
                 .collect(Collectors.toList());
+    }
+
+    private JDefinedClass subclass(JDefinedClass jdc) {
+        SelectQueryHolder sqh = executeQuery(
+                SelectQueryFabric.collectAllParents(jdc.name())
+        );
+        return apply(
+                jdc,
+                sqh,
+                x -> jdc._implements(
+                        getPsg().getCm()._getClass(ProgramGenerationUtils.composeName((String)x[0]))
+                )
+        );
     }
 
     private JDefinedClass createInterface(String interfaceName) {
@@ -41,7 +55,7 @@ public class InterfaceGeneration extends ProgramElelementGenerator{
         SelectQueryHolder sqh = executeQuery(
                 SelectQueryFabric.collectClassAttributes(jdc.name())
         );
-        return apply(jdc, sqh, x -> addGetter(jdc, x[0], x[1]));
+        return apply(jdc, sqh, x -> addSetterAndGetter4Interface(jdc, x[0], x[1]));
     }
 
     private JDefinedClass elaborate(JDefinedClass jdc) {

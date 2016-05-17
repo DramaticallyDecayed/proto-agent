@@ -30,55 +30,28 @@ public class ClassGenerator extends ProgramElelementGenerator {
                 .map(name -> createClass(name))
                 .map(jdc -> implementInterface(jdc))
                 .map(jdc -> collectAllInterfaces(jdc))
-                .map(entry -> collectParentClasses(entry))
-                .map(entry -> collectAllElaborations(entry))
                 .map(entry -> fillWithFieldsAndSetGet(entry))
                 .collect(Collectors.toList());
 
     }
 
-    private Map.Entry<JDefinedClass, List<String>> collectAllElaborations
-            (Map.Entry<JDefinedClass, List<String>> entry) {
-        String parentInterface = getParentInterface(entry.getKey()).name();
-        SelectQueryHolder sqh = executeQuery(
-                SelectQueryFabric.collectElaborations4Interface(parentInterface)
-        );
-        sqh.getDisk("c")
-                .stream()
-                .map(name -> entry.getKey()._implements(getPsg().getCm()._getClass((String)name)));
-        entry.getValue().addAll(sqh.getDisk("c"));
-        return new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue());
-    }
-
-    private JDefinedClass fillWithFieldsAndSetGet(Map.Entry<JDefinedClass, List<String>> entry) {
+    private JDefinedClass fillWithFieldsAndSetGet(Map.Entry<JDefinedClass, Set<String>> entry) {
         System.out.println(entry.getKey().name() + " " + entry.getValue());
         JDefinedClass jdc = entry.getKey();
         for (String implInterface : entry.getValue()) {
             SelectQueryHolder sqh = executeQuery(
                     SelectQueryFabric.collectClassAttributes(implInterface)
             );
-            apply(jdc, sqh, x -> addGetter(jdc, x[0], x[1]));
+            apply(jdc, sqh, x -> addSetterAndGetter4Class(jdc, x[0], x[1]));
         }
         return entry.getKey();
     }
 
-    private Map.Entry<JDefinedClass, List<String>> collectAllInterfaces(JDefinedClass jdc) {
+    private Map.Entry<JDefinedClass, Set<String>> collectAllInterfaces(JDefinedClass jdc) {
         JDefinedClass parentInterface = getParentInterface(jdc);
-        List<String> interfaces = collectAllInterfaces(parentInterface, new ArrayList<>());
+        Set<String> interfaces = collectAllInterfaces(parentInterface, new HashSet<>());
+        System.out.println(jdc.name() + " " + interfaces);
         return new AbstractMap.SimpleEntry<>(jdc, interfaces);
-    }
-
-    private Map.Entry<JDefinedClass, List<String>> collectParentClasses(
-            Map.Entry<JDefinedClass, List<String>> entry) {
-        String parentInterface = getParentInterface(entry.getKey()).name();
-        SelectQueryHolder sqh = executeQuery(
-                SelectQueryFabric.collectAllParents(parentInterface)
-        );
-        sqh.getDisk("pc")
-                .stream()
-                .map(name -> entry.getKey()._implements(getPsg().getCm()._getClass((String)name)));
-        entry.getValue().addAll(sqh.getDisk("pc"));
-        return new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue());
     }
 
     private JDefinedClass implementInterface(JDefinedClass jdc) {
@@ -90,7 +63,7 @@ public class ClassGenerator extends ProgramElelementGenerator {
         return getPsg().getCm()._getClass(interfaceName);
     }
 
-    private List<String> collectAllInterfaces(JClass parentInterface, List<String> interfaceAccum) {
+    private Set<String> collectAllInterfaces(JClass parentInterface, Set<String> interfaceAccum) {
         interfaceAccum.add(parentInterface.name());
         Iterator<JClass> it = parentInterface._implements();
         for (; it.hasNext(); ) {
