@@ -13,13 +13,13 @@ import java.util.function.Function;
 /**
  * Created by Sergey on 15.05.2016.
  */
-public abstract class ProgramElelementGenerator {
+public abstract class ProgramElementGenerator {
 
     private final ProgramStructureGenerator psg;
 
     public abstract void generate(List<String> elementNames);
 
-    public ProgramElelementGenerator(ProgramStructureGenerator psg) {
+    public ProgramElementGenerator(ProgramStructureGenerator psg) {
         this.psg = psg;
     }
 
@@ -46,7 +46,7 @@ public abstract class ProgramElelementGenerator {
                     getterName.toString(),
                     OwlTranlationUtils.decodeStringType((String) getterType));
         } catch (OwlInterplayException e) {
-            throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
+            throw new WrappedTranslatorException(WorldEntityInterfaceGeneration.class.getSimpleName(), e);
         }
     }
 
@@ -56,7 +56,7 @@ public abstract class ProgramElelementGenerator {
                     setterName.toString(),
                     OwlTranlationUtils.decodeStringType((String) setterArgType));
         } catch (OwlInterplayException e) {
-            throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
+            throw new WrappedTranslatorException(WorldEntityInterfaceGeneration.class.getSimpleName(), e);
         }
     }
 }

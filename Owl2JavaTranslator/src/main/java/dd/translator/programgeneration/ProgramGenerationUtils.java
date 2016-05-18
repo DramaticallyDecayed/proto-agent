@@ -1,6 +1,7 @@
 package dd.translator.programgeneration;
 
 import com.sun.codemodel.*;
+import dd.translator.WrappedTranslatorException;
 
 /**
  * Created by Sergey on 15.05.2016.
@@ -35,20 +36,49 @@ public final class ProgramGenerationUtils {
         return className.substring(0, className.length() - 1);
     }
 
-    private static String makeFirsLetterUp(String str) {
+    public static String makeFirsLetterUp(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static String makeFirsLetterLow(String str) {
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
     public static JDefinedClass addSettersAndGetters4Class(
             JDefinedClass c,
             String paramName,
             Class paramType) {
-        addGetter(c, paramName, paramType, JMod.PUBLIC);
-        JMethod setter = addSetter(c, paramName, paramType, JMod.PUBLIC);
 
         JFieldVar paramField = c.field(JMod.PRIVATE, paramType, paramName);
-        setter.body().assign(JExpr._this().ref(paramField), JExpr.ref(paramName));
+        addGetter(c, paramName, paramType, JMod.PUBLIC, paramField);
+        createFieldWithSetter(c, paramName, paramType, paramField);
         return c;
+    }
+
+    public static JDefinedClass addSettersAndGetters4Class(
+            JDefinedClass c,
+            String paramName,
+            JType paramType) {
+        JFieldVar paramField = c.field(JMod.PRIVATE, paramType, paramName);
+        addGetter(c, paramName, paramType, JMod.PUBLIC, paramField );
+        createFieldWithSetter(c, paramName, paramType, paramField);
+        return c;
+    }
+
+    public static void createFieldWithSetter(JDefinedClass c,
+                                             String paramName,
+                                             Class paramType,
+                                             JFieldVar paramField) {
+        JMethod setter = addSetter(c, paramName, paramType, JMod.PUBLIC);
+        setter.body().assign(JExpr._this().ref(paramField), JExpr.ref(paramName));
+    }
+
+    public static void createFieldWithSetter(JDefinedClass c,
+                                             String paramName,
+                                             JType paramType,
+                                             JFieldVar paramField) {
+        JMethod setter = addSetter(c, paramName, paramType, JMod.PUBLIC);
+        setter.body().assign(JExpr._this().ref(paramField), JExpr.ref(paramName));
     }
 
     private static JMethod addSetter(JDefinedClass structure, String paramName, Class paramType, int modifier) {
@@ -57,7 +87,31 @@ public final class ProgramGenerationUtils {
         return setter;
     }
 
+    private static JMethod addSetter(JDefinedClass structure, String paramName, JType paramType, int modifier) {
+        JMethod setter = structure.method(modifier, void.class, "set" + makeFirsLetterUp(paramName));
+        setter.param(paramType, paramName);
+        return setter;
+    }
+
     private static void addGetter(JDefinedClass getterOwner, String getterName, Class getterType, int aPublic) {
         getterOwner.method(aPublic, getterType, "get" + makeFirsLetterUp(getterName));
+    }
+
+    private static void addGetter(JDefinedClass getterOwner, String getterName, Class getterType, int aPublic, JFieldVar paramField) {
+        getterOwner.method(aPublic, getterType, "get" + makeFirsLetterUp(getterName)).body()
+                ._return(paramField);
+    }
+
+    private static void addGetter(JDefinedClass getterOwner, String getterName, JType getterType, int aPublic, JFieldVar paramField) {
+        getterOwner.method(aPublic, getterType, "get" + makeFirsLetterUp(getterName)).body()
+                ._return(paramField);
+    }
+
+    public static JDefinedClass createClass(JCodeModel jcm, String className) {
+        try {
+            return jcm._class(className, ClassType.CLASS);
+        } catch (JClassAlreadyExistsException e) {
+            throw new WrappedTranslatorException(WorldEntityClassGenerator.class.getSimpleName(), e);
+        }
     }
 }

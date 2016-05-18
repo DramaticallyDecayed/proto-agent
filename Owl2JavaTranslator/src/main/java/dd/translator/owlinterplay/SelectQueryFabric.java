@@ -80,7 +80,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectEffecitiveEntities() {
+    public static SelectQueryHolder collectEffectiveEntities() {
         return new SelectQueryHolder(
                 "SELECT * " +
                         "WHERE {" +
@@ -95,6 +95,45 @@ public final class SelectQueryFabric {
                         "?c rdfs:subClassOf+ core2ed:Computed ." +
                         "}" +
                         "}"
+        );
+    }
+
+    public static SelectQueryHolder collectComputationEntities(){
+        return new SelectQueryHolder(
+                "SELECT * " +
+                        "WHERE { " +
+                        "    ?c rdfs:subClassOf core2ed:ComputationEntity ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectObjectProperties(){
+        return new SelectQueryHolder(
+                "SELECT * " +
+                        "WHERE {" +
+                        "   ?r rdfs:subPropertyOf+ core2ed:world ." +
+                        "   ?r a owl:ObjectProperty ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectDomains(String name){
+        return collectPropertyFeature(name, "domain");
+    }
+
+    public static SelectQueryHolder collectRanges(String name){
+        return collectPropertyFeature(name, "range");
+    }
+
+    private static SelectQueryHolder collectPropertyFeature(String name, String feature){
+        return new SelectQueryHolder(
+                "SELECT ?f " +
+                        "WHERE {" +
+                        "BIND(:" + name + " AS ?r) ." +
+                        "   ?r rdfs:subPropertyOf+ core2ed:world ." +
+                        "   ?r a owl:ObjectProperty ." +
+                        "   ?r rdfs:" + feature + " ?f ." +
+                        "} "
         );
     }
 }

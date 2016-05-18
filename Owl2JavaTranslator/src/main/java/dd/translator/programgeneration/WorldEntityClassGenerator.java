@@ -1,11 +1,8 @@
 package dd.translator.programgeneration;
 
-import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JClass;
-import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
 import dd.ontologyinterchanger.SelectQueryHolder;
-import dd.translator.WrappedTranslatorException;
 import dd.translator.owlinterplay.SelectQueryFabric;
 
 import java.util.*;
@@ -14,11 +11,11 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 13.05.2016.
  */
-public class ClassGenerator extends ProgramElelementGenerator {
+public class WorldEntityClassGenerator extends ProgramElementGenerator {
 
     private ProgramStructureGenerator generator;
 
-    public ClassGenerator(ProgramStructureGenerator psg) {
+    public WorldEntityClassGenerator(ProgramStructureGenerator psg) {
         super(psg);
     }
 
@@ -27,7 +24,7 @@ public class ClassGenerator extends ProgramElelementGenerator {
         classNames.stream()
                 .map(name -> ProgramGenerationUtils.composeName(name))
                 .map(name -> ProgramGenerationUtils.interfaceName2ClassName(name))
-                .map(name -> createClass(name))
+                .map(name -> ProgramGenerationUtils.createClass(getPsg().getCm(), name))
                 .map(jdc -> implementInterface(jdc))
                 .map(jdc -> collectAllInterfaces(jdc))
                 .map(entry -> fillWithFieldsAndSetGet(entry))
@@ -73,11 +70,5 @@ public class ClassGenerator extends ProgramElelementGenerator {
     }
 
 
-    private JDefinedClass createClass(String className) {
-        try {
-            return getPsg().getCm()._class(className, ClassType.CLASS);
-        } catch (JClassAlreadyExistsException e) {
-            throw new WrappedTranslatorException(ClassGenerator.class.getSimpleName(), e);
-        }
-    }
+
 }

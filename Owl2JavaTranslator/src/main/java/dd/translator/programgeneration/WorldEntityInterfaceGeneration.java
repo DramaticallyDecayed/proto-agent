@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 14.05.2016.
  */
-public class InterfaceGeneration extends ProgramElelementGenerator{
+public class WorldEntityInterfaceGeneration extends ProgramElementGenerator {
 
-    public InterfaceGeneration(ProgramStructureGenerator psg) {
+    public WorldEntityInterfaceGeneration(ProgramStructureGenerator psg) {
         super(psg);
     }
 
@@ -47,7 +47,7 @@ public class InterfaceGeneration extends ProgramElelementGenerator{
         try {
             return getPsg().getCm()._class(interfaceName, ClassType.INTERFACE);
         } catch (JClassAlreadyExistsException e) {
-            throw new WrappedTranslatorException(InterfaceGeneration.class.getSimpleName(), e);
+            throw new WrappedTranslatorException(WorldEntityInterfaceGeneration.class.getSimpleName(), e);
         }
     }
 

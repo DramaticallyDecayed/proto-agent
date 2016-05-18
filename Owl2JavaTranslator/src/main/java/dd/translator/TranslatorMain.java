@@ -4,9 +4,10 @@ package dd.translator;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
-import dd.translator.programgeneration.ClassGenerator;
-import dd.translator.programgeneration.InterfaceGeneration;
 import dd.translator.programgeneration.ProgramStructureGenerator;
+import dd.translator.programgeneration.PropertiesGenerator;
+import dd.translator.programgeneration.WorldEntityClassGenerator;
+import dd.translator.programgeneration.WorldEntityInterfaceGeneration;
 
 import java.io.IOException;
 
@@ -19,33 +20,47 @@ public class TranslatorMain {
         TranslatorOntologyHandler.INSTANCE.checkOntologyInference();
         ProgramStructureGenerator psg = new ProgramStructureGenerator();
 
-        InterfaceGeneration ig = new InterfaceGeneration(psg);
+        WorldEntityInterfaceGeneration weInterfaceGenerator = new WorldEntityInterfaceGeneration(psg);
+
+        generateInterfaces4VirtualEntities(weInterfaceGenerator);
+
+        generateClasses4ActualEntities(psg, weInterfaceGenerator);
+
 
         SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectVirtualEntities());
+                SelectQueryFabric.collectObjectProperties());
 
-
-        try {
-            ig.generate(sqh.getDisk("c"));
-        } catch (WrappedTranslatorException e) {
-            e.printStackTrace();
-        }
-
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectEffecitiveEntities());
-        try {
-            ig.generate(sqh.getDisk("c"));
-        } catch (WrappedTranslatorException e) {
-            e.printStackTrace();
-        }
-
-        ClassGenerator cg = new ClassGenerator(psg);
-
-
-        cg.generate(sqh.getDisk("c"));
+        new PropertiesGenerator(psg).generate(sqh.getDisk("r"));
 
         psg.generate();
+
+
     }
+
+    private static void generateClasses4ActualEntities(
+            ProgramStructureGenerator psg,
+            WorldEntityInterfaceGeneration weInterfaceGenerator) {
+        SelectQueryHolder sqh;
+        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectEffectiveEntities());
+        try {
+            weInterfaceGenerator.generate(sqh.getDisk("c"));
+        } catch (WrappedTranslatorException e) {
+            e.printStackTrace();
+        }
+        WorldEntityClassGenerator weClassGenerator = new WorldEntityClassGenerator(psg);
+        weClassGenerator.generate(sqh.getDisk("c"));
+    }
+
+    private static void generateInterfaces4VirtualEntities(WorldEntityInterfaceGeneration weInterfaceGenarator) {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectVirtualEntities());
+        try {
+            weInterfaceGenarator.generate(sqh.getDisk("c"));
+        } catch (WrappedTranslatorException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
