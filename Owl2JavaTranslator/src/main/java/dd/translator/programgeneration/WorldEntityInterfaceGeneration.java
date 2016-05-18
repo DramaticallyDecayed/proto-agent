@@ -27,6 +27,7 @@ public class WorldEntityInterfaceGeneration extends ProgramElementGenerator {
                 .map(jdc -> fillWithGetters(jdc))
                 .map(jdc -> elaborate(jdc))
                 .map(jdc -> subclass(jdc))
+                .map(jdc -> link2SAS(jdc))
                 .collect(Collectors.toList());
     }
 

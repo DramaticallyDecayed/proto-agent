@@ -1,9 +1,6 @@
 package dd.soccer;
 
 import commonmodel.ElementState;
-import dd.protosas.presentation.ElementIdent;
-import dd.soccer.sas.presentation.PlayerIdent;
-import dd.soccer.sas.presentation.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +24,19 @@ public class PlayerSensor {
         List<ElementState> players = new ArrayList<>();
         boolean[] numbers = new boolean[POSSIBLE_PLAYER_NUMBERS];
         for(int i = 0; i < size; i++){
-            players.add(generatePlayer(numbers));
+//            players.add(generatePlayer(numbers));
         }
         return players;
     }
 
-    private Player generatePlayer(boolean[] numbers) {
-        int number = generatePlayerNumber(numbers);
-        if(r.nextBoolean()){
-            return new Player(number);
-        }else{
-            return new Player();
-        }
-    }
+//    private Player generatePlayer(boolean[] numbers) {
+//        int number = generatePlayerNumber(numbers);
+//        if(r.nextBoolean()){
+//            return new Player(number);
+//        }else{
+//            return new Player();
+//        }
+//    }
 
     private int generatePlayerNumber(boolean[] numbers){
         int number = r.nextInt(POSSIBLE_PLAYER_NUMBERS);

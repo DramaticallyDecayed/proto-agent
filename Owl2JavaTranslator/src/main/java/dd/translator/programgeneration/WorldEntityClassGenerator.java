@@ -33,7 +33,6 @@ public class WorldEntityClassGenerator extends ProgramElementGenerator {
     }
 
     private JDefinedClass fillWithFieldsAndSetGet(Map.Entry<JDefinedClass, Set<String>> entry) {
-        System.out.println(entry.getKey().name() + " " + entry.getValue());
         JDefinedClass jdc = entry.getKey();
         for (String implInterface : entry.getValue()) {
             SelectQueryHolder sqh = executeQuery(
@@ -47,7 +46,6 @@ public class WorldEntityClassGenerator extends ProgramElementGenerator {
     private Map.Entry<JDefinedClass, Set<String>> collectAllInterfaces(JDefinedClass jdc) {
         JDefinedClass parentInterface = getParentInterface(jdc);
         Set<String> interfaces = collectAllInterfaces(parentInterface, new HashSet<>());
-        System.out.println(jdc.name() + " " + interfaces);
         return new AbstractMap.SimpleEntry<>(jdc, interfaces);
     }
 

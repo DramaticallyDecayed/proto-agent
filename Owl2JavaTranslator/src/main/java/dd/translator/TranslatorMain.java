@@ -4,10 +4,7 @@ package dd.translator;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
-import dd.translator.programgeneration.ProgramStructureGenerator;
-import dd.translator.programgeneration.PropertiesGenerator;
-import dd.translator.programgeneration.WorldEntityClassGenerator;
-import dd.translator.programgeneration.WorldEntityInterfaceGeneration;
+import dd.translator.programgeneration.*;
 
 import java.io.IOException;
 
@@ -30,7 +27,13 @@ public class TranslatorMain {
         SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
                 SelectQueryFabric.collectObjectProperties());
 
-        new PropertiesGenerator(psg).generate(sqh.getDisk("r"));
+        new ObjectPropertyGenerator(psg).generate(sqh.getDisk("r"));
+
+
+        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectNodes());
+
+        new NodeGenerator(psg).generate(sqh.getDisk("nd"));
 
         psg.generate();
 

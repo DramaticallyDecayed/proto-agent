@@ -2,14 +2,10 @@ package dd.soccer;
 
 import commonmodel.ElementState;
 import dd.protoperception.SensorFrame;
-import dd.protosas.computation.LevelHolder;
-import dd.protosas.computation.LightweightLevel;
 import dd.soccer.executionsystem.Executor;
 import dd.soccer.perception.NoCommunicationException;
 import dd.soccer.perception.Perceptor;
 import dd.soccer.perception.perceptingobjects.*;
-import dd.soccer.sas.computation.generated.LevelNodeInitializer;
-import dd.soccer.sas.computation.generated.Node_cd_perception;
 
 import java.io.FileNotFoundException;
 import java.net.SocketException;
@@ -27,10 +23,10 @@ public class LightweightAgent {
 
     public static void main(String... args) throws SocketException, UnknownHostException, FileNotFoundException, InterruptedException {
 
-        LevelHolder levelHolder = new LevelHolder();
-        LevelNodeInitializer.init(levelHolder);
-        LightweightLevel level_1 = levelHolder.getLevel(0);
-        Node_cd_perception perceptionNode = (Node_cd_perception) level_1.getLightweightNode(Node_cd_perception.class);
+//        LevelHolder levelHolder = new LevelHolder();
+//        LevelNodeInitializer.init(levelHolder);
+//        LightweightLevel level_1 = levelHolder.getLevel(0);
+//        Node_cd_perception perceptionNode = (Node_cd_perception) level_1.getLightweightNode(Node_cd_perception.class);
 
 
         Perceptor perceptor = new Perceptor();
@@ -71,12 +67,12 @@ public class LightweightAgent {
                                 bodyStateList.add((BodyState) es);
                             }
                         }
-                        perceptionNode.setBallList(ballList);
-                        perceptionNode.setFlagList(flagList);
-                        perceptionNode.setLineList(lineList);
-                        perceptionNode.setPlayerList(playerList);
-                        perceptionNode.setBodyStateList(bodyStateList);
-                        perceptionNode.setGoalList(goalList);
+//                        perceptionNode.setBallList(ballList);
+//                        perceptionNode.setFlagList(flagList);
+//                        perceptionNode.setLineList(lineList);
+//                        perceptionNode.setPlayerList(playerList);
+//                        perceptionNode.setBodyStateList(bodyStateList);
+//                        perceptionNode.setGoalList(goalList);
 //                        System.out.println("------------------------------");
 //                        System.out.println(ballList.size());
 //                        System.out.println(flagList.size());
@@ -87,7 +83,7 @@ public class LightweightAgent {
 //                        System.out.println("------------------------------");
                     }
                 }
-                levelHolder.process();
+//                levelHolder.process();
                 executor.cycle();
             }
         } catch (NoCommunicationException e) {

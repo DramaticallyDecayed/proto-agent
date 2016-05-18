@@ -107,6 +107,7 @@ public class SelectQueryHolder extends QueryHolder implements Iterable<Map<Strin
     public boolean isEmpty(){
         return result.isEmpty();
     }
+
     public Stream<Object[]> asStream(){
         return result.stream();
     }

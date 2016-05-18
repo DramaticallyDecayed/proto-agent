@@ -98,11 +98,11 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectComputationEntities(){
+    public static SelectQueryHolder collectNodes(){
         return new SelectQueryHolder(
-                "SELECT * " +
+                "SELECT ?nd " +
                         "WHERE { " +
-                        "    ?c rdfs:subClassOf core2ed:ComputationEntity ." +
+                        "    ?nd a core2ed:Node ." +
                         "}"
         );
     }

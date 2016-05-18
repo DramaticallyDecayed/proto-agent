@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 18.05.2016.
  */
-public class PropertiesGenerator extends ProgramElementGenerator {
+public class ObjectPropertyGenerator extends ProgramElementGenerator {
 
     private final String DOMAIN = "domain";
     private final String RANGE = "range";
 
-    public PropertiesGenerator(ProgramStructureGenerator psg) {
+    public ObjectPropertyGenerator(ProgramStructureGenerator psg) {
         super(psg);
     }
 
@@ -26,8 +26,11 @@ public class PropertiesGenerator extends ProgramElementGenerator {
                 .map(name -> composeName(name))
                 .map(name -> ProgramGenerationUtils.createClass(getPsg().getCm(), name))
                 .map(jdc -> addDomainAndRange(jdc))
+                .map(jdc -> link2SAS(jdc))
                 .collect(Collectors.toList());
     }
+
+
 
     private JDefinedClass addDomainAndRange(JDefinedClass jdc) {
         String propertyName = ProgramGenerationUtils.makeFirsLetterLow(jdc.name());

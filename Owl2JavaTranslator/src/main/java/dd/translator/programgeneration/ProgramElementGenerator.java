@@ -2,6 +2,7 @@ package dd.translator.programgeneration;
 
 import com.sun.codemodel.JDefinedClass;
 import dd.ontologyinterchanger.SelectQueryHolder;
+import dd.sas.presentation.WorldEntity;
 import dd.translator.WrappedTranslatorException;
 import dd.translator.owlinterplay.OwlInterplayException;
 import dd.translator.owlinterplay.OwlTranlationUtils;
@@ -32,8 +33,8 @@ public abstract class ProgramElementGenerator {
     }
 
     public JDefinedClass apply(JDefinedClass jdc,
-                                SelectQueryHolder sqh,
-                                Function<Object[], JDefinedClass> function) {
+                               SelectQueryHolder sqh,
+                               Function<Object[], JDefinedClass> function) {
         return sqh.isEmpty() ? jdc : sqh.asStream()
                 .map(function)
                 .reduce((f1, f2) -> f2)
@@ -59,4 +60,10 @@ public abstract class ProgramElementGenerator {
             throw new WrappedTranslatorException(WorldEntityInterfaceGeneration.class.getSimpleName(), e);
         }
     }
+
+    public JDefinedClass link2SAS(JDefinedClass jdc) {
+        return jdc._implements(WorldEntity.class);
+    }
+
+
 }

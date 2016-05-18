@@ -7,9 +7,6 @@ import com.hp.hpl.jena.util.FileUtils;
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QuieringUtils;
-import dd.protosas.computation.LevelHolder;
-import dd.protosas.computation.LightweightLevel;
-import dd.protosas.computation.LightweightNode;
 import org.topbraid.spin.system.SPINModuleRegistry;
 
 import java.io.File;
@@ -40,7 +37,7 @@ public class Translator {
         for (Integer levelNum : map.values()) {
             try {
                 JDefinedClass levelClass = cm._class(packageName + ".Level_" + levelNum);
-                levelClass._extends(LightweightLevel.class);
+                //levelClass._extends(LightweightLevel.class);
                 JMethod defaultConstructor = levelClass.constructor(JMod.PUBLIC);
                 defaultConstructor.body().invoke("super").arg(JExpr.lit(levelNum));
                 classes[levelNum] = levelClass;
@@ -53,7 +50,7 @@ public class Translator {
         for (String cd : map.keySet()) {
             Integer levelNum = map.get(cd);
             JDefinedClass nodeClass = cm._class(packageName + ".Node_" + cd);
-            nodeClass._extends(LightweightNode.class);
+           // nodeClass._extends(LightweightNode.class);
             JDefinedClass levelClass = cm._getClass(packageName + ".Level_" + levelNum);
 
             if (node.get(levelClass.name()) == null) {
@@ -140,14 +137,14 @@ public class Translator {
 
         JDefinedClass initializer = cm._class(packageName + ".LevelNodeInitializer");
         JMethod init = initializer.method(JMod.PUBLIC | JMod.STATIC, cm.VOID, "init");
-        JVar levelHolder = init.param(LevelHolder.class, "levelHolder");
+       // JVar levelHolder = init.param(LevelHolder.class, "levelHolder");
 
         for (JDefinedClass jdf : classes) {
             if (jdf != null) {
                 String levelName = jdf.name().toLowerCase();
                 JVar level = init.body().decl(jdf, levelName);
                 init.body().assign(JExpr.ref(levelName), JExpr._new(jdf));
-                init.body().invoke(levelHolder, "addLevel").arg(level);
+           //     init.body().invoke(levelHolder, "addLevel").arg(level);
                 List<JDefinedClass> ns = node.get(jdf.name());
                 for (JDefinedClass n : ns) {
                     JVar[] params = n.constructors().next().listParams();

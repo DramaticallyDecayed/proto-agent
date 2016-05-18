@@ -13,7 +13,6 @@ import com.hp.hpl.jena.util.FileUtils;
 import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QuieringUtils;
 import dd.soccer.perception.perceptingobjects.BodyState;
-import dd.soccer.sas.presentation.soccerrelations.See;
 import org.junit.Before;
 import org.junit.Test;
 import org.topbraid.spin.inference.DefaultSPINRuleComparator;
@@ -78,7 +77,7 @@ public class TopBraidIntegrationTest {
         interchanger.commitInference();
 
 
-        interchanger.insertIndividual(See.class, "some_see");
+        //interchanger.insertIndividual(See.class, "some_see");
         interchanger.runInference();
         showNodes(interchanger.getNewTriples());
         interchanger.commitInference();
