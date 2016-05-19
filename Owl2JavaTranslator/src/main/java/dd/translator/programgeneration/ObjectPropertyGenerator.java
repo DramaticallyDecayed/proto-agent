@@ -59,7 +59,7 @@ public class ObjectPropertyGenerator extends ProgramElementGenerator {
     }
 
 
-    private String composeName(String name) {
+    public static String composeName(String name) {
         return ProgramStructureGenerator.PACKAGE_PREFIX + "." + "objectproperty" + "." + name;
     }
 }

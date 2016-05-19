@@ -136,4 +136,16 @@ public final class SelectQueryFabric {
                         "} "
         );
     }
+
+    public static SelectQueryHolder collectNodeBases(String name){
+        return new SelectQueryHolder(
+                "SELECT ?base ?type " +
+                        "WHERE {" +
+                        "   BIND(:" + name + " AS ?nd) ." +
+                        "   ?nd a core2ed:Node ." +
+                        "   ?nd core2ed:hasBase ?base ." +
+                        "   ?base rdf:type ?type ." +
+                        "}"
+        );
+    }
 }
