@@ -1,25 +1,31 @@
 package dd.sas.computation;
 
-import dd.sas.presentation.WorldEntity;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Sergey on 18.05.2016.
  */
-public abstract class Node implements Processable{
+public abstract class Node implements Processable {
 
     private Level level;
-    private List<Node> donors = new ArrayList<>();
-    private List<WorldEntity> derivative = new ArrayList<>();
 
-    public Node(Level level){
+    public Node(Level level) {
         this.level = level;
     }
 
     @Override
-    abstract  public void process();
+    public void process() {
+        pullData();
+        dropDerivative();
+        customProcess();
+        buildDerivative();
+    }
+
+    abstract public void pullData();
+
+    abstract public void dropDerivative();
+
+    abstract public void customProcess();
+
+    abstract public void buildDerivative();
 
     public Level getLevel() {
         return level;

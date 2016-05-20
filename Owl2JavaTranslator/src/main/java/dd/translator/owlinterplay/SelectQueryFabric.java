@@ -139,13 +139,38 @@ public final class SelectQueryFabric {
 
     public static SelectQueryHolder collectNodeBases(String name){
         return new SelectQueryHolder(
-                "SELECT ?base ?type " +
+                "SELECT ?donor ?base ?type " +
                         "WHERE {" +
                         "   BIND(:" + name + " AS ?nd) ." +
-                        "   ?nd a core2ed:Node ." +
                         "   ?nd core2ed:hasBase ?base ." +
+                        "   ?nd core2ed:dependOn ?donor ." +
+                        "   ?donor core2ed:hasDerivative ?base ." +
                         "   ?base rdf:type ?type ." +
                         "}"
         );
     }
+
+    public static SelectQueryHolder collectNodeDerivatives(String name){
+        return new SelectQueryHolder(
+                "SELECT ?derivative ?type " +
+                        "WHERE { " +
+                        "   BIND(:" + name + " AS ?nd) ." +
+                        "   ?nd core2ed:hasDerivative ?derivative ." +
+                        "   ?derivative rdf:type ?type ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectGenerativeInitialNodes(){
+        return new SelectQueryHolder(
+          "SELECT ?nd " +
+                  "WHERE { " +
+                  " ?nd a core2ed:Node ." +
+                  " ?nd core2ed:implement ?cu ." +
+                  " ?cu a core2ed:GenerativeInitialCU ." +
+                  "}"
+        );
+    }
+
+
 }

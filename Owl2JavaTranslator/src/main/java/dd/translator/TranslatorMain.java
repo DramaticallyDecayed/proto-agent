@@ -5,6 +5,7 @@ import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
+import dd.translator.programgeneration.nodecreators.NodeCreatorFiller;
 
 import java.io.IOException;
 
@@ -34,6 +35,11 @@ public class TranslatorMain {
                 SelectQueryFabric.collectNodes());
 
         new NodeGenerator(psg).generate(sqh.getDisk("nd"));
+
+
+        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectGenerativeInitialNodes());
+        new NodeCreatorFiller(psg).generate(sqh.getDisk("nd"));
 
         psg.generate();
 

@@ -102,7 +102,7 @@ public final class ProgramGenerationUtils {
                 ._return(paramField);
     }
 
-    private static void addGetter(JDefinedClass getterOwner, String getterName, JType getterType, int aPublic, JFieldVar paramField) {
+    public static void addGetter(JDefinedClass getterOwner, String getterName, JType getterType, int aPublic, JFieldVar paramField) {
         getterOwner.method(aPublic, getterType, "get" + makeFirsLetterUp(getterName)).body()
                 ._return(paramField);
     }
