@@ -172,5 +172,16 @@ public final class SelectQueryFabric {
         );
     }
 
+    public static SelectQueryHolder collectAssociativePlainNodes(){
+        return new SelectQueryHolder(
+                "SELECT ?nd " +
+                        "WHERE {" +
+                        " ?nd a core2ed:Node ." +
+                        " ?nd core2ed:implement ?cu ." +
+                        " ?cu a core2ed:AssociativePlainCU ." +
+                        "}"
+        );
+    }
+
 
 }
