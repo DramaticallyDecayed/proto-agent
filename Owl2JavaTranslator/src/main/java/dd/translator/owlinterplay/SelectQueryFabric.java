@@ -183,5 +183,26 @@ public final class SelectQueryFabric {
         );
     }
 
+    public static SelectQueryHolder inferRealDomain(String donorName, String derivativeName){
+        return inferRealFeature(donorName,  derivativeName, "domain");
+    }
+
+    public static SelectQueryHolder inferRealRange(String donorName, String derivativeName){
+        return inferRealFeature(donorName,  derivativeName, "range");
+    }
+
+    private static SelectQueryHolder inferRealFeature(String donorName, String derivativeName, String feature){
+        return new SelectQueryHolder(
+          "SELECT ?f " +
+                  "WHERE { " +
+                  " BIND(:" + donorName +" AS ?nd) ." +
+                  " BIND(:" + derivativeName + " AS ?r) ." +
+                  " ?r rdfs:" + feature + " ?generic ." +
+                  " ?nd core2ed:hasBase ?f. " +
+                  " ?f rdfs:subClassOf* ?generic ." +
+                  "}"
+        );
+    }
+
 
 }

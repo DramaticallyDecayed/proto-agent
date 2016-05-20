@@ -1,8 +1,6 @@
 package dd.translator.programgeneration.nodecreators;
 
-import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JMethod;
-import com.sun.codemodel.JMod;
+import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.programgeneration.*;
@@ -40,16 +38,45 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
     }
 
     private JDefinedClass addDerivativeCreator(JDefinedClass jdc, String derivativeName) {
+
         String derivativeClassName = ObjectPropertyGenerator
                 .composeName(ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
         JDefinedClass derivativeClass = getPsg().getCm()._getClass(derivativeClassName);
+
         JMethod creator = jdc.method(
                 JMod.PRIVATE,
                 derivativeClass,
                 "create" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
 
-        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.collectDomains(derivativeName));
-        String domain = (String) sqh.firstSlice().get("f");
+
+        JDefinedClass domainClass = getRelationDefinerClass(
+                executeQuery(SelectQueryFabric.collectDomains(derivativeName))
+        );
+
+        JDefinedClass domainRangeClass = getRelationDefinerClass(
+                executeQuery(SelectQueryFabric.inferRealDomain(
+                        ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
+                        derivativeName)));
+
+        JDefinedClass rangeClass = getRelationDefinerClass(
+                executeQuery(SelectQueryFabric.collectRanges(derivativeName))
+        );
+
+        JDefinedClass realRangeClass = getRelationDefinerClass(
+                executeQuery(SelectQueryFabric.inferRealRange(
+                        ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
+                        derivativeName)));
+
+        JVar derivativeVar = creator.param(derivativeClass, "relation");
+        JVar domainVar = creator.param(domainRangeClass, "domain");
+        JVar rangeVar = creator.param(realRangeClass, "range");
+
+        JMethod donorSetter = derivativeClass.getMethod("setDomain",new JType[]{domainClass});
+        JMethod rangeSetter = derivativeClass.getMethod("setRange",new JType[]{rangeClass});
+
+
+        creator.body().invoke(derivativeVar, donorSetter).arg(domainVar);
+        creator.body().invoke(derivativeVar, rangeSetter).arg(rangeVar);
 
         return jdc;
     }
@@ -57,5 +84,13 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
     private JDefinedClass getNodeClass(String name) {
         String nodeClassName = NodeGenerator.composeName(ProgramGenerationUtils.makeFirsLetterUp(name));
         return getPsg().getCm()._getClass(nodeClassName);
+    }
+
+
+    //TODO:move to class working with ontology objects
+    private JDefinedClass getRelationDefinerClass(SelectQueryHolder sqh){
+        String featureName = (String) sqh.firstSlice().get("f");
+        String domainClassName = ProgramGenerationUtils.composeName(featureName);
+        return getPsg().getCm()._getClass(domainClassName);
     }
 }
