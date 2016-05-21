@@ -2,6 +2,8 @@ package dd.translator.programgeneration.nodecreators;
 
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
+import dd.sas.annotations.NodeWarning;
+import dd.sas.annotations.NodeWarningMessage;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.programgeneration.*;
 
@@ -69,7 +71,6 @@ public class AssociativeRefiningNodeExtender extends ProgramElementGenerator {
             JVar param = initRelationMethod.params().get(0);
 
 
-
             initRelationMethod.body().invoke(
                     relationVar,
                     relationClass.getMethod("setDomain", new JType[]{domainClass})
@@ -81,7 +82,7 @@ public class AssociativeRefiningNodeExtender extends ProgramElementGenerator {
             ).arg(JExpr.invoke(param, inverseRelationClass.getMethod("getDomain", new JType[]{})));
 
 
-            JFieldVar derivativeList = jdc.fields().get(derivativeName+"List");
+            JFieldVar derivativeList = jdc.fields().get(derivativeName + "List");
 
             initRelationMethod.body().add(derivativeList.invoke("add").arg(relationVar));
 
@@ -127,22 +128,41 @@ public class AssociativeRefiningNodeExtender extends ProgramElementGenerator {
                     executeQuery(SelectQueryFabric.collectRanges(derivativeName))
             );
 
-            newDerivativeMethod.body().invoke(
-                    derivativeVar,
-                    derivativeClass.getMethod("setDomain", new JType[]{domainClass})
-            ).arg(JExpr.invoke(firstVar, fRelationClass.getMethod("getDomain", new JType[]{})));
+            boolean unsafeCasting = false;
 
-            newDerivativeMethod.body().invoke(
-                    derivativeVar,
-                    derivativeClass.getMethod("setRange", new JType[]{rangeClass})
-            ).arg(JExpr.invoke(secondVar, sRelationClass.getMethod("getRange", new JType[]{})));
-
-            JType ret = sRelationClass.getMethod("getRange", new JType[]{}).type();
-
-            if(rangeClass.isAssignableFrom(ret.boxify())){
-                System.out.println(rangeClass.name() + " is assignable from " + ret.boxify().name());
+            JMethod getDomain = fRelationClass.getMethod("getDomain", new JType[]{});
+            if (getDomain.type().boxify().isAssignableFrom(rangeClass)
+                    && getDomain.type().boxify() != domainClass) {
+                newDerivativeMethod.body().invoke(
+                        derivativeVar,
+                        derivativeClass.getMethod("setDomain", new JType[]{domainClass})
+                ).arg(JExpr.cast(domainClass,   JExpr.invoke(firstVar, getDomain)));
+                unsafeCasting = true;
+            }else{
+                newDerivativeMethod.body().invoke(
+                        derivativeVar,
+                        derivativeClass.getMethod("setDomain", new JType[]{domainClass})
+                ).arg(JExpr.invoke(firstVar, getDomain));
             }
 
+            JMethod getRange = sRelationClass.getMethod("getRange", new JType[]{});
+            if (getRange.type().boxify().isAssignableFrom(rangeClass)
+                    && getRange.type().boxify() != rangeClass) {
+                newDerivativeMethod.body().invoke(
+                        derivativeVar,
+                        derivativeClass.getMethod("setRange", new JType[]{rangeClass})
+                ).arg(JExpr.cast(rangeClass, JExpr.invoke(secondVar, getRange)));
+                unsafeCasting = true;
+            } else {
+                newDerivativeMethod.body().invoke(
+                        derivativeVar,
+                        derivativeClass.getMethod("setRange", new JType[]{rangeClass})
+                ).arg(JExpr.invoke(secondVar, getRange));
+            }
+
+            if(unsafeCasting){
+                newDerivativeMethod.annotate(NodeWarning.class).param("warning", NodeWarningMessage.UNSAFE_CASTING.getValue());
+            }
 
             sqh = executeQuery(SelectQueryFabric.findInverseRelation(derivativeName));
             if (!sqh.isEmpty()) {
@@ -153,7 +173,7 @@ public class AssociativeRefiningNodeExtender extends ProgramElementGenerator {
             }
 
 
-            JFieldVar derivativeList = jdc.fields().get(derivativeName+"List");
+            JFieldVar derivativeList = jdc.fields().get(derivativeName + "List");
             newDerivativeMethod.body().add(derivativeList.invoke("add").arg(derivativeVar));
 
             newDerivativeMethod.body()._return(derivativeVar);

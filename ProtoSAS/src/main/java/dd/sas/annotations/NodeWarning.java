@@ -6,12 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by Sergey on 20.05.2016.
+ * Created by Sergey on 21.05.2016.
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
-public @interface NodeMarkup {
-
-    String present();
-
+@Target(ElementType.METHOD)
+public @interface  NodeWarning {
+    String warning();
 }

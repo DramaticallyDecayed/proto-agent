@@ -10,7 +10,7 @@ public enum NodePart {
 
     private String value;
 
-    private NodePart(String value){
+    NodePart(String value){
         this.value = value;
     }
 
