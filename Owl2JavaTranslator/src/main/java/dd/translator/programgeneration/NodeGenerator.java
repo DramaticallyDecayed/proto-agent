@@ -4,6 +4,7 @@ import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.sas.annotations.NodeMarkup;
 import dd.sas.annotations.NodePart;
+import dd.sas.computation.Level;
 import dd.sas.computation.Node;
 import dd.translator.owlinterplay.SelectQueryFabric;
 
@@ -33,7 +34,8 @@ public class NodeGenerator extends ProgramElementGenerator {
                 .collect(Collectors.toList())
                 .stream()
                 .map(jdc -> addBases(jdc))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+        ;
     }
 
     private JDefinedClass addDerivatives(JDefinedClass jdc) {
@@ -54,7 +56,7 @@ public class NodeGenerator extends ProgramElementGenerator {
         derivativeField.annotate(NodeMarkup.class).param("present", NodePart.DERIVATIVE.getValue());
         ProgramGenerationUtils.addGetter(
                 jdc,
-                name,
+                derivativeField.name(),
                 derivativeField.type(),
                 JMod.PUBLIC,
                 derivativeField);
@@ -91,9 +93,6 @@ public class NodeGenerator extends ProgramElementGenerator {
         JDefinedClass donorClass = getPsg().getCm()._getClass(donor.type().fullName());
         JMethod getter = donorClass.getMethod("get" + ProgramGenerationUtils.makeFirsLetterUp(base.name()),
                 new JType[]{});
-        if(getter == null){
-            System.out.println("");
-        }
         method.body().assign(base, donor.invoke(getter));
     }
 
@@ -124,7 +123,7 @@ public class NodeGenerator extends ProgramElementGenerator {
         JClass fieldNarrowedImplementationClass = fieldCommonImplementationClass.narrow(fieldNarrowClass);
         return jdc.field(JMod.PRIVATE,
                 fieldFinalClass,
-                ProgramGenerationUtils.makeFirsLetterLow(name),
+                ProgramGenerationUtils.makeFirsLetterLow(name) + "List",
                 JExpr._new(fieldNarrowedImplementationClass));
     }
 
@@ -135,6 +134,9 @@ public class NodeGenerator extends ProgramElementGenerator {
         jdc.method(JMod.PUBLIC, void.class, "dropDerivative").annotate(Override.class);
         jdc.method(JMod.PUBLIC, void.class, "customProcess").annotate(Override.class);
         jdc.method(JMod.PUBLIC, void.class, "buildDerivative").annotate(Override.class);
+        JMethod constructor = jdc.constructor(JMod.PUBLIC);
+        JVar level = constructor.param(Level.class, "level");
+        constructor.body().invoke("super").arg(level);
         return jdc;
     }
 

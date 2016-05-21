@@ -215,5 +215,44 @@ public final class SelectQueryFabric {
         );
     }
 
+    public static SelectQueryHolder collectRelationAxiomParts(String nodeName, String relationName){
+        return new SelectQueryHolder(
+                "SELECT ?first ?second " +
+                        "WHERE { " +
+                        "   BIND(:" + nodeName + " AS ?nd)" +
+                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?r owl:propertyChainAxiom ?axiom ." +
+                        "   ?nd core2ed:hasBase ?b1 ." +
+                        "   ?nd core2ed:hasBase ?b2 ." +
+                        "   ?axiom rdf:first ?first ." +
+                        "   ?axiom rdf:rest/rdf:first ?second ." +
+                        "   FILTER(?b1 = ?first && ?b2 = ?second) ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder findInverseRelationDerivative(String nodeName, String relationName){
+        return new SelectQueryHolder(
+                "SELECT ?r ?inverser " +
+                        "WHERE {" +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?nd core2ed:hasDerivative ?inverser ." +
+                        "   ?r owl:inverseOf ?inverser ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder findInverseRelation(String relationName){
+        return new SelectQueryHolder(
+          "SELECT ?r " +
+                  "WHERE {" +
+                  " BIND(:" + relationName + " AS ?inverser) ." +
+                  " ?r owl:inverseOf ?inverser ." +
+                  "}"
+        );
+
+    }
+
 
 }
