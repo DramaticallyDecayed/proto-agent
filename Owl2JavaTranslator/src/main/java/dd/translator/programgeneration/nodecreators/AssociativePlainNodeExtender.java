@@ -38,22 +38,21 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
     }
 
     private JDefinedClass addDerivativeCreator(JDefinedClass jdc, String derivativeName) {
-
         String derivativeClassName = ObjectPropertyGenerator
                 .composeName(ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
         JDefinedClass derivativeClass = getPsg().getCm()._getClass(derivativeClassName);
 
-        JMethod creator = jdc.method(
-                JMod.PRIVATE,
-                derivativeClass,
-                "create" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
 
+        JMethod newRelationMethod = addNewDerivativeMethod(jdc, derivativeName, derivativeClass);
+
+
+        //-------------------------------------------------------------------------------
 
         JDefinedClass domainClass = getRelationDefinerClass(
                 executeQuery(SelectQueryFabric.collectDomains(derivativeName))
         );
 
-        JDefinedClass domainRangeClass = getRelationDefinerClass(
+        JDefinedClass realDomainClass = getRelationDefinerClass(
                 executeQuery(SelectQueryFabric.inferRealDomain(
                         ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
                         derivativeName)));
@@ -67,18 +66,45 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
                         ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
                         derivativeName)));
 
+        JMethod creator = jdc.method(
+                JMod.PRIVATE,
+                derivativeClass,
+                "fill" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+
         JVar derivativeVar = creator.param(derivativeClass, "relation");
-        JVar domainVar = creator.param(domainRangeClass, "domain");
+        JVar domainVar = creator.param(realDomainClass, "domain");
         JVar rangeVar = creator.param(realRangeClass, "range");
 
-        JMethod donorSetter = derivativeClass.getMethod("setDomain",new JType[]{domainClass});
-        JMethod rangeSetter = derivativeClass.getMethod("setRange",new JType[]{rangeClass});
+        JMethod donorSetter = derivativeClass.getMethod("setDomain", new JType[]{domainClass});
+        JMethod rangeSetter = derivativeClass.getMethod("setRange", new JType[]{rangeClass});
 
 
         creator.body().invoke(derivativeVar, donorSetter).arg(domainVar);
         creator.body().invoke(derivativeVar, rangeSetter).arg(rangeVar);
+        creator.body()._return(derivativeVar);
+
+        //---------------------------------------------------------------------
+
+        JMethod newDerivativeMethod = jdc.method(JMod.PRIVATE, derivativeClass, "newDerivative");
+        newDerivativeMethod.param(realDomainClass, "domain");
+        newDerivativeMethod.param(realRangeClass, "range");
+        newDerivativeMethod
+                .body()
+                ._return(
+                        JExpr.invoke(creator)
+                                .arg(JExpr.invoke(newRelationMethod))
+                                .arg(domainVar)
+                                .arg(rangeVar)
+                );
 
         return jdc;
+    }
+
+    private JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeClass) {
+        JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeClass, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+        newRelationMethod.body()
+                ._return(JExpr._new(derivativeClass));
+        return newRelationMethod;
     }
 
     private JDefinedClass getNodeClass(String name) {
@@ -88,7 +114,7 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
 
 
     //TODO:move to class working with ontology objects
-    private JDefinedClass getRelationDefinerClass(SelectQueryHolder sqh){
+    private JDefinedClass getRelationDefinerClass(SelectQueryHolder sqh) {
         String featureName = (String) sqh.firstSlice().get("f");
         String domainClassName = ProgramGenerationUtils.composeName(featureName);
         return getPsg().getCm()._getClass(domainClassName);

@@ -204,5 +204,16 @@ public final class SelectQueryFabric {
         );
     }
 
+    public static SelectQueryHolder collectAssociativeRefiningNodes(){
+        return new SelectQueryHolder(
+                "SELECT ?nd " +
+                        "WHERE { " +
+                        "   ?nd a core2ed:Node ." +
+                        "   ?nd core2ed:implement ?cu ." +
+                        "   ?cu a core2ed:AssociativeRefiningCU ." +
+                        "}"
+        );
+    }
+
 
 }

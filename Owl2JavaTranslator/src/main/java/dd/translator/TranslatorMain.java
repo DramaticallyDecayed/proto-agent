@@ -6,6 +6,7 @@ import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
 import dd.translator.programgeneration.nodecreators.AssociativePlainNodeExtender;
+import dd.translator.programgeneration.nodecreators.AssociativeRefiningNodeExtender;
 import dd.translator.programgeneration.nodecreators.GenerativeInitialExtender;
 
 import java.io.IOException;
@@ -45,6 +46,10 @@ public class TranslatorMain {
         sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
                 SelectQueryFabric.collectAssociativePlainNodes());
         new AssociativePlainNodeExtender(psg).generate(sqh.getDisk("nd"));
+
+        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectAssociativeRefiningNodes());
+        new AssociativeRefiningNodeExtender(psg).generate(sqh.getDisk("nd"));
 
         psg.generate();
 
