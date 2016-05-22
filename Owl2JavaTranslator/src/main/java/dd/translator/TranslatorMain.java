@@ -5,10 +5,7 @@ import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
-import dd.translator.programgeneration.nodecreators.AssociativePlainNodeExtender;
-import dd.translator.programgeneration.nodecreators.AssociativeRefiningNodeExtender;
-import dd.translator.programgeneration.nodecreators.AssociativeRelationRefiningNodeExtender;
-import dd.translator.programgeneration.nodecreators.GenerativeInitialExtender;
+import dd.translator.programgeneration.nodecreators.*;
 
 import java.io.IOException;
 
@@ -57,6 +54,10 @@ public class TranslatorMain {
                 SelectQueryFabric.collectAssociativeRelationRefiningNodes());
         new AssociativeRelationRefiningNodeExtender(psg).generate(sqh.getDisk("nd"));
 
+
+        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectGenerativeCompositeNode());
+        new GenerativeCompositeNode(psg).generate(sqh.getDisk("nd"));
 
         psg.generate();
 

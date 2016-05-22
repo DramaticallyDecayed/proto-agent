@@ -69,7 +69,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectAllParents(String className){
+    public static SelectQueryHolder collectAllParents(String className) {
         return new SelectQueryHolder(
                 "SELECT DISTINCT ?pc " +
                         "WHERE {" +
@@ -98,7 +98,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectNodes(){
+    public static SelectQueryHolder collectNodes() {
         return new SelectQueryHolder(
                 "SELECT ?nd " +
                         "WHERE { " +
@@ -107,7 +107,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectObjectProperties(){
+    public static SelectQueryHolder collectObjectProperties() {
         return new SelectQueryHolder(
                 "SELECT * " +
                         "WHERE {" +
@@ -117,15 +117,15 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectDomains(String name){
+    public static SelectQueryHolder collectDomains(String name) {
         return collectPropertyFeature(name, "domain");
     }
 
-    public static SelectQueryHolder collectRanges(String name){
+    public static SelectQueryHolder collectRanges(String name) {
         return collectPropertyFeature(name, "range");
     }
 
-    private static SelectQueryHolder collectPropertyFeature(String name, String feature){
+    private static SelectQueryHolder collectPropertyFeature(String name, String feature) {
         return new SelectQueryHolder(
                 "SELECT ?f " +
                         "WHERE {" +
@@ -137,7 +137,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectNodeBases(String name){
+    public static SelectQueryHolder collectNodeBases(String name) {
         return new SelectQueryHolder(
                 "SELECT ?donor ?base ?type " +
                         "WHERE {" +
@@ -150,7 +150,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectNodeDerivatives(String name){
+    public static SelectQueryHolder collectNodeDerivatives(String name) {
         return new SelectQueryHolder(
                 "SELECT ?derivative ?type " +
                         "WHERE { " +
@@ -161,18 +161,18 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectGenerativeInitialNodes(){
+    public static SelectQueryHolder collectGenerativeInitialNodes() {
         return new SelectQueryHolder(
-          "SELECT ?nd " +
-                  "WHERE { " +
-                  " ?nd a core2ed:Node ." +
-                  " ?nd core2ed:implement ?cu ." +
-                  " ?cu a core2ed:GenerativeInitialCU ." +
-                  "}"
+                "SELECT ?nd " +
+                        "WHERE { " +
+                        " ?nd a core2ed:Node ." +
+                        " ?nd core2ed:implement ?cu ." +
+                        " ?cu a core2ed:GenerativeInitialCU ." +
+                        "}"
         );
     }
 
-    public static SelectQueryHolder collectAssociativePlainNodes(){
+    public static SelectQueryHolder collectAssociativePlainNodes() {
         return new SelectQueryHolder(
                 "SELECT ?nd " +
                         "WHERE {" +
@@ -183,28 +183,28 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder inferRealDomain(String donorName, String derivativeName){
-        return inferRealFeature(donorName,  derivativeName, "domain");
+    public static SelectQueryHolder inferRealDomain(String donorName, String derivativeName) {
+        return inferRealFeature(donorName, derivativeName, "domain");
     }
 
-    public static SelectQueryHolder inferRealRange(String donorName, String derivativeName){
-        return inferRealFeature(donorName,  derivativeName, "range");
+    public static SelectQueryHolder inferRealRange(String donorName, String derivativeName) {
+        return inferRealFeature(donorName, derivativeName, "range");
     }
 
-    private static SelectQueryHolder inferRealFeature(String donorName, String derivativeName, String feature){
+    private static SelectQueryHolder inferRealFeature(String donorName, String derivativeName, String feature) {
         return new SelectQueryHolder(
-          "SELECT ?f " +
-                  "WHERE { " +
-                  " BIND(:" + donorName +" AS ?nd) ." +
-                  " BIND(:" + derivativeName + " AS ?r) ." +
-                  " ?r rdfs:" + feature + " ?generic ." +
-                  " ?nd core2ed:hasBase ?f. " +
-                  " ?f rdfs:subClassOf* ?generic ." +
-                  "}"
+                "SELECT ?f " +
+                        "WHERE { " +
+                        " BIND(:" + donorName + " AS ?nd) ." +
+                        " BIND(:" + derivativeName + " AS ?r) ." +
+                        " ?r rdfs:" + feature + " ?generic ." +
+                        " ?nd core2ed:hasBase ?f. " +
+                        " ?f rdfs:subClassOf* ?generic ." +
+                        "}"
         );
     }
 
-    public static SelectQueryHolder collectAssociativeRelationRefiningNodes(){
+    public static SelectQueryHolder collectAssociativeRelationRefiningNodes() {
         return new SelectQueryHolder(
                 "SELECT ?nd " +
                         "WHERE { " +
@@ -215,7 +215,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectAssociativeRefiningNodes(){
+    public static SelectQueryHolder collectAssociativeRefiningNodes() {
         return new SelectQueryHolder(
                 "SELECT ?nd " +
                         "WHERE { " +
@@ -227,7 +227,7 @@ public final class SelectQueryFabric {
     }
 
 
-    public static SelectQueryHolder collectRelationAxiomParts(String nodeName, String relationName){
+    public static SelectQueryHolder collectRelationAxiomParts(String nodeName, String relationName) {
         return new SelectQueryHolder(
                 "SELECT ?first ?second " +
                         "WHERE { " +
@@ -243,7 +243,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder findInverseRelationDerivative(String nodeName, String relationName){
+    public static SelectQueryHolder findInverseRelationDerivative(String nodeName, String relationName) {
         return new SelectQueryHolder(
                 "SELECT ?r ?inverser " +
                         "WHERE {" +
@@ -255,16 +255,66 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder findInverseRelation(String relationName){
+    public static SelectQueryHolder findInverseRelation(String relationName) {
         return new SelectQueryHolder(
-          "SELECT ?r " +
-                  "WHERE {" +
-                  " BIND(:" + relationName + " AS ?inverser) ." +
-                  " ?r owl:inverseOf ?inverser ." +
-                  "}"
+                "SELECT ?r " +
+                        "WHERE {" +
+                        " BIND(:" + relationName + " AS ?inverser) ." +
+                        " ?r owl:inverseOf ?inverser ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectGenerativeCompositeNode() {
+        return new SelectQueryHolder(
+                "SELECT ?nd " +
+                        "WHERE { " +
+                        "   ?nd a core2ed:Node ." +
+                        "   ?nd core2ed:implement ?cu ." +
+                        "   ?cu a core2ed:GenerativeCompositeCU ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder findCompositeDerivative(String nodeName, String relationName) {
+        return new SelectQueryHolder(
+                "SELECT ?r ?base ?second " +
+                        "WHERE { " +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?r owl:propertyChainAxiom ?axiom ." +
+                        "   ?axiom rdf:first ?base ." +
+                        "   ?axiom rdf:rest/rdf:first ?second ." +
+                        "   ?nd core2ed:hasBase ?base." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder findSecondPartOfCompositeDerivative(String nodeName, String relationName) {
+        return new SelectQueryHolder(
+                "SELECT ?r ?base " +
+                        "WHERE {" +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?nd core2ed:hasBase ?base." +
+                        "   ?d owl:propertyChainAxiom ?axiom ." +
+                        "   ?axiom rdf:first ?base ." +
+                        "   ?axiom rdf:rest/rdf:first ?r ." +
+                        "}"
         );
 
     }
 
+    public static SelectQueryHolder retriveClassDerivative(String nodeName, String relationName){
+        return new SelectQueryHolder(
+                "SELECT ?c " +
+                        "WHERE {" +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?nd core2ed:hasDerivative ?c ." +
+                        "   ?c a owl:Class ." +
+                        "}"
+        );
+    }
 
 }
