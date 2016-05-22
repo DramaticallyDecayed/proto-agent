@@ -51,7 +51,7 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
         return jdc;
     }
 
-    private String addNewDerivative(JDefinedClass jdc, String compositeName){
+    private String addNewDerivative(JDefinedClass jdc, String compositeName) {
         SelectQueryHolder sqh = executeQuery(SelectQueryFabric.findCompositeDerivative(
                 ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
                 compositeName)
@@ -82,7 +82,7 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
 
             newDerivativeMethod.body()
                     ._return(
-                            JExpr.invoke(jdc.getMethod("create" + compositeClass.name(), new JType[]{baseClass,secondClass})
+                            JExpr.invoke(jdc.getMethod("create" + compositeClass.name(), new JType[]{baseClass, secondClass})
                             ).arg(baseParam).arg(classVar)
                     );
 
@@ -92,17 +92,21 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
 
     private Map.Entry<String, String> addDerivativeCreator(JDefinedClass jdc, String derivativeName, String type) {
         String derivativeClassName = null;
+        JDefinedClass derivativeClass = null;
         switch (type) {
             case "Class":
                 derivativeClassName = ProgramGenerationUtils.composeName(derivativeName);
+                JDefinedClass derivativeInterface = getPsg().getCm()._getClass(derivativeClassName);
+                derivativeClass = getPsg().getCm()._getClass(derivativeClassName + "C");
+                addNewDerivativeMethod(jdc, derivativeName, derivativeInterface, derivativeClass);
                 break;
             case "ObjectProperty":
                 derivativeClassName = ObjectPropertyGenerator
                         .composeName(ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+                derivativeClass = getPsg().getCm()._getClass(derivativeClassName);
+                addNewDerivativeMethod(jdc, derivativeName, derivativeClass);
                 break;
         }
-        JDefinedClass derivativeClass = getPsg().getCm()._getClass(derivativeClassName);
-        addNewDerivativeMethod(jdc, derivativeName, derivativeClass);
         return new AbstractMap.SimpleEntry(type, derivativeName);
     }
 
@@ -268,7 +272,7 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
     }
 
 
-    private JDefinedClass treatInverse(JDefinedClass jdc, String derivativeName){
+    private JDefinedClass treatInverse(JDefinedClass jdc, String derivativeName) {
         SelectQueryHolder sqh = executeQuery(SelectQueryFabric.findInverseRelationDerivative(
                 ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
                 derivativeName));
@@ -322,6 +326,13 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
 
     private JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeClass) {
         JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeClass, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+        newRelationMethod.body()
+                ._return(JExpr._new(derivativeClass));
+        return newRelationMethod;
+    }
+
+    private JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeInterface, JDefinedClass derivativeClass) {
+        JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeInterface, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
         newRelationMethod.body()
                 ._return(JExpr._new(derivativeClass));
         return newRelationMethod;
