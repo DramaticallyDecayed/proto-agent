@@ -92,7 +92,8 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
         return compositeName;
     }
 
-    private Map.Entry<String, String> addDerivativeCreator(JDefinedClass jdc, String derivativeName, String type) {
+    private Map.Entry<String, String> addDerivativeCreator(
+            JDefinedClass jdc, String derivativeName, String type) {
         String derivativeClassName = null;
         JDefinedClass derivativeClass = null;
         switch (type) {
@@ -147,7 +148,7 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
 
 
         SelectQueryHolder sqh = executeQuery(
-                SelectQueryFabric.retriveClassDerivative(
+                SelectQueryFabric.retrieveClassDerivative(
                         ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
                         secondName)
         );

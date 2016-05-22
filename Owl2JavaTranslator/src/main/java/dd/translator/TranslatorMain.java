@@ -59,6 +59,10 @@ public class TranslatorMain {
                 SelectQueryFabric.collectGenerativeCompositeNode());
         new GenerativeCompositeNode(psg).generate(sqh.getDisk("nd"));
 
+        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectGenerativeComplexNode());
+        new GenerativeComplexNodeExtender(psg).generate(sqh.getDisk("nd"));
+
         psg.generate();
 
 

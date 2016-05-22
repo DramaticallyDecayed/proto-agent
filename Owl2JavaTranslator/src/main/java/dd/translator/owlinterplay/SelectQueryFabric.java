@@ -305,12 +305,48 @@ public final class SelectQueryFabric {
 
     }
 
-    public static SelectQueryHolder retriveClassDerivative(String nodeName, String relationName){
+    public static SelectQueryHolder retrieveClassDerivative(String nodeName, String relationName) {
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE {" +
                         "   BIND(:" + nodeName + " AS ?nd) ." +
                         "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?nd core2ed:hasDerivative ?c ." +
+                        "   ?c a owl:Class ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectGenerativeComplexNode() {
+        return new SelectQueryHolder(
+                "SELECT ?nd " +
+                        "WHERE {" +
+                        "   ?nd a core2ed:Node ." +
+                        "   ?nd core2ed:implement ?cu ." +
+                        "   ?cu a core2ed:GenerativeComplexCU ." +
+                        "}"
+        );
+    }
+
+
+    public static SelectQueryHolder collectRalationDomainPairs(String nodeName) {
+        return new SelectQueryHolder(
+                "SELECT ?r ?b " +
+                        "WHERE {" +
+                        "   BIND(:" + nodeName +" AS ?nd) ." +
+                        "   ?nd core2ed:hasDerivative ?r ." +
+                        "   ?r a owl:ObjectProperty ." +
+                        "   ?nd core2ed:hasBase ?b ." +
+                        "   ?r rdfs:domain ?b." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder retrieveClassDerivative(String nodeName){
+        return new SelectQueryHolder(
+                "SELECT ?c " +
+                        "WHERE {" +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
                         "   ?nd core2ed:hasDerivative ?c ." +
                         "   ?c a owl:Class ." +
                         "}"
