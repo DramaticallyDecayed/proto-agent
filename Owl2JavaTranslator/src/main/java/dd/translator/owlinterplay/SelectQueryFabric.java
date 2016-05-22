@@ -204,6 +204,17 @@ public final class SelectQueryFabric {
         );
     }
 
+    public static SelectQueryHolder collectAssociativeRelationRefiningNodes(){
+        return new SelectQueryHolder(
+                "SELECT ?nd " +
+                        "WHERE { " +
+                        "   ?nd a core2ed:Node ." +
+                        "   ?nd core2ed:implement ?cu ." +
+                        "   ?cu a core2ed:AssociativeRelationRefiningCU ." +
+                        "}"
+        );
+    }
+
     public static SelectQueryHolder collectAssociativeRefiningNodes(){
         return new SelectQueryHolder(
                 "SELECT ?nd " +
@@ -214,6 +225,7 @@ public final class SelectQueryFabric {
                         "}"
         );
     }
+
 
     public static SelectQueryHolder collectRelationAxiomParts(String nodeName, String relationName){
         return new SelectQueryHolder(
