@@ -2,6 +2,8 @@ package dd.translator.programgeneration.nodecreators;
 
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
+import dd.sas.annotations.NodeWarning;
+import dd.sas.annotations.NodeWarningMessage;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.programgeneration.*;
 
@@ -171,23 +173,52 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
                         secondName,
                         JExpr.invoke(jdc.getMethod("new" + secondClass.name(), new JType[]{})));
 
+        //-----------------------------------------------------------------------
+        boolean unsafeCasting = false;
+
         JDefinedClass secondDomainClass = getRelationDefinerClass(
                 executeQuery(SelectQueryFabric.collectDomains(secondName))
         );
+
         JMethod baseRange = baseClass.getMethod("getRange", new JType[]{});
-        createSecondMethod.body().invoke(
-                secondVar,
-                secondClass.getMethod("setDomain", new JType[]{secondDomainClass})
-        ).arg(JExpr.invoke(baseParam, baseRange));
+        if (baseRange.type().boxify().isAssignableFrom(secondDomainClass)
+                && baseRange.type().boxify() != secondDomainClass) {
+            createSecondMethod.body().invoke(
+                    secondVar,
+                    secondClass.getMethod("setDomain", new JType[]{secondDomainClass})
+            ).arg(JExpr.cast(secondDomainClass, JExpr.invoke(baseParam, baseRange)));
+            unsafeCasting = true;
+        } else {
+            createSecondMethod.body().invoke(
+                    secondVar,
+                    secondClass.getMethod("setDomain", new JType[]{secondDomainClass})
+            ).arg(JExpr.invoke(baseParam, baseRange));
+        }
 
 
+        //---------------------------------------------------------------------------------------
         JDefinedClass secondRangeClass = getRelationDefinerClass(
                 executeQuery(SelectQueryFabric.collectRanges(secondName))
         );
-        createSecondMethod.body().invoke(
-                secondVar,
-                secondClass.getMethod("setRange", new JType[]{secondRangeClass})
-        ).arg(classVar);
+
+        if (classVar.type().boxify().isAssignableFrom(secondRangeClass)
+                && classVar.type().boxify() != secondRangeClass) {
+            createSecondMethod.body().invoke(
+                    secondVar,
+                    secondClass.getMethod("setRange", new JType[]{secondRangeClass})
+            ).arg(JExpr.cast(secondRangeClass, classVar));
+        } else {
+            createSecondMethod.body().invoke(
+                    secondVar,
+                    secondClass.getMethod("setRange", new JType[]{secondRangeClass})
+            ).arg(classVar);
+        }
+
+        if (unsafeCasting) {
+            createSecondMethod.annotate(NodeWarning.class).param("warning", NodeWarningMessage.UNSAFE_CASTING.getValue());
+        }
+
+        //----------------------------------------------------------------------------------------
 
         JFieldVar secondList = jdc.fields().get(secondName + "List");
         createSecondMethod.body().add(secondList.invoke("add").arg(secondVar));
@@ -223,26 +254,53 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
                 .decl(compositeClass, compositeName)
                 .init(JExpr.invoke(newCompositeMethod));
 
+        //---------------------------------------------------------------------
 
+        boolean unsafeCasting = false;
         JDefinedClass compositeDomainClass = getRelationDefinerClass(
                 executeQuery(SelectQueryFabric.collectDomains(compositeName))
         );
         JMethod baseDomain = baseClass.getMethod("getDomain", new JType[]{});
-        createCompositeMethod.body().invoke(
-                compositeVar,
-                compositeClass.getMethod("setDomain", new JType[]{compositeDomainClass})
-        ).arg(JExpr.invoke(firstVar, baseDomain));
+
+        if (baseDomain.type().boxify().isAssignableFrom(compositeDomainClass)
+                && baseDomain.type().boxify() != compositeDomainClass) {
+            createCompositeMethod.body().invoke(
+                    compositeVar,
+                    compositeClass.getMethod("setDomain", new JType[]{compositeDomainClass})
+            ).arg(JExpr.cast(compositeDomainClass, JExpr.invoke(firstVar, baseDomain)));
+            unsafeCasting = true;
+        } else {
+            createCompositeMethod.body().invoke(
+                    compositeVar,
+                    compositeClass.getMethod("setDomain", new JType[]{compositeDomainClass})
+            ).arg(JExpr.invoke(firstVar, baseDomain));
+        }
 
 
+        //------------------------------------------------------------------------
         JDefinedClass compositeRangeClass = getRelationDefinerClass(
                 executeQuery(SelectQueryFabric.collectRanges(compositeName))
         );
         JMethod secondRange = secondClass.getMethod("getRange", new JType[]{});
-        createCompositeMethod.body().invoke(
-                compositeVar,
-                compositeClass.getMethod("setRange", new JType[]{compositeRangeClass})
-        ).arg(JExpr.invoke(secondVar, secondRange));
 
+        if (secondRange.type().boxify().isAssignableFrom(compositeRangeClass)
+                && secondRange.type().boxify() != compositeRangeClass) {
+            createCompositeMethod.body().invoke(
+                    compositeVar,
+                    compositeClass.getMethod("setRange", new JType[]{compositeRangeClass})
+            ).arg(JExpr.cast(compositeRangeClass, JExpr.invoke(secondVar, secondRange)));
+            unsafeCasting = true;
+        } else {
+            createCompositeMethod.body().invoke(
+                    compositeVar,
+                    compositeClass.getMethod("setRange", new JType[]{compositeRangeClass})
+            ).arg(JExpr.invoke(secondVar, secondRange));
+        }
+
+        if (unsafeCasting) {
+            createCompositeMethod.annotate(NodeWarning.class).param("warning", NodeWarningMessage.UNSAFE_CASTING.getValue());
+        }
+        //-------------------------------------------------------------------------------
 
         SelectQueryHolder sqh = executeQuery(SelectQueryFabric.findInverseRelation(compositeName));
         if (!sqh.isEmpty()) {

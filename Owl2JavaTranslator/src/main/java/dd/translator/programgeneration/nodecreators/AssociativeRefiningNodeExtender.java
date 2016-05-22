@@ -131,7 +131,7 @@ public class AssociativeRefiningNodeExtender extends ProgramElementGenerator {
             boolean unsafeCasting = false;
 
             JMethod getDomain = fRelationClass.getMethod("getDomain", new JType[]{});
-            if (getDomain.type().boxify().isAssignableFrom(rangeClass)
+            if (getDomain.type().boxify().isAssignableFrom(domainClass)
                     && getDomain.type().boxify() != domainClass) {
                 newDerivativeMethod.body().invoke(
                         derivativeVar,
