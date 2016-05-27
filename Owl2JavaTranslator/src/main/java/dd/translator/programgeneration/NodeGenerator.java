@@ -7,6 +7,7 @@ import dd.sas.annotations.NodePart;
 import dd.sas.computation.Level;
 import dd.sas.computation.Node;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,15 @@ public class NodeGenerator extends ProgramElementGenerator {
     }
 
     @Override
-    public void generate(List<String> elementNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectNodes());
+        return sqh.getDisk("nd");
+    }
+
+    @Override
+    public void generate() {
+        List<String> elementNames = receiveData();
         elementNames.stream()
                 .map(name -> ProgramGenerationUtils.makeFirsLetterUp(name))
                 .map(name -> composeName(name))

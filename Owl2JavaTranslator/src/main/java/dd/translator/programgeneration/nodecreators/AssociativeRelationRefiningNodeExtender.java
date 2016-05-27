@@ -1,5 +1,8 @@
 package dd.translator.programgeneration.nodecreators;
 
+import dd.ontologyinterchanger.SelectQueryHolder;
+import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.ProgramStructureGenerator;
 
 import java.util.List;
@@ -13,7 +16,14 @@ public class AssociativeRelationRefiningNodeExtender extends AssociativeRefining
     }
 
     @Override
-    public void generate(List<String> elementNames) {
-        super.generate(elementNames);
+    public List<String> receiveData() {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectAssociativeRelationRefiningNodes());
+        return sqh.getDisk("nd");
+    }
+
+    @Override
+    public void generate() {
+        super.generate();
     }
 }

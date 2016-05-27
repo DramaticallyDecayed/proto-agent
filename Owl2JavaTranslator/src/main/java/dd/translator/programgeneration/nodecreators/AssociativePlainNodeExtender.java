@@ -3,6 +3,7 @@ package dd.translator.programgeneration.nodecreators;
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
 
 import java.util.List;
@@ -18,7 +19,15 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
     }
 
     @Override
-    public void generate(List<String> elementNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder         sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectAssociativePlainNodes());
+        return sqh.getDisk("nd");
+    }
+
+    @Override
+    public void generate() {
+        List<String> elementNames = receiveData();
         elementNames.stream()
                 .map(name -> getNodeClass(name))
                 .map(jdc -> addCreator(jdc))

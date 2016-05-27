@@ -8,8 +8,8 @@ import dd.translator.owlinterplay.OwlInterplayException;
 import dd.translator.owlinterplay.OwlTranlationUtils;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 
-import java.util.List;
 import java.util.function.Function;
+import java.util.List;
 
 /**
  * Created by Sergey on 15.05.2016.
@@ -18,7 +18,8 @@ public abstract class ProgramElementGenerator {
 
     private final ProgramStructureGenerator psg;
 
-    public abstract void generate(List<String> elementNames);
+    public abstract List<String> receiveData();
+    public abstract void generate();
 
     public ProgramElementGenerator(ProgramStructureGenerator psg) {
         this.psg = psg;

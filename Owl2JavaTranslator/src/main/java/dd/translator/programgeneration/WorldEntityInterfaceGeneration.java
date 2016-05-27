@@ -13,14 +13,15 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 14.05.2016.
  */
-public class WorldEntityInterfaceGeneration extends ProgramElementGenerator {
+public abstract class WorldEntityInterfaceGeneration extends ProgramElementGenerator {
 
     public WorldEntityInterfaceGeneration(ProgramStructureGenerator psg) {
         super(psg);
     }
 
     @Override
-    public void generate(List<String> interfaceNames) {
+    public void generate() {
+        List<String> interfaceNames = receiveData();
         interfaceNames.stream()
                 .map(name -> ProgramGenerationUtils.composeName(name))
                 .map(name -> createInterface(name))

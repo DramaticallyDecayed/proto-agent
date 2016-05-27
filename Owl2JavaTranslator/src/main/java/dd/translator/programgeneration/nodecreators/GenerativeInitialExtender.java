@@ -5,6 +5,7 @@ import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JMod;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.NodeGenerator;
 import dd.translator.programgeneration.ProgramElementGenerator;
 import dd.translator.programgeneration.ProgramGenerationUtils;
@@ -24,7 +25,15 @@ public class GenerativeInitialExtender extends ProgramElementGenerator {
     }
 
     @Override
-    public void generate(List<String> elementNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder  sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectGenerativeInitialNodes());
+        return sqh.getDisk("nd");
+    }
+
+    @Override
+    public void generate() {
+        List<String> elementNames = receiveData();
         elementNames.stream()
                 .map(name -> getNodeClass(name))
                 .map(jdc -> addCreator(jdc))

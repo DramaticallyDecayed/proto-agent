@@ -3,6 +3,7 @@ package dd.translator.programgeneration;
 import com.sun.codemodel.JDefinedClass;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +21,15 @@ public class ObjectPropertyGenerator extends ProgramElementGenerator {
     }
 
     @Override
-    public void generate(List<String> elementNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectObjectProperties());
+        return sqh.getDisk("r");
+    }
+
+    @Override
+    public void generate() {
+        List<String> elementNames = receiveData();
         elementNames.stream()
                 .map(name -> ProgramGenerationUtils.makeFirsLetterUp(name))
                 .map(name -> composeName(name))
@@ -29,7 +38,6 @@ public class ObjectPropertyGenerator extends ProgramElementGenerator {
                 .map(jdc -> link2SAS(jdc))
                 .collect(Collectors.toList());
     }
-
 
 
     private JDefinedClass addDomainAndRange(JDefinedClass jdc) {

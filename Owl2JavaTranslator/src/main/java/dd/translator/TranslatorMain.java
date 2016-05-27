@@ -1,8 +1,6 @@
 package dd.translator;
 
 
-import dd.ontologyinterchanger.SelectQueryHolder;
-import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
 import dd.translator.programgeneration.nodecreators.*;
@@ -18,79 +16,21 @@ public class TranslatorMain {
         TranslatorOntologyHandler.INSTANCE.checkOntologyInference();
         ProgramStructureGenerator psg = new ProgramStructureGenerator();
 
-        WorldEntityInterfaceGeneration weInterfaceGenerator = new WorldEntityInterfaceGeneration(psg);
-
-        generateInterfaces4VirtualEntities(weInterfaceGenerator);
-
-        generateClasses4ActualEntities(psg, weInterfaceGenerator);
-
-
-        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectObjectProperties());
-
-        new ObjectPropertyGenerator(psg).generate(sqh.getDisk("r"));
-
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectNodes());
-
-        new NodeGenerator(psg).generate(sqh.getDisk("nd"));
-
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectGenerativeInitialNodes());
-        new GenerativeInitialExtender(psg).generate(sqh.getDisk("nd"));
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectAssociativePlainNodes());
-        new AssociativePlainNodeExtender(psg).generate(sqh.getDisk("nd"));
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectAssociativeRefiningNodes());
-        new AssociativeRefiningNodeExtender(psg).generate(sqh.getDisk("nd"));
-
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectAssociativeRelationRefiningNodes());
-        new AssociativeRelationRefiningNodeExtender(psg).generate(sqh.getDisk("nd"));
-
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectGenerativeCompositeNode());
-        new GenerativeCompositeNode(psg).generate(sqh.getDisk("nd"));
-
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectGenerativeComplexNode());
-        new GenerativeComplexNodeExtender(psg).generate(sqh.getDisk("nd"));
+        new WorldVirtualEntityInterfaceGenerator(psg).generate();
+        new WorldActualEntityInterfaceGenerator(psg).generate();
+        new WorldEntityClassGenerator(psg).generate();
+        new ObjectPropertyGenerator(psg).generate();
+        new NodeGenerator(psg).generate();
+        new GenerativeInitialExtender(psg).generate();
+        new AssociativePlainNodeExtender(psg).generate();
+        new AssociativeRefiningNodeExtender(psg).generate();
+        new AssociativeRelationRefiningNodeExtender(psg).generate();
+        new GenerativeCompositeNode(psg).generate();
+        new GenerativeComplexNodeExtender(psg).generate();
 
         psg.generate();
 
 
-    }
-
-    private static void generateClasses4ActualEntities(
-            ProgramStructureGenerator psg,
-            WorldEntityInterfaceGeneration weInterfaceGenerator) {
-        SelectQueryHolder sqh;
-        sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectEffectiveEntities());
-        try {
-            weInterfaceGenerator.generate(sqh.getDisk("c"));
-        } catch (WrappedTranslatorException e) {
-            e.printStackTrace();
-        }
-        WorldEntityClassGenerator weClassGenerator = new WorldEntityClassGenerator(psg);
-        weClassGenerator.generate(sqh.getDisk("c"));
-    }
-
-    private static void generateInterfaces4VirtualEntities(WorldEntityInterfaceGeneration weInterfaceGenarator) {
-        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectVirtualEntities());
-        try {
-            weInterfaceGenarator.generate(sqh.getDisk("c"));
-        } catch (WrappedTranslatorException e) {
-            e.printStackTrace();
-        }
     }
 
 

@@ -3,6 +3,7 @@ package dd.translator.programgeneration.nodecreators;
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
 
 import java.util.AbstractMap;
@@ -20,7 +21,16 @@ public class GenerativeComplexNodeExtender extends NodeExtender {
     }
 
     @Override
-    public void generate(List<String> elementNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectGenerativeComplexNode());
+        return sqh.getDisk("nd");
+    }
+
+    @Override
+    public void generate() {
+
+        List<String> elementNames = receiveData();
         elementNames.stream()
                 .map(name -> getNodeClass(name))
                 .map(jdc -> addCreator(jdc))

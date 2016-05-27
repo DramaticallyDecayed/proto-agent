@@ -4,6 +4,7 @@ import com.sun.codemodel.JClass;
 import com.sun.codemodel.JDefinedClass;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +19,15 @@ public class WorldEntityClassGenerator extends ProgramElementGenerator {
     }
 
     @Override
-    public void generate(List<String> classNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectEffectiveEntities());
+        return sqh.getDisk("c");
+    }
+
+    @Override
+    public void generate() {
+        List<String> classNames = receiveData();
         classNames.stream()
                 .map(name -> ProgramGenerationUtils.composeName(name))
                 .map(name -> ProgramGenerationUtils.interfaceName2ClassName(name))
@@ -64,7 +73,6 @@ public class WorldEntityClassGenerator extends ProgramElementGenerator {
         }
         return interfaceAccum;
     }
-
 
 
 }

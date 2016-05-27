@@ -5,6 +5,7 @@ import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.sas.annotations.NodeWarning;
 import dd.sas.annotations.NodeWarningMessage;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
 
 import java.util.AbstractMap;
@@ -22,7 +23,16 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
     }
 
     @Override
-    public void generate(List<String> elementNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectGenerativeCompositeNode());
+        return sqh.getDisk("nd");
+    }
+
+    @Override
+    public void generate() {
+
+        List<String> elementNames = receiveData();
         elementNames.stream()
                 .map(name -> getNodeClass(name))
                 .map(jdc -> addCreator(jdc))

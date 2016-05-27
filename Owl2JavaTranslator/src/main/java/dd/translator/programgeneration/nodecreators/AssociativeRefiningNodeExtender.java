@@ -5,6 +5,7 @@ import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.sas.annotations.NodeWarning;
 import dd.sas.annotations.NodeWarningMessage;
 import dd.translator.owlinterplay.SelectQueryFabric;
+import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
 
 import java.util.List;
@@ -20,7 +21,15 @@ public class AssociativeRefiningNodeExtender extends NodeExtender {
     }
 
     @Override
-    public void generate(List<String> elementNames) {
+    public List<String> receiveData() {
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+                SelectQueryFabric.collectAssociativeRefiningNodes());
+        return sqh.getDisk("nd");
+    }
+
+    @Override
+    public void generate() {
+        List<String> elementNames = receiveData();
         elementNames.stream()
                 .map(name -> getNodeClass(name))
                 .map(jdc -> addCreator(jdc))
