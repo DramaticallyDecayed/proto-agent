@@ -227,7 +227,7 @@ public final class SelectQueryFabric {
     }
 
 
-    public static SelectQueryHolder collectRelationAxiomParts(String nodeName, String relationName) {
+    public static SelectQueryHolder collectRelationAxiomParts4Node(String nodeName, String relationName) {
         return new SelectQueryHolder(
                 "SELECT ?first ?second " +
                         "WHERE { " +
@@ -239,6 +239,18 @@ public final class SelectQueryFabric {
                         "   ?axiom rdf:first ?first ." +
                         "   ?axiom rdf:rest/rdf:first ?second ." +
                         "   FILTER(?b1 = ?first && ?b2 = ?second) ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectRelationAxiomParts(String relationName) {
+        return new SelectQueryHolder(
+                "SELECT ?first ?second " +
+                        "WHERE { " +
+                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?r owl:propertyChainAxiom ?axiom ." +
+                        "   ?axiom rdf:first ?first ." +
+                        "   ?axiom rdf:rest/rdf:first ?second ." +
                         "}"
         );
     }

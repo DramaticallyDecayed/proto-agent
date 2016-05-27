@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 22.05.2016.
  */
-public class GenerativeComplexNodeExtender extends ProgramElementGenerator {
+public class GenerativeComplexNodeExtender extends NodeExtender {
 
     public GenerativeComplexNodeExtender(ProgramStructureGenerator psg) {
         super(psg);
@@ -88,6 +88,7 @@ public class GenerativeComplexNodeExtender extends ProgramElementGenerator {
                 );
 
         JFieldVar relationList = jdc.fields().get(relationName + "List");
+
         newDerivative.body().add(relationList.invoke("add").arg(relationVar));
 
         return jdc;
@@ -113,13 +114,9 @@ public class GenerativeComplexNodeExtender extends ProgramElementGenerator {
     private JDefinedClass generateObjectPropertyCreator(JDefinedClass jdc, String derivativeName) {
         JDefinedClass derivativeClass = getRelationClass(derivativeName);
 
-        JDefinedClass domainClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.collectDomains(derivativeName))
-        );
+        JDefinedClass domainClass = getDomainClass(derivativeName);
 
-        JDefinedClass rangeClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.collectRanges(derivativeName))
-        );
+        JDefinedClass rangeClass = getRangeClass(derivativeName);
 
         JMethod derivativeMethod = jdc.method(JMod.PRIVATE, derivativeClass, "init" + derivativeClass.name());
         JVar domainVar = derivativeMethod.param(domainClass, "domain");
@@ -132,22 +129,15 @@ public class GenerativeComplexNodeExtender extends ProgramElementGenerator {
                         derivativeName,
                         JExpr.invoke(jdc.getMethod("new" + derivativeClass.name(), new JType[]{})));
 
-        JDefinedClass derivativeDomainClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.collectDomains(derivativeName))
-        );
-
         derivativeMethod.body().invoke(
                 derivativeVar,
-                derivativeClass.getMethod("setDomain", new JType[]{derivativeDomainClass})
+                derivativeClass.getMethod("setDomain", new JType[]{domainClass})
         ).arg(domainVar);
 
-        JDefinedClass derivativeRangeClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.collectRanges(derivativeName))
-        );
 
         derivativeMethod.body().invoke(
                 derivativeVar,
-                derivativeClass.getMethod("setRange", new JType[]{derivativeRangeClass})
+                derivativeClass.getMethod("setRange", new JType[]{rangeClass})
         ).arg(rangeVar);
 
         derivativeMethod.body()._return(derivativeVar);
@@ -169,42 +159,34 @@ public class GenerativeComplexNodeExtender extends ProgramElementGenerator {
                 derivativeClassName = ProgramGenerationUtils.composeName(derivativeName);
                 JDefinedClass derivativeInterface = getPsg().getCm()._getClass(derivativeClassName);
                 derivativeClass = getPsg().getCm()._getClass(derivativeClassName + "C");
-                addNewDerivativeMethod(jdc, derivativeName, derivativeInterface, derivativeClass);
+                addNewDerivativeMethod(jdc, derivativeInterface, derivativeClass);
                 break;
             case "ObjectProperty":
                 derivativeClassName = ObjectPropertyGenerator
                         .composeName(ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
                 derivativeClass = getPsg().getCm()._getClass(derivativeClassName);
-                addNewDerivativeMethod(jdc, derivativeName, derivativeClass);
+                addNewDerivativeMethod(jdc, derivativeClass);
                 break;
         }
 
         return new AbstractMap.SimpleEntry<>(type, derivativeName);
     }
 
-    private JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeClass) {
-        JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeClass, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+    private JMethod addNewDerivativeMethod(JDefinedClass jdc, JDefinedClass derivativeClass) {
+        JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeClass, "new" + derivativeClass.name());
         newRelationMethod.body()
                 ._return(JExpr._new(derivativeClass));
         return newRelationMethod;
     }
 
-    private JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeInterface, JDefinedClass derivativeClass) {
-        JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeInterface, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+    private JMethod addNewDerivativeMethod(JDefinedClass jdc, JDefinedClass derivativeInterface, JDefinedClass derivativeClass) {
+        JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeInterface, "new" + derivativeInterface.name());
         newRelationMethod.body()
                 ._return(JExpr._new(derivativeClass));
         return newRelationMethod;
     }
 
-    private JDefinedClass getNodeClass(String name) {
-        String nodeClassName = NodeGenerator.composeName(ProgramGenerationUtils.makeFirsLetterUp(name));
-        return getPsg().getCm()._getClass(nodeClassName);
-    }
 
-    //TODO:move to class working with ontology objects
-    private JDefinedClass getRelationDefinerClass(SelectQueryHolder sqh) {
-        String featureName = (String) sqh.firstSlice().get("f");
-        String domainClassName = ProgramGenerationUtils.composeName(featureName);
-        return getPsg().getCm()._getClass(domainClassName);
-    }
+
+
 }

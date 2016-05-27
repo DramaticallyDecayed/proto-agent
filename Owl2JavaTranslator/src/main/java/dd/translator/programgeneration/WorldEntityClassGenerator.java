@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
  */
 public class WorldEntityClassGenerator extends ProgramElementGenerator {
 
-    private ProgramStructureGenerator generator;
-
     public WorldEntityClassGenerator(ProgramStructureGenerator psg) {
         super(psg);
     }

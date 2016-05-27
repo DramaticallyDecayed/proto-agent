@@ -28,7 +28,7 @@ public abstract class ProgramElementGenerator {
         return psg;
     }
 
-    public SelectQueryHolder executeQuery(SelectQueryHolder sqh) {
+    public static SelectQueryHolder executeQuery(SelectQueryHolder sqh) {
         return TranslatorOntologyHandler.INSTANCE.executeQuery(sqh);
     }
 
