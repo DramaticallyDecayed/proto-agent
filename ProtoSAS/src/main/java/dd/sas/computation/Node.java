@@ -1,11 +1,15 @@
 package dd.sas.computation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Sergey on 18.05.2016.
  */
-public abstract class Node implements Processable {
+public abstract class Node implements Processable, Activable {
 
-    private DerivativeActivable activable;
+    private DerivativeActivable activator;
+    private List<Node> subscribers = new ArrayList<>();
 
     /**
      * Possible additions:
@@ -29,8 +33,25 @@ public abstract class Node implements Processable {
         pullData();
         dropDerivative();
         if(customProcess()) {
-            activable.activateDerivative();
+            activate();
         }
+    }
+
+    public void activateNode(){
+        level.addNodeToBeActivated(this);
+    }
+
+    public void processNode(){
+        level.addNodeToBeProcessed(this);
+    }
+
+    public void subscribe(Node node){
+        subscribers.add(node);
+    }
+
+    @Override
+    public void activate(){
+        activator.activateDerivative();
     }
 
     abstract public void pullData();
@@ -39,7 +60,17 @@ public abstract class Node implements Processable {
 
     abstract public boolean customProcess();
 
+    abstract public String name();
+
     public Level getLevel() {
         return level;
+    }
+
+    public void setActivator(DerivativeActivable activator){
+        this.activator = activator;
+    }
+
+    public List<Node> getSubscribers(){
+        return subscribers;
     }
 }
