@@ -5,6 +5,8 @@ package dd.sas.computation;
  */
 public abstract class Node implements Processable {
 
+    private DerivativeActivable activable;
+
     /**
      * Possible additions:
      * 1. Node is activated by other nodes
@@ -26,17 +28,16 @@ public abstract class Node implements Processable {
     public void process() {
         pullData();
         dropDerivative();
-        customProcess();
-        buildDerivative();
+        if(customProcess()) {
+            activable.activateDerivative();
+        }
     }
 
     abstract public void pullData();
 
     abstract public void dropDerivative();
 
-    abstract public void customProcess();
-
-    abstract public void buildDerivative();
+    abstract public boolean customProcess();
 
     public Level getLevel() {
         return level;

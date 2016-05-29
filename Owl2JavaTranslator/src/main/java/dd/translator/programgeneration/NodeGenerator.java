@@ -141,8 +141,11 @@ public class NodeGenerator extends ProgramElementGenerator {
         jdc._extends(Node.class);
         jdc.method(JMod.PUBLIC, void.class, "pullData").annotate(Override.class);
         jdc.method(JMod.PUBLIC, void.class, "dropDerivative").annotate(Override.class);
-        jdc.method(JMod.PUBLIC, void.class, "customProcess").annotate(Override.class);
-        jdc.method(JMod.PUBLIC, void.class, "buildDerivative").annotate(Override.class);
+        JMethod customProcessMethod = jdc.method(JMod.PUBLIC, void.class, "customProcess");
+        customProcessMethod.annotate(Override.class);
+        customProcessMethod.type(getPsg().getCm()._ref(Boolean.class));
+        customProcessMethod.body()._return(JExpr.lit(false));
+
         JMethod constructor = jdc.constructor(JMod.PUBLIC);
         JVar level = constructor.param(Level.class, "level");
         constructor.body().invoke("super").arg(level);

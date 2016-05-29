@@ -27,6 +27,7 @@ public class TranslatorMain {
         new AssociativeRelationRefiningNodeExtender(psg).generate();
         new GenerativeCompositeNode(psg).generate();
         new GenerativeComplexNodeExtender(psg).generate();
+        new Adapter2SASGenerator(psg).generate();
 
         psg.generate();
 

@@ -87,6 +87,10 @@ public class SelectQueryHolder extends QueryHolder implements Iterable<Map<Strin
         return getSlice(0);
     }
 
+    public Object getTheFirstResult(){
+        return result.get(0)[0];
+    }
+
     public List getDisk(String diskName){
         List disk = new ArrayList<>(result.size());
         disk.addAll(result.stream()
