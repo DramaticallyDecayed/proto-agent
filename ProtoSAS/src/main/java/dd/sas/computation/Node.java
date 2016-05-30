@@ -26,6 +26,7 @@ public abstract class Node implements Processable, Activable {
 
     public Node(Level level) {
         this.level = level;
+        activator = new OntologyActivator(this);
     }
 
     @Override
@@ -58,7 +59,7 @@ public abstract class Node implements Processable, Activable {
 
     abstract public void dropDerivative();
 
-    abstract public boolean customProcess();
+    abstract public Boolean customProcess();
 
     abstract public String name();
 

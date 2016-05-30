@@ -6,7 +6,7 @@ import dd.ontologyinterchanger.SelectQueryHolder;
 /**
  * Created by Sergey on 10.05.2016.
  */
-public enum TranslatorOntologyHandler {
+public enum TranslatorOntologyHandler{
 
     INSTANCE;
 

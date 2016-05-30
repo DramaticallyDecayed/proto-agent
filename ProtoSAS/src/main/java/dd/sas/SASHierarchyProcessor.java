@@ -1,6 +1,7 @@
 package dd.sas;
 
 import dd.sas.computation.Level;
+import dd.sas.computation.Node;
 
 /**
  * Created by Sergey on 29.05.2016.
@@ -12,6 +13,8 @@ public class SASHierarchyProcessor extends SASProcessor{
     }
 
     public void process(){
-        getLevelHolder().getLevels().forEach(Level::process);
+        for(Level level : getLevelHolder().getLevels()){
+            level.getNodesToBeProcessed().forEach(Node::process);
+        }
     }
 }

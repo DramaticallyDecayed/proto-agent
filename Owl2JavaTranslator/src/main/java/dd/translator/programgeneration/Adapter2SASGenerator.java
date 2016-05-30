@@ -95,7 +95,7 @@ public class Adapter2SASGenerator extends ProgramElementGenerator {
 
     private JDefinedClass createAdapter() {
         try {
-            return getPsg().getCm()._class(JMod.ABSTRACT, NameService.PACKAGE_PREFIX + "." + "Perceptor2SASAdapter", ClassType.CLASS);
+            return getPsg().getCm()._class(JMod.PUBLIC | JMod.ABSTRACT, NameService.PACKAGE_PREFIX + "." + "Perceptor2SASAdapter", ClassType.CLASS);
         } catch (JClassAlreadyExistsException e) {
             throw new WrappedTranslatorException(WorldEntityInterfaceGeneration.class.getSimpleName(), e);
         }

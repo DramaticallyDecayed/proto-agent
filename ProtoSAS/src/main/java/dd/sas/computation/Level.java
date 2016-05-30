@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Sergey on 18.05.2016.
  */
-public class Level implements Processable, Activable {
+public class Level {
 
     private int number;
     private List<Node> nodesToBeProcessed = new ArrayList<>();
@@ -20,25 +20,23 @@ public class Level implements Processable, Activable {
         return number;
     }
 
-    @Override
-    public void process() {
-        for (Node node : nodesToBeProcessed) {
-            node.process();
-        }
-    }
-
-    @Override
-    public void activate(){
-        for (Node node : nodesToBeActivated) {
-            node.activate();
-        }
-    }
-
     public void addNodeToBeProcessed(Node node) {
         nodesToBeProcessed.add(node);
     }
     public void addNodeToBeActivated(Node node){
         nodesToBeActivated.add(node);
+    }
+
+    public List<Node> getNodesToBeActivated(){
+        return nodesToBeActivated;
+    }
+
+    public List<Node> getNodesToBeProcessed(){
+        return nodesToBeProcessed;
+    }
+
+    public String getName(){
+        return "Level_" + number;
     }
 
 }
