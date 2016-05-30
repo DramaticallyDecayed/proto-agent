@@ -7,6 +7,7 @@ import dd.sas.computation.Node;
 import dd.sas.owlinterplay.QueryFabric;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.stream.Collectors;
 
 /**
  * Created by Sergey on 30.05.2016.
@@ -35,8 +36,14 @@ public class SASOntologyProcessor extends SASProcessor {
         sqh.getDisk("n")
                 .stream()
                 .map(num -> new Level((Integer) num))
+                .map(level -> addLevel2Holder((Level) level))
                 .map(level -> addNodes((Level) level))
                 .forEach(level -> levelHolder.addLevel((Level) level));
+    }
+
+    private Level addLevel2Holder(Level level) {
+        getLevelHolder().addLevel(level);
+        return level;
     }
 
     private Level addNodes(Level level) {
@@ -45,8 +52,28 @@ public class SASOntologyProcessor extends SASProcessor {
         sqh.getDisk("node")
                 .stream()
                 .map(name -> createNodeInstance(level, (String) name))
-                .forEach(node -> level.addNodeToBeProcessed((Node) node));
+                .map(node -> addNode2Level((Node) node, level))
+                .map(node -> subscribeNode((Node) node))
+                .collect(Collectors.toList());
         return level;
+    }
+
+    private Node subscribeNode(Node node) {
+        SelectQueryHolder sqh = (SelectQueryHolder) queryExecuter
+                .executeQueryOnInference(QueryFabric.collectNodeDonors(node.name()));
+        if (sqh.isEmpty()) {
+            Level zero = getLevelHolder().getLevel(0);
+            Node adapter = zero.retrieveNode("perceptor2SASAdapter");
+            adapter.subscribe(node);
+        } else {
+
+        }
+        return null;
+    }
+
+    private Node addNode2Level(Node node, Level level) {
+        level.addNode(node);
+        return node;
     }
 
     private Node createNodeInstance(Level level, String name) {

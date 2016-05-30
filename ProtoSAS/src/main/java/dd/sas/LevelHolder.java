@@ -2,21 +2,26 @@ package dd.sas;
 
 import dd.sas.computation.Level;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Sergey on 29.05.2016.
  */
 public class LevelHolder {
 
-    private List<Level> levels = new ArrayList<>();
+    private Map<Integer, Level> levels = new HashMap<>();
 
     public void addLevel(Level level){
-        levels.add(level);
+        levels.put(level.getNumber(), level);
     }
 
-    public List<Level> getLevels(){
-        return levels;
+    public Level getLevel(Integer num){
+        return levels.get(num);
+    }
+
+    public Collection<Level> getLevels(){
+        return levels.values();
     }
 }

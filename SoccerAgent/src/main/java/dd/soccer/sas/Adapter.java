@@ -1,14 +1,20 @@
 package dd.soccer.sas;
 
+import dd.sas.computation.Node;
 import dd.soccer.sas.worldentity.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Sergey on 30.05.2016.
  */
 public class Adapter extends Perceptor2SASAdapter {
 
+    public final static String NAME = "perceptor2SASAdapter";
+
+    private Map<String, Node> subscribers = new HashMap<>();
 
     @Override
     public List<Ball> getBallList() {
@@ -46,6 +52,11 @@ public class Adapter extends Perceptor2SASAdapter {
     }
 
     @Override
+    public void subscribe(Node node) {
+        subscribers.put(node.name(), node);
+    }
+
+    @Override
     public void pullData() {
 
     }
@@ -57,11 +68,11 @@ public class Adapter extends Perceptor2SASAdapter {
 
     @Override
     public Boolean customProcess() {
-        return null;
+        return false;
     }
 
     @Override
     public String name() {
-        return null;
+        return NAME;
     }
 }

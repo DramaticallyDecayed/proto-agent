@@ -43,4 +43,14 @@ public final class QueryFabric {
                         "}"
         );
     }
+
+    public static SelectQueryHolder collectNodeDonors(String nodeName){
+        return new SelectQueryHolder(
+                "SELECT ?donor " +
+                        "WHERE {" +
+                        "   BIND(:node_cu_Ball AS ?node) ." +
+                        "   ?node core2ed:dependOn ?donor ." +
+                        "}"
+        );
+    }
 }
