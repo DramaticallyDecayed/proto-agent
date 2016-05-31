@@ -1,5 +1,9 @@
 package dd.sas.computation;
 
+import dd.sas.Utils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,5 +77,18 @@ public abstract class Node implements Processable, Activable {
 
     public List<Node> getSubscribers(){
         return subscribers;
+    }
+
+    public void setDonor(Node donor){
+        setDonor(donor, donor.getClass());
+    }
+
+    public void setDonor(Node donor, Class donorClass){
+        try {
+            Method method = this.getClass().getMethod("set" + Utils.makeFirsLetterUp(donor.name()), new Class[]{donorClass});
+            method.invoke(this, donor);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -55,14 +55,14 @@ public final class ProgramGenerationUtils {
         return c;
     }
 
-    public static JDefinedClass addSettersAndGetters4Class(
+    public static JFieldVar addSettersAndGetters4Class(
             JDefinedClass c,
             String paramName,
             JType paramType) {
         JFieldVar paramField = c.field(JMod.PRIVATE, paramType, paramName);
         addGetter(c, paramName, paramType, JMod.PUBLIC, paramField );
         createFieldWithSetter(c, paramName, paramType, paramField);
-        return c;
+        return paramField;
     }
 
     public static void createFieldWithSetter(JDefinedClass c,

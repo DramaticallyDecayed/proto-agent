@@ -108,9 +108,7 @@ public class NodeGenerator extends ProgramElementGenerator {
     private JFieldVar generateDonorField(JDefinedClass jdc, String donor) {
         String donorClassName = composeName(ProgramGenerationUtils.makeFirsLetterUp(donor));
         JType donorClass = getPsg().getCm()._getClass(donorClassName);
-        return jdc.field(JMod.PRIVATE,
-                donorClass,
-                donor);
+        return ProgramGenerationUtils.addSettersAndGetters4Class(jdc, donor, donorClass);
     }
 
     private JFieldVar generateBaseField(JDefinedClass jdc, String name, String type) {
@@ -144,11 +142,21 @@ public class NodeGenerator extends ProgramElementGenerator {
 
         addCustomProcessMethod(jdc);
         addGetNameMethod(jdc);
+        addNameStaticField(jdc);
 
         JMethod constructor = jdc.constructor(JMod.PUBLIC);
         JVar level = constructor.param(Level.class, "level");
         constructor.body().invoke("super").arg(level);
         return jdc;
+    }
+
+    private void addNameStaticField(JDefinedClass jdc) {
+        jdc.field(
+                JMod.PUBLIC | JMod.STATIC | JMod.FINAL,
+                getPsg().getCm()._ref(String.class),
+                "NAME",
+                JExpr.lit(ProgramGenerationUtils.makeFirsLetterLow(jdc.name()))
+        );
     }
 
     private void addGetNameMethod(JDefinedClass jdc) {

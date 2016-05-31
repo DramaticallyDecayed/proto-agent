@@ -41,7 +41,7 @@ public class Level {
     }
 
     public String getName(){
-        return "Level_" + number;
+        return "level_" + number;
     }
 
     public void addNode(Node node){

@@ -1,7 +1,11 @@
 import dd.ontologypart.OntologyHandler;
 import dd.sas.LevelHolder;
+import dd.sas.SASHierarchyProcessor;
 import dd.sas.SASOntologyProcessor;
+import dd.soccer.perception.perceptingobjects.Ball;
 import dd.soccer.sas.Adapter;
+import dd.soccer.sas.worldentity.CoordinateCenter;
+import dd.soccer.sas.worldentity.CoordinateCenterC;
 import org.junit.Test;
 
 /**
@@ -23,5 +27,18 @@ public class SASTest {
 
         SASOntologyProcessor ontologyProcessor = new SASOntologyProcessor(levelHolder, ontologyHandler);
         ontologyProcessor.process();
+
+        SASHierarchyProcessor sasHierarchyProcessor = new SASHierarchyProcessor(levelHolder);
+        sasHierarchyProcessor.process();
+
+        Ball ball = new Ball("1.0 2.0");
+        adapter.setBall(ball);
+
+        CoordinateCenter coordinateCenter = new CoordinateCenterC();
+        coordinateCenter.setX(0.0);
+        coordinateCenter.setY(0.0);
+        adapter.setCoordinateCenter(coordinateCenter);
+
+        sasHierarchyProcessor.process();
     }
 }

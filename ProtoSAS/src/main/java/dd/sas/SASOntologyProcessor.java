@@ -49,12 +49,14 @@ public class SASOntologyProcessor extends SASProcessor {
     private Level addNodes(Level level) {
         SelectQueryHolder sqh = (SelectQueryHolder) queryExecuter
                 .executeQueryOnInference(QueryFabric.collectNodes4Level(level.getName()));
-        sqh.getDisk("node")
-                .stream()
-                .map(name -> createNodeInstance(level, (String) name))
-                .map(node -> addNode2Level((Node) node, level))
-                .map(node -> subscribeNode((Node) node))
-                .collect(Collectors.toList());
+        if(!sqh.isEmpty()) {
+            sqh.getDisk("node")
+                    .stream()
+                    .map(name -> createNodeInstance(level, (String) name))
+                    .map(node -> addNode2Level((Node) node, level))
+                    .map(node -> subscribeNode((Node) node))
+                    .collect(Collectors.toList());
+        }
         return level;
     }
 
@@ -65,6 +67,8 @@ public class SASOntologyProcessor extends SASProcessor {
             Level zero = getLevelHolder().getLevel(0);
             Node adapter = zero.retrieveNode("perceptor2SASAdapter");
             adapter.subscribe(node);
+            Class c = adapter.getClass().getSuperclass();
+            node.setDonor(adapter, c);
         } else {
 
         }

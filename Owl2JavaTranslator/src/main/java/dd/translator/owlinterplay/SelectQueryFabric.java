@@ -365,16 +365,18 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectAllKnownEntities(){
+    public static SelectQueryHolder collectAllInitialEntities(){
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE {" +
-                        "    ?c rdfs:subClassOf+ core2ed:Percepted ." +
+                        "   {?c rdfs:subClassOf+ core2ed:Percepted .}" +
+                        "   UNION" +
+                        "   {?c rdfs:subClassOf+ core2ed:Known .}" +
                         "}"
         );
     }
 
-    public static SelectQueryHolder collectPerceptionNode(){
+    public static SelectQueryHolder collectInitialNode(){
         return new SelectQueryHolder(
                 "SELECT ?nd ?d " +
                         "WHERE {" +
@@ -382,7 +384,6 @@ public final class SelectQueryFabric {
                         "   ?nd core2ed:implement ?cu ." +
                         "   ?cu a core2ed:GenerativeInitialCU ." +
                         "   ?cu core2ed:hasDerivative ?d ." +
-                        "   ?d rdfs:subClassOf* core2ed:Percepted ." +
                         "}"
         );
     }

@@ -37,7 +37,7 @@ public final class QueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?node " +
                         "WHERE {" +
-                        "   BIND(:level_1 AS ?level) ." +
+                        "   BIND(:" + level + " AS ?level) ." +
                         "   ?node a core2ed:Node ." +
                         "   ?node core2ed:belongs2Level ?level ." +
                         "}"
@@ -48,7 +48,7 @@ public final class QueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?donor " +
                         "WHERE {" +
-                        "   BIND(:node_cu_Ball AS ?node) ." +
+                        "   BIND(:" + nodeName + " AS ?node) ." +
                         "   ?node core2ed:dependOn ?donor ." +
                         "}"
         );

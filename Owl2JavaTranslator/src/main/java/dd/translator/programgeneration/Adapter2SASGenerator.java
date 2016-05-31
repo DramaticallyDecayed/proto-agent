@@ -25,7 +25,7 @@ public class Adapter2SASGenerator extends ProgramElementGenerator {
     @Override
     public List<String> receiveData() {
         SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectAllKnownEntities());
+                SelectQueryFabric.collectAllInitialEntities());
         return sqh.getDisk("c");
     }
 
@@ -42,7 +42,7 @@ public class Adapter2SASGenerator extends ProgramElementGenerator {
 
     private void initPerceptionNodes(JDefinedClass adapter) {
         SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
-                SelectQueryFabric.collectPerceptionNode());
+                SelectQueryFabric.collectInitialNode());
         sqh.asStream()
                 .map(result -> initPerceptionNode((String) result[0], (String) result[1], adapter))
                 .collect(Collectors.toList());
