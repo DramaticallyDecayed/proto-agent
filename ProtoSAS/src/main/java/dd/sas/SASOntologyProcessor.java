@@ -8,7 +8,7 @@ import dd.sas.owlinterplay.QueryFabric;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Collectors;
-
+import java.util.List;
 /**
  * Created by Sergey on 30.05.2016.
  */
@@ -71,9 +71,20 @@ public class SASOntologyProcessor extends SASProcessor {
             Class c = adapter.getClass().getSuperclass();
             node.setDonor(adapter, c);
         } else {
-
+            for(String donorName : (List<String>)sqh.getDisk("donor")){
+                subscribeNode(node, donorName);
+            }
         }
         return node;
+    }
+
+    private void subscribeNode(Node node, String donorName){
+        SelectQueryHolder sqh = (SelectQueryHolder) queryExecuter
+                .executeQuery(QueryFabric.findNodeLevelNumber(donorName));
+        Integer levelNum = (Integer)sqh.getTheFirstResult();
+        Node donor = getLevelHolder().getLevel(levelNum).retrieveNode(donorName);
+        donor.subscribe(node);
+        node.setDonor(donor, donor.getClass().getSuperclass());
     }
 
     private Node addNode2Level(Node node, Level level) {

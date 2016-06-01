@@ -52,4 +52,15 @@ public final class QueryFabric {
                         "}"
         );
     }
+
+    public static SelectQueryHolder findNodeLevelNumber(String nodeName){
+        return new SelectQueryHolder(
+                "SELECT ?num " +
+                        "WHERE{" +
+                        "   BIND(:" + nodeName + " AS ?node) ." +
+                        "   ?node core2ed:belongs2Level ?level ." +
+                        "   ?level core2ed:hasNumber ?num ." +
+                        "}"
+        );
+    }
 }
