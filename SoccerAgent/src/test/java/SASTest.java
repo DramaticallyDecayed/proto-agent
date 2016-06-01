@@ -1,8 +1,6 @@
+import ch.qos.logback.classic.Level;
 import dd.ontologypart.OntologyHandler;
-import dd.sas.LevelHolder;
-import dd.sas.SASHierarchyProcessor;
-import dd.sas.SASOntologyNotifyProcessor;
-import dd.sas.SASOntologyProcessor;
+import dd.sas.SAS;
 import dd.soccer.perception.perceptingobjects.BodyState;
 import dd.soccer.perception.perceptingobjects.Line;
 import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
@@ -11,38 +9,38 @@ import dd.soccer.sas.worldentity.CoordinateCenter;
 import dd.soccer.sas.worldentity.CoordinateCenterC;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Sergey on 30.05.2016.
  */
 public class SASTest {
 
-    @Test
-    public void genericSASTest(){
+    public static void setLoggingLevel(Level level) {
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        root.setLevel(level);
+    }
 
-        Perceptor2SASAdapterImpl adapter = new Perceptor2SASAdapterImpl();
-        adapter.getLevel().addNode(adapter);
+    @Test
+    public void genericSASTest() {
+
+        setLoggingLevel(Level.OFF);
 
         OntologyHandler ontologyHandler = new OntologyHandler();
+        SAS sas = new SAS(ontologyHandler);
+        Perceptor2SASAdapterImpl adapter = new Perceptor2SASAdapterImpl();
+        adapter.getLevel().addNode(adapter);
+        sas.getLevelHolder().addLevel(adapter.getLevel());
 
-        LevelHolder levelHolder = new LevelHolder();
-        levelHolder.addLevel(adapter.getLevel());
-
-
-        SASOntologyProcessor ontologyProcessor = new SASOntologyProcessor(levelHolder, ontologyHandler);
-        ontologyProcessor.process();
-
-        SASHierarchyProcessor sasHierarchyProcessor = new SASHierarchyProcessor(levelHolder);
-        sasHierarchyProcessor.process();
-
-        //Ball ball = new Ball("1.0 2.0");
-        //adapter.setBall(ball);
+        long start = System.nanoTime();
+        sas.cycle();
+        long end = System.nanoTime();
+        System.out.println(end - start);
 
         BodyState bodyState = new BodyState();
         adapter.setBodystate(bodyState);
-        Line line = new Line("l","1.0 2.0");
+        Line line = new Line("l", "1.0 2.0");
         List<NavigatingLandmark> landmarkList = new ArrayList<>();
         landmarkList.add(line);
         adapter.setNavigatingLandmarks(landmarkList);
@@ -53,11 +51,9 @@ public class SASTest {
         coordinateCenter.setY(0.0);
         adapter.setCoordinateCenter(coordinateCenter);
 
-        sasHierarchyProcessor.process();
-
-        SASOntologyNotifyProcessor ontologyNotifyProcessor = new SASOntologyNotifyProcessor(levelHolder, ontologyHandler);
-        ontologyNotifyProcessor.process();
-
-        ontologyProcessor.process();
+        start = System.nanoTime();
+        sas.cycle();
+        end = System.nanoTime();
+        System.out.println(end - start);
     }
 }

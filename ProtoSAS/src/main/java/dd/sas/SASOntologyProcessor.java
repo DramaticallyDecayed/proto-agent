@@ -27,6 +27,7 @@ public class SASOntologyProcessor extends SASProcessor {
 
     @Override
     public void process() {
+        System.out.println("--------------Ontology cycle---------------");
         queryExecuter.runInference();
         addNewLevels(getLevelHolder());
         addNewNodes();
@@ -110,6 +111,7 @@ public class SASOntologyProcessor extends SASProcessor {
         try {
             Node node = (Node) nodeClass.getConstructor(new Class[]{Level.class}).newInstance(level);
             addNode2Level(node, level);
+            System.out.println(node.name());
             return node;
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
