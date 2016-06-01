@@ -3,10 +3,7 @@ package dd.soccer.sas;
 import dd.sas.computation.Node;
 import dd.soccer.perception.perceptingobjects.BodyState;
 import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
-import dd.soccer.sas.computation.node.Node_cu_Ball;
-import dd.soccer.sas.computation.node.Node_cu_CoordinateCenter;
-import dd.soccer.sas.computation.node.Node_cu_Ego;
-import dd.soccer.sas.computation.node.Node_cu_Landmark;
+import dd.soccer.sas.computation.node.*;
 import dd.soccer.sas.worldentity.*;
 
 import java.util.ArrayList;
@@ -27,6 +24,8 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     private List<CoordinateCenter> coordinateCenterList;
     private List<Landmark> landmarkList;
     private List<Ego> egoList;
+    private List<EgoTeam> egoTeamList;
+    private List<RivalTeam> rivalTeamList;
 
     public void setBall(dd.soccer.perception.perceptingobjects.Ball ball){
         Ball sasBall = new BallC();
@@ -61,6 +60,18 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
         egoList = new ArrayList<>();
         egoList.add(ego);
         subscribers.get(Node_cu_Ego.NAME).processNode();
+    }
+
+    public void setEgoTeam(EgoTeam egoTeam){
+        egoTeamList = new ArrayList<>(1);
+        egoTeamList.add(egoTeam);
+        subscribers.get(Node_cu_EgoTeam.NAME).processNode();
+    }
+
+    public void setRivalTeam(RivalTeam rivalTeam){
+        rivalTeamList = new ArrayList<>(1);
+        rivalTeamList.add(rivalTeam);
+        subscribers.get(Node_cu_RivalTeam.NAME).processNode();
     }
 
     @Override
@@ -100,12 +111,12 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
 
     @Override
     public List<EgoTeam> getEgoTeamList() {
-        return null;
+        return egoTeamList;
     }
 
     @Override
     public List<RivalTeam> getRivalTeamList() {
-        return null;
+        return rivalTeamList;
     }
 
     @Override

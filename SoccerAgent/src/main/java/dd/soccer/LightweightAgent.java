@@ -7,10 +7,14 @@ import dd.sas.SAS;
 import dd.soccer.executionsystem.Executor;
 import dd.soccer.perception.NoCommunicationException;
 import dd.soccer.perception.Perceptor;
+import dd.soccer.perception.perceptingobjects.Ball;
 import dd.soccer.perception.perceptingobjects.*;
+import dd.soccer.perception.perceptingobjects.Flag;
+import dd.soccer.perception.perceptingobjects.Goal;
+import dd.soccer.perception.perceptingobjects.Line;
+import dd.soccer.perception.perceptingobjects.Player;
 import dd.soccer.sas.Perceptor2SASAdapterImpl;
-import dd.soccer.sas.worldentity.CoordinateCenter;
-import dd.soccer.sas.worldentity.CoordinateCenterC;
+import dd.soccer.sas.worldentity.*;
 
 import java.io.FileNotFoundException;
 import java.net.SocketException;
@@ -123,6 +127,14 @@ public class LightweightAgent {
         coordinateCenter.setX(0.0);
         coordinateCenter.setY(0.0);
         adapter.setCoordinateCenter(coordinateCenter);
+
+        EgoTeam egoTeam = new EgoTeamC();
+        egoTeam.setTeamName("commandA");
+        adapter.setEgoTeam(egoTeam);
+
+        RivalTeam rivalTeam = new RivalTeamC();
+        rivalTeam.setTeamName("commandB");
+        adapter.setRivalTeam(rivalTeam);
     }
 
     private static Perceptor2SASAdapterImpl initPerceptor2SASAdapter(SAS sas) {
