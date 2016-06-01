@@ -1,5 +1,6 @@
 package dd.ontologypart;
 
+import com.hp.hpl.jena.rdf.model.Model;
 import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QueryExecuter;
 import dd.ontologyinterchanger.QueryHolder;
@@ -39,5 +40,10 @@ public class OntologyHandler implements QueryExecuter{
     @Override
     public void commitResults() {
         bmi.commitInference();
+    }
+
+    @Override
+    public void commitResults(Model m) {
+        bmi.commitModel(m);
     }
 }

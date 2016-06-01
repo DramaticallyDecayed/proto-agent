@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 public class SASOntologyProcessor extends SASProcessor {
 
     public final static String PACKAGE_PREFIX = "dd.soccer.sas";
-    private final static String NODE_PACKAGE = PACKAGE_PREFIX + "." + "computation.node";
+    private final static String NODE_CUSTOM_IMPL_PACKAGE = PACKAGE_PREFIX + "." + "nodeimplementation";
+    private final static String NODE_DEFAULG_IMPL_PACKAGE = PACKAGE_PREFIX + "." + "computation.node";
 
     private QueryExecuter queryExecuter;
 
@@ -28,17 +29,20 @@ public class SASOntologyProcessor extends SASProcessor {
     public void process() {
         queryExecuter.runInference();
         addNewLevels(getLevelHolder());
+        addNewNodes();
+        queryExecuter.commitResults();
     }
 
     private void addNewLevels(LevelHolder levelHolder) {
         SelectQueryHolder sqh = (SelectQueryHolder) queryExecuter
                 .executeQueryOnInference(QueryFabric.collectLevelNumbers());
-        sqh.getDisk("n")
-                .stream()
-                .map(num -> new Level((Integer) num))
-                .map(level -> addLevel2Holder((Level) level))
-                .map(level -> addNodes((Level) level))
-                .forEach(level -> levelHolder.addLevel((Level) level));
+        if (!sqh.isEmpty()) {
+            sqh.getDisk("n")
+                    .stream()
+                    .map(num -> new Level((Integer) num))
+                    .map(level -> addLevel2Holder((Level) level))
+                    .forEach(level -> levelHolder.addLevel((Level) level));
+        }
     }
 
     private Level addLevel2Holder(Level level) {
@@ -46,18 +50,15 @@ public class SASOntologyProcessor extends SASProcessor {
         return level;
     }
 
-    private Level addNodes(Level level) {
+    private void addNewNodes() {
         SelectQueryHolder sqh = (SelectQueryHolder) queryExecuter
-                .executeQueryOnInference(QueryFabric.collectNodes4Level(level.getName()));
-        if(!sqh.isEmpty()) {
-            sqh.getDisk("node")
-                    .stream()
-                    .map(name -> createNodeInstance(level, (String) name))
-                    .map(node -> addNode2Level((Node) node, level))
+                .executeQueryOnInference(QueryFabric.collectNodesWithLevel());
+        if (!sqh.isEmpty()) {
+            sqh.asStream()
+                    .map(result -> createNodeInstance((String) result[0], (String) result[1]))
                     .map(node -> subscribeNode((Node) node))
                     .collect(Collectors.toList());
         }
-        return level;
     }
 
     private Node subscribeNode(Node node) {
@@ -72,7 +73,7 @@ public class SASOntologyProcessor extends SASProcessor {
         } else {
 
         }
-        return null;
+        return node;
     }
 
     private Node addNode2Level(Node node, Level level) {
@@ -80,20 +81,40 @@ public class SASOntologyProcessor extends SASProcessor {
         return node;
     }
 
-    private Node createNodeInstance(Level level, String name) {
+    private Node createNodeInstance(String levelName, String nodeName) {
+        Integer levelNum = Integer.valueOf(levelName.substring(levelName.indexOf("_") + 1));
+        Level level = getLevelHolder().getLevel(levelNum);
+        Class nodeClass;
         try {
-            Class nodeClass = getClass().getClassLoader().loadClass(nodeClassName(name));
+            nodeClass = getClass().getClassLoader().loadClass(customNodeImplClassName(nodeName));
+        } catch (ClassNotFoundException e) {
+            try {
+                nodeClass = getClass().getClassLoader().loadClass(defaultNodeImplClassName(nodeName));
+            } catch (ClassNotFoundException t) {
+                t.printStackTrace();
+                return null;
+            }
+        }
+
+        try {
             Node node = (Node) nodeClass.getConstructor(new Class[]{Level.class}).newInstance(level);
+            addNode2Level(node, level);
             return node;
-        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
             return null;
         }
+
     }
 
-    public String nodeClassName(String name) {
+    public String customNodeImplClassName(String name) {
         name = makeFirsLetterUp(name);
-        return NODE_PACKAGE + "." + name;
+        return NODE_CUSTOM_IMPL_PACKAGE + "." + name;
+    }
+
+    public String defaultNodeImplClassName(String name) {
+        name = makeFirsLetterUp(name);
+        return NODE_DEFAULG_IMPL_PACKAGE + "." + name;
     }
 
     public String makeFirsLetterUp(String str) {

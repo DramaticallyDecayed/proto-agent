@@ -7,13 +7,19 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class ConstructQuery extends QueryHolder {
 
+    private Model result;
+
     public ConstructQuery(String queryString) {
         super(queryString);
     }
 
     @Override
     public QueryHolder executeQuery(Model model) {
-        QuieringUtils.constructQuery(model, getQueryString());
+        result = QuieringUtils.constructQuery(model, getQueryString());
         return this;
+    }
+
+    public Model getResult() {
+        return result;
     }
 }

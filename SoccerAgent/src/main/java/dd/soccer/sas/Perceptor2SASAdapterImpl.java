@@ -1,8 +1,12 @@
 package dd.soccer.sas;
 
 import dd.sas.computation.Node;
+import dd.soccer.perception.perceptingobjects.BodyState;
+import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
 import dd.soccer.sas.computation.node.Node_cu_Ball;
 import dd.soccer.sas.computation.node.Node_cu_CoordinateCenter;
+import dd.soccer.sas.computation.node.Node_cu_Ego;
+import dd.soccer.sas.computation.node.Node_cu_Landmark;
 import dd.soccer.sas.worldentity.*;
 
 import java.util.ArrayList;
@@ -13,7 +17,7 @@ import java.util.Map;
 /**
  * Created by Sergey on 30.05.2016.
  */
-public class Adapter extends Perceptor2SASAdapter {
+public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
 
     public final static String NAME = "perceptor2SASAdapter";
 
@@ -21,6 +25,8 @@ public class Adapter extends Perceptor2SASAdapter {
 
     private List<Ball> ballList;
     private List<CoordinateCenter> coordinateCenterList;
+    private List<Landmark> landmarkList;
+    private List<Ego> egoList;
 
     public void setBall(dd.soccer.perception.perceptingobjects.Ball ball){
         Ball sasBall = new BallC();
@@ -37,6 +43,26 @@ public class Adapter extends Perceptor2SASAdapter {
         subscribers.get(Node_cu_CoordinateCenter.NAME).processNode();
     }
 
+    public void setNavigatingLandmarks(List<NavigatingLandmark> landmarks){
+        landmarkList = new ArrayList<>();
+        for(NavigatingLandmark landmark : landmarks) {
+            Landmark sasLandmark = new LandmarkC();
+            sasLandmark.setDirection(landmark.getDirection());
+            sasLandmark.setDistance(landmark.getDistance());
+            sasLandmark.setX(landmark.getX());
+            sasLandmark.setY(landmark.getY());
+            landmarkList.add(sasLandmark);
+        }
+        subscribers.get(Node_cu_Landmark.NAME).processNode();
+    }
+
+    public void setBodystate(BodyState bodyState){
+        Ego ego = new EgoC();
+        egoList = new ArrayList<>();
+        egoList.add(ego);
+        subscribers.get(Node_cu_Ego.NAME).processNode();
+    }
+
     @Override
     public List<Ball> getBallList() {
         return ballList;
@@ -44,7 +70,7 @@ public class Adapter extends Perceptor2SASAdapter {
 
     @Override
     public List<Landmark> getLandmarkList() {
-        return null;
+        return landmarkList;
     }
 
     @Override
@@ -69,7 +95,7 @@ public class Adapter extends Perceptor2SASAdapter {
 
     @Override
     public List<Ego> getEgoList() {
-        return null;
+        return egoList;
     }
 
     @Override

@@ -33,11 +33,10 @@ public final class QueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectNodes4Level(String level){
+    public static SelectQueryHolder collectNodesWithLevel(){
         return new SelectQueryHolder(
-                "SELECT ?node " +
+                "SELECT ?level ?node " +
                         "WHERE {" +
-                        "   BIND(:" + level + " AS ?level) ." +
                         "   ?node a core2ed:Node ." +
                         "   ?node core2ed:belongs2Level ?level ." +
                         "}"
