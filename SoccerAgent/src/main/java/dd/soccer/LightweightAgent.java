@@ -43,7 +43,9 @@ public class LightweightAgent {
 //        LightweightLevel level_1 = levelHolder.getLevel(0);
 //        Node_cd_perception perceptionNode = (Node_cd_perception) level_1.getLightweightNode(Node_cd_perception.class);
 
-        SAS sas = new SAS(new OntologyHandler());
+        OntologyHandler ontologyHandler = new OntologyHandler();
+        ontologyHandler.arm();
+        SAS sas = new SAS(ontologyHandler);
         Perceptor2SASAdapterImpl adapter = initPerceptor2SASAdapter(sas);
         sas.cycle();
         initKnowObjects(adapter);
@@ -73,18 +75,22 @@ public class LightweightAgent {
                         goalList.clear();
                         playerList.clear();
                         bodyStateList.clear();
+                        navigatingLandmarkList.clear();
                         for (ElementState es : ef.getElementStates()) {
                             if (es instanceof Ball) {
                                 //ballList.add((Ball) es);
                                 adapter.setBall((Ball) es);
                             } else if (es instanceof Line) {
                                 //lineList.add((Line) es);
+                                //System.out.println(es.toString());
                                 navigatingLandmarkList.add((Line) es);
                             } else if (es instanceof Flag) {
                                 //flagList.add((Flag) es);
+                                //System.out.println(es.toString());
                                 navigatingLandmarkList.add((Flag) es);
-                            } else if (es instanceof Flag) {
+                            } else if (es instanceof Goal) {
                                 //goalList.add((Goal) es);
+                                //System.out.println(es.toString());
                                 navigatingLandmarkList.add((Goal) es);
                             } else if (es instanceof Player) {
                                 playerList.add((Player) es);
@@ -114,7 +120,10 @@ public class LightweightAgent {
                     }
                 }
 //                levelHolder.process();
+                long start = System.nanoTime();
                 sas.cycle();
+                long end = System.nanoTime();
+                //System.out.println("DURATION: " + (end - start));
                 executor.cycle();
             }
         } catch (NoCommunicationException e) {

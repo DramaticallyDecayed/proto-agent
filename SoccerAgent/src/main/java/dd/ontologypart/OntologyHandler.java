@@ -10,6 +10,7 @@ import dd.ontologyinterchanger.QueryHolder;
  */
 public class OntologyHandler implements QueryExecuter{
 
+    private boolean armed;
     private BareModelInterchanger bmi;
     private final static String ONTOLOGY_FILE_NAME = "soccer2ed.rdf";
 
@@ -45,5 +46,20 @@ public class OntologyHandler implements QueryExecuter{
     @Override
     public void commitResults(Model m) {
         bmi.commitModel(m);
+    }
+
+    @Override
+    public void arm() {
+        armed = true;
+    }
+
+    @Override
+    public boolean isArmed() {
+        return armed;
+    }
+
+    @Override
+    public void disarm() {
+        armed = false;
     }
 }

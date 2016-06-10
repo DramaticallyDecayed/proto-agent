@@ -54,9 +54,10 @@ public abstract class ProgramElementGenerator {
 
     public JDefinedClass addSetterAndGetter4Class(JDefinedClass setterHolder, Object setterName, Object setterArgType) {
         try {
-            return ProgramGenerationUtils.addSettersAndGetters4Class(setterHolder,
+            ProgramGenerationUtils.addSettersAndGetters4Class(setterHolder,
                     setterName.toString(),
                     OwlTranlationUtils.decodeStringType((String) setterArgType));
+            return setterHolder;
         } catch (OwlInterplayException e) {
             throw new WrappedTranslatorException(WorldEntityInterfaceGeneration.class.getSimpleName(), e);
         }

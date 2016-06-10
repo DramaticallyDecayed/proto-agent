@@ -150,6 +150,21 @@ public final class SelectQueryFabric {
         );
     }
 
+    public static SelectQueryHolder collectNodeGenericBases(String nodeName) {
+        return new SelectQueryHolder(
+                "SELECT ?donor ?fbase ?cbase ?type " +
+                        "WHERE {" +
+                        "   BIND(:" + nodeName + " AS ?nd) . " +
+                        "   ?nd core2ed:dependOn ?donor . " +
+                        "   ?donor core2ed:hasDerivative ?cbase . " +
+                        "   ?nd core2ed:hasBase ?base ." +
+                        "   ?cbase rdfs:subClassOf* ?base . "+
+                        "   BIND(core2ed:FindPair(?nd, ?cbase) AS ?fbase) ." +
+                        "   ?fbase rdf:type ?type ." +
+                        "}"
+        );
+    }
+
     public static SelectQueryHolder collectNodeDerivatives(String name) {
         return new SelectQueryHolder(
                 "SELECT ?derivative ?type " +
@@ -345,7 +360,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?r ?b " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName +" AS ?nd) ." +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
                         "   ?nd core2ed:hasDerivative ?r ." +
                         "   ?r a owl:ObjectProperty ." +
                         "   ?nd core2ed:hasBase ?b ." +
@@ -354,7 +369,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder retrieveClassDerivative(String nodeName){
+    public static SelectQueryHolder retrieveClassDerivative(String nodeName) {
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE {" +
@@ -365,7 +380,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectAllInitialEntities(){
+    public static SelectQueryHolder collectAllInitialEntities() {
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE {" +
@@ -376,7 +391,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectInitialNode(){
+    public static SelectQueryHolder collectInitialNode() {
         return new SelectQueryHolder(
                 "SELECT ?nd ?d " +
                         "WHERE {" +

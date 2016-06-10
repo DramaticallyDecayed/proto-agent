@@ -12,6 +12,7 @@ public class OntologyActivator extends DerivativeActivable {
     @Override
     public void activateDerivative() {
         getNode().activateNode();
+        switchStrategy();
     }
 
     public void switchStrategy(){

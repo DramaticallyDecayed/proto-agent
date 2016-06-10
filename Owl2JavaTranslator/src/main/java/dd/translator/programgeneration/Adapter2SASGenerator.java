@@ -72,6 +72,10 @@ public class Adapter2SASGenerator extends ProgramElementGenerator {
         JMethod derivativeGetter = adapter.getMethod("get" + derivativeName + "List", new JType[]{});
         JFieldVar derivativeField = nodeClass.fields().get(ProgramGenerationUtils.makeFirsLetterLow(derivativeName) + "List");
         JMethod pullDataMethod = nodeClass.getMethod("pullData", new JType[]{});
+        if (pullDataMethod == null) {
+            pullDataMethod = nodeClass.method(JMod.PUBLIC, void.class, "pullData");
+            pullDataMethod.annotate(Override.class);
+        }
         pullDataMethod.body().assign(derivativeField, JExpr.invoke(donorField, derivativeGetter));
     }
 

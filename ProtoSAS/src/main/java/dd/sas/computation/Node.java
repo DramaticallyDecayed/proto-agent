@@ -1,11 +1,14 @@
 package dd.sas.computation;
 
 import dd.sas.Utils;
+import dd.sas.presentation.WorldEntity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Sergey on 18.05.2016.
@@ -13,6 +16,8 @@ import java.util.List;
 public abstract class Node implements Processable, Activable {
 
     private DerivativeActivable activator;
+    private Map<Class, List<WrappingGetter>> donorMap = new HashMap<>();
+    private Map<Class, List<? extends WorldEntity>> baseMap = new HashMap<>();
     private List<Node> subscribers = new ArrayList<>();
 
     /**
@@ -37,29 +42,49 @@ public abstract class Node implements Processable, Activable {
     public void process() {
         pullData();
         dropDerivative();
-        if(customProcess()) {
+        if (customProcess()) {
             activate();
         }
     }
 
-    public void activateNode(){
+    public void activateNode() {
         level.addNodeToBeActivated(this);
     }
 
-    public void processNode(){
+    public void processNode() {
         level.addNodeToBeProcessed(this);
     }
 
-    public void subscribe(Node node){
+    public void subscribe(Node node) {
         subscribers.add(node);
     }
 
     @Override
-    public void activate(){
+    public void activate() {
         activator.activateDerivative();
     }
 
-    abstract public void pullData();
+    public void pullData() {
+        for (Class c : donorMap.keySet()) {
+            for (WrappingGetter wg : donorMap.get(c)) {
+                fillBases(c, wg);
+            }
+        }
+    }
+
+    public void fillDonor(Class c, WrappingGetter wg) {
+        if (donorMap.get(c) == null) {
+            donorMap.put(c, new ArrayList<>());
+        }
+        donorMap.get(c).add(wg);
+    }
+
+    private void fillBases(Class c, WrappingGetter wg) {
+        if (baseMap.get(c) == null) {
+            baseMap.put(c, new ArrayList<>());
+        }
+        baseMap.get(c).addAll(wg.getObjectList());
+    }
 
     abstract public void dropDerivative();
 
@@ -71,19 +96,17 @@ public abstract class Node implements Processable, Activable {
         return level;
     }
 
-    public void setActivator(DerivativeActivable activator){
+    public void setActivator(DerivativeActivable activator) {
         this.activator = activator;
     }
 
-    public List<Node> getSubscribers(){
+    public List<Node> getSubscribers() {
         return subscribers;
     }
 
-    public void setDonor(Node donor){
-        setDonor(donor, donor.getClass());
-    }
+    public abstract void pushAsDonor(Node acceptor);
 
-    public void setDonor(Node donor, Class donorClass){
+    public void setDonor(Node donor, Class donorClass) {
         try {
             Method method = this.getClass().getMethod("set" + Utils.makeFirsLetterUp(donor.name()), new Class[]{donorClass});
             method.invoke(this, donor);
@@ -91,4 +114,13 @@ public abstract class Node implements Processable, Activable {
             e.printStackTrace();
         }
     }
+
+    public Map<Class, List<WrappingGetter>> getDonorMap() {
+        return donorMap;
+    }
+
+    public Map<Class, List<? extends WorldEntity>> getBaseMap() {
+        return baseMap;
+    }
+
 }

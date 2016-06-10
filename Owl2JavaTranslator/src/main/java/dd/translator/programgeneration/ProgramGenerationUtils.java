@@ -44,7 +44,7 @@ public final class ProgramGenerationUtils {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
-    public static JDefinedClass addSettersAndGetters4Class(
+    public static JFieldVar addSettersAndGetters4Class(
             JDefinedClass c,
             String paramName,
             Class paramType) {
@@ -52,7 +52,7 @@ public final class ProgramGenerationUtils {
         JFieldVar paramField = c.field(JMod.PRIVATE, paramType, paramName);
         addGetter(c, paramName, paramType, JMod.PUBLIC, paramField);
         createFieldWithSetter(c, paramName, paramType, paramField);
-        return c;
+        return paramField;
     }
 
     public static JFieldVar addSettersAndGetters4Class(
@@ -110,6 +110,14 @@ public final class ProgramGenerationUtils {
     public static JDefinedClass createClass(JCodeModel jcm, String className) {
         try {
             return jcm._class(className, ClassType.CLASS);
+        } catch (JClassAlreadyExistsException e) {
+            throw new WrappedTranslatorException(WorldEntityClassGenerator.class.getSimpleName(), e);
+        }
+    }
+
+    public static JDefinedClass createInterface(JCodeModel jcm, String className) {
+        try {
+            return jcm._class(className, ClassType.INTERFACE);
         } catch (JClassAlreadyExistsException e) {
             throw new WrappedTranslatorException(WorldEntityClassGenerator.class.getSimpleName(), e);
         }

@@ -11,4 +11,7 @@ public interface QueryExecuter {
     void runInference();
     void commitResults();
     void commitResults(Model m);
+    void arm();
+    boolean isArmed();
+    void disarm();
 }

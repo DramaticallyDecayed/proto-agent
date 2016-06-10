@@ -27,7 +27,7 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     private List<EgoTeam> egoTeamList;
     private List<RivalTeam> rivalTeamList;
 
-    public void setBall(dd.soccer.perception.perceptingobjects.Ball ball){
+    public void setBall(dd.soccer.perception.perceptingobjects.Ball ball) {
         Ball sasBall = new BallC();
         sasBall.setDirection(ball.getDirection());
         sasBall.setDistance(ball.getDistance());
@@ -36,15 +36,17 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
         subscribers.get(Node_cu_Ball.NAME).processNode();
     }
 
-    public void setCoordinateCenter(CoordinateCenter coordinateCenter){
+    public void setCoordinateCenter(CoordinateCenter coordinateCenter) {
         coordinateCenterList = new ArrayList<>(1);
         coordinateCenterList.add(coordinateCenter);
-        subscribers.get(Node_cu_CoordinateCenter.NAME).processNode();
+        if (subscribers.get(Node_cu_CoordinateCenter.NAME) != null) {
+            subscribers.get(Node_cu_CoordinateCenter.NAME).processNode();
+        }
     }
 
-    public void setNavigatingLandmarks(List<NavigatingLandmark> landmarks){
+    public void setNavigatingLandmarks(List<NavigatingLandmark> landmarks) {
         landmarkList = new ArrayList<>();
-        for(NavigatingLandmark landmark : landmarks) {
+        for (NavigatingLandmark landmark : landmarks) {
             Landmark sasLandmark = new LandmarkC();
             sasLandmark.setDirection(landmark.getDirection());
             sasLandmark.setDistance(landmark.getDistance());
@@ -52,23 +54,27 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
             sasLandmark.setY(landmark.getY());
             landmarkList.add(sasLandmark);
         }
-        subscribers.get(Node_cu_Landmark.NAME).processNode();
+        if (subscribers.get(Node_cu_Landmark.NAME) != null) {
+            subscribers.get(Node_cu_Landmark.NAME).processNode();
+        }
     }
 
-    public void setBodystate(BodyState bodyState){
+    public void setBodystate(BodyState bodyState) {
         Ego ego = new EgoC();
         egoList = new ArrayList<>();
         egoList.add(ego);
-        subscribers.get(Node_cu_Ego.NAME).processNode();
+        if (subscribers.get(Node_cu_Ego.NAME) != null) {
+            subscribers.get(Node_cu_Ego.NAME).processNode();
+        }
     }
 
-    public void setEgoTeam(EgoTeam egoTeam){
+    public void setEgoTeam(EgoTeam egoTeam) {
         egoTeamList = new ArrayList<>(1);
         egoTeamList.add(egoTeam);
         subscribers.get(Node_cu_EgoTeam.NAME).processNode();
     }
 
-    public void setRivalTeam(RivalTeam rivalTeam){
+    public void setRivalTeam(RivalTeam rivalTeam) {
         rivalTeamList = new ArrayList<>(1);
         rivalTeamList.add(rivalTeam);
         subscribers.get(Node_cu_RivalTeam.NAME).processNode();
@@ -128,6 +134,7 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     public void subscribe(Node node) {
         subscribers.put(node.name(), node);
     }
+
     @Override
     public void pullData() {
 
@@ -146,5 +153,10 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     @Override
     public String name() {
         return NAME;
+    }
+
+    @Override
+    public void pushAsDonor(Node acceptor) {
+
     }
 }

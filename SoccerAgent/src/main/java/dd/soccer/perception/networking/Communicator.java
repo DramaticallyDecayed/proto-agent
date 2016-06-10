@@ -42,8 +42,8 @@ public class Communicator implements Runnable {
 
     private void sendMessage() throws IOException {
         while (!outputMessageQ.isEmpty()) {
-            String messgae = outputMessageQ.poll();
-            packetInterchanger.send(messgae);
+            String message = outputMessageQ.poll();
+            packetInterchanger.send(message);
         }
     }
 
@@ -51,6 +51,7 @@ public class Communicator implements Runnable {
         try {
             String message = packetInterchanger.receive();
             inputMessageQ.add(message);
+            System.out.println("SIZE OF QUEUE: " + inputMessageQ.size());
             return true;
         } catch (SocketTimeoutException e) {
             logger.log(Level.INFO, "timeout expires -> no server activity -> go out");

@@ -21,7 +21,11 @@ public class SASOntologyNotifyProcessor extends SASProcessor {
     @Override
     public void process() {
         for (Level level : getLevelHolder().getLevels()) {
-            level.getNodesToBeActivated().forEach(this::activateNodeInOntology);
+            if(!level.getNodesToBeActivated().isEmpty()) {
+                System.out.println("SIZE OF TO BE ACT: "+ level.getNodesToBeActivated().size());
+                level.getNodesToBeActivated().forEach(this::activateNodeInOntology);
+                level.getNodesToBeActivated().clear();
+            }
         }
     }
 
@@ -30,6 +34,7 @@ public class SASOntologyNotifyProcessor extends SASProcessor {
         executer.executeQuery(cq);
         if(!cq.getResult().isEmpty()){
             executer.commitResults(cq.getResult());
+            executer.arm();
         }
     }
 }
