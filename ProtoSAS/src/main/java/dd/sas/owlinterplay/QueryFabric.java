@@ -23,17 +23,17 @@ public final class QueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectLevelNumbers(){
+    public static SelectQueryHolder collectLevelNumbers() {
         return new SelectQueryHolder(
-          "SELECT ?n " +
-                  "WHERE {" +
-                  "    ?level a core2ed:Level ." +
-                  "    ?level core2ed:hasNumber ?n ." +
-                  "}"
+                "SELECT ?n " +
+                        "WHERE {" +
+                        "    ?level a core2ed:Level ." +
+                        "    ?level core2ed:hasNumber ?n ." +
+                        "}"
         );
     }
 
-    public static SelectQueryHolder collectNodesWithLevel(){
+    public static SelectQueryHolder collectNodesWithLevel() {
         return new SelectQueryHolder(
                 "SELECT ?level ?node " +
                         "WHERE {" +
@@ -43,7 +43,7 @@ public final class QueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectNodeDonors(String nodeName){
+    public static SelectQueryHolder collectNodeDonors(String nodeName) {
         return new SelectQueryHolder(
                 "SELECT ?donor " +
                         "WHERE {" +
@@ -53,7 +53,7 @@ public final class QueryFabric {
         );
     }
 
-    public static SelectQueryHolder findNodeLevelNumber(String nodeName){
+    public static SelectQueryHolder findNodeLevelNumber(String nodeName) {
         return new SelectQueryHolder(
                 "SELECT ?num " +
                         "WHERE{" +
@@ -63,4 +63,22 @@ public final class QueryFabric {
                         "}"
         );
     }
+
+    public static SelectQueryHolder collectNodesToBeRefined(String nodeName) {
+        return new SelectQueryHolder(
+                "SELECT ?num ?nd " +
+                        "WHERE{" +
+                        "   BIND(:" + nodeName + " AS ?refnd)" +
+                        "   ?refnd core2ed:implement ?refcu ." +
+                        "   ?refcu core2ed:hasDerivative ?d ." +
+                        "   ?nd core2ed:implement ?cu ." +
+                        "   ?d rdfs:subClassOf* ?parent ." +
+                        "   ?cu core2ed:hasBase ?parent ." +
+                        "   ?nd core2ed:belongs2Level ?level ." +
+                        "   ?level core2ed:hasNumber ?num ." +
+                        "}"
+        );
+    }
+
+
 }

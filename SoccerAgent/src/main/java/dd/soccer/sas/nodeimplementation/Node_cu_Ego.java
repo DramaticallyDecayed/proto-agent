@@ -12,7 +12,7 @@ public class Node_cu_Ego extends dd.soccer.sas.computation.node.Node_cu_Ego {
     }
 
     @Override
-    public Boolean customProcess(){
+    public Boolean customProcess() {
         return true;
     }
 

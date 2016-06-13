@@ -44,8 +44,33 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
                 .collect(Collectors.toList())
                 .stream()
                 .map(jdc -> addBases(jdc))
+                .map(jdc -> addGenericBaseGetters(jdc))
                 .collect(Collectors.toList())
         ;
+    }
+
+    private JDefinedClass addGenericBaseGetters(JDefinedClass jdc) {
+        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.collectGenericBases(
+                ProgramGenerationUtils.makeFirsLetterLow(jdc.name()))
+        );
+        sqh.asStream().forEach(result -> addGenericBaseGetter(jdc, (String) result[0], (String) result[1]));
+        return jdc;
+    }
+
+    private void addGenericBaseGetter(JDefinedClass jdc, String genericBaseName, String genericBaseType) {
+        JDefinedClass entityGenericClass = getGenericEntityClass(genericBaseName, genericBaseType);
+        JClass returnCommonClass = getPsg().getCm().ref(List.class);
+        JClass returnFinalClass = returnCommonClass.narrow(entityGenericClass);
+        JMethod genericBaseGetter = jdc.method(JMod.PUBLIC, returnFinalClass, "get" + ProgramGenerationUtils.makeFirsLetterUp(genericBaseName) + "List");
+        genericBaseGetter
+                .body()
+                ._return(JExpr.cast(returnFinalClass,
+                        JExpr.invoke(
+                                JExpr.invoke("getBaseMap"), "get")
+                                .arg(entityGenericClass.dotclass())
+                        )
+                );
+
     }
 
     private JDefinedClass createOxidizingInterface(JDefinedClass jdc) {
@@ -80,7 +105,13 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
                 derivativeField.type(),
                 JMod.PUBLIC,
                 derivativeField);
+        addDerivativeClearRecord(jdc, derivativeField);
         return jdc;
+    }
+
+    private void addDerivativeClearRecord(JDefinedClass jdc, JFieldVar derivativeField){
+        jdc.getMethod("dropDerivative", new JType[]{})
+                .body().invoke(derivativeField, "clear");
     }
 
     private JDefinedClass addBases(JDefinedClass jdc) {
@@ -106,19 +137,21 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
             String entityGenericName,
             String entityConcreteName,
             String entityType) {
-        JMethod setDonorMethod = jdc.method(JMod.PUBLIC, void.class, "setDonor");
+
         JDefinedClass donorClass = getPsg().getCm()._getClass(NameService.nodeClassName(donorName));
-        JDefinedClass entityGenericClass;
-        if (entityType.equals("Class")) {
-            entityGenericClass = getPsg().getCm()._getClass(NameService.worldEntityClassName(ProgramGenerationUtils.makeFirsLetterUp(entityGenericName)));
-        } else {
-            entityGenericClass = getPsg().getCm()._getClass(NameService.objectPropertyClassName(ProgramGenerationUtils.makeFirsLetterUp(entityGenericName)));
+
+        JMethod setDonorMethod = jdc.getMethod("setDonor", new JType[]{donorClass});
+        if(setDonorMethod == null) {
+            setDonorMethod = jdc.method(JMod.PUBLIC, void.class, "setDonor");
+            setDonorMethod.annotate(Override.class);
+            setDonorMethod.param(donorClass, "node");
         }
-        setDonorMethod.param(donorClass, "node");
+
+        JDefinedClass entityGenericClass = getGenericEntityClass(entityGenericName, entityType);
 
         JDefinedClass oxidizingInterface = getPsg().getCm()._getClass(donorClass.fullName() + "Oxidizing");
         jdc._implements(oxidizingInterface);
-        setDonorMethod.annotate(Override.class);
+
 
         setDonorMethod
                 .body()
@@ -126,6 +159,16 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
                 .arg(entityGenericClass.dotclass())
                 .arg(JExpr.direct("node::get" + ProgramGenerationUtils.makeFirsLetterUp(entityConcreteName) + "List"));
         return jdc;
+    }
+
+    private JDefinedClass getGenericEntityClass(String entityGenericName, String entityType) {
+        JDefinedClass entityGenericClass;
+        if (entityType.equals("Class")) {
+            entityGenericClass = getPsg().getCm()._getClass(NameService.worldEntityClassName(ProgramGenerationUtils.makeFirsLetterUp(entityGenericName)));
+        } else {
+            entityGenericClass = getPsg().getCm()._getClass(NameService.objectPropertyClassName(ProgramGenerationUtils.makeFirsLetterUp(entityGenericName)));
+        }
+        return entityGenericClass;
     }
 
     private JFieldVar generateBaseField(JDefinedClass jdc, String name, String type) {

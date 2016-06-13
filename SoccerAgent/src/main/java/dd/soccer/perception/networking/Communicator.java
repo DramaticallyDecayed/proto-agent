@@ -51,7 +51,7 @@ public class Communicator implements Runnable {
         try {
             String message = packetInterchanger.receive();
             inputMessageQ.add(message);
-            System.out.println("SIZE OF QUEUE: " + inputMessageQ.size());
+            //System.out.println("SIZE OF QUEUE: " + inputMessageQ.size());
             return true;
         } catch (SocketTimeoutException e) {
             logger.log(Level.INFO, "timeout expires -> no server activity -> go out");

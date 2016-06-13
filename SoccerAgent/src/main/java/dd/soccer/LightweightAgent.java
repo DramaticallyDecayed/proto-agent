@@ -78,48 +78,22 @@ public class LightweightAgent {
                         navigatingLandmarkList.clear();
                         for (ElementState es : ef.getElementStates()) {
                             if (es instanceof Ball) {
-                                //ballList.add((Ball) es);
                                 adapter.setBall((Ball) es);
                             } else if (es instanceof Line) {
-                                //lineList.add((Line) es);
-                                //System.out.println(es.toString());
                                 navigatingLandmarkList.add((Line) es);
                             } else if (es instanceof Flag) {
-                                //flagList.add((Flag) es);
-                                //System.out.println(es.toString());
                                 navigatingLandmarkList.add((Flag) es);
                             } else if (es instanceof Goal) {
-                                //goalList.add((Goal) es);
-                                //System.out.println(es.toString());
                                 navigatingLandmarkList.add((Goal) es);
                             } else if (es instanceof Player) {
                                 playerList.add((Player) es);
                             } else if (es instanceof BodyState) {
-                                //bodyStateList.add((BodyState) es);
                                 adapter.setBodystate((BodyState) es);
                             }
                         }
-
-
                         adapter.setNavigatingLandmarks(navigatingLandmarkList);
-
-//                        perceptionNode.setBallList(ballList);
-//                        perceptionNode.setFlagList(flagList);
-//                        perceptionNode.setLineList(lineList);
-//                        perceptionNode.setPlayerList(playerList);
-//                        perceptionNode.setBodyStateList(bodyStateList);
-//                        perceptionNode.setGoalList(goalList);
-//                        System.out.println("------------------------------");
-//                        System.out.println("balls: " + ballList.size());
-//                        System.out.println("flags: " + flagList.size());
-//                        System.out.println("lines: " + lineList.size());
-//                        System.out.println("players: " + playerList.size());
-//                        System.out.println("bodies: " + bodyStateList.size());
-//                        System.out.println("goals: " + goalList.size());
-//                        System.out.println("------------------------------");
                     }
                 }
-//                levelHolder.process();
                 long start = System.nanoTime();
                 sas.cycle();
                 long end = System.nanoTime();

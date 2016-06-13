@@ -40,11 +40,12 @@ public abstract class Node implements Processable, Activable {
 
     @Override
     public void process() {
-        pullData();
         dropDerivative();
+        pullData();
         if (customProcess()) {
             activate();
         }
+        dropBases();
     }
 
     public void activateNode() {
@@ -79,11 +80,15 @@ public abstract class Node implements Processable, Activable {
         donorMap.get(c).add(wg);
     }
 
-    private void fillBases(Class c, WrappingGetter wg) {
+    public void fillBases(Class c, WrappingGetter wg) {
         if (baseMap.get(c) == null) {
             baseMap.put(c, new ArrayList<>());
         }
         baseMap.get(c).addAll(wg.getObjectList());
+    }
+
+    public void dropBases(){
+        baseMap.values().forEach(List::clear);
     }
 
     abstract public void dropDerivative();

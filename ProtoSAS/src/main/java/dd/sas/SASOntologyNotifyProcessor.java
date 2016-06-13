@@ -2,6 +2,7 @@ package dd.sas;
 
 import dd.ontologyinterchanger.ConstructQuery;
 import dd.ontologyinterchanger.QueryExecuter;
+import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.sas.computation.Level;
 import dd.sas.computation.Node;
 import dd.sas.owlinterplay.QueryFabric;
@@ -21,9 +22,9 @@ public class SASOntologyNotifyProcessor extends SASProcessor {
     @Override
     public void process() {
         for (Level level : getLevelHolder().getLevels()) {
-            if(!level.getNodesToBeActivated().isEmpty()) {
-                System.out.println("SIZE OF TO BE ACT: "+ level.getNodesToBeActivated().size());
+            if (!level.getNodesToBeActivated().isEmpty()) {
                 level.getNodesToBeActivated().forEach(this::activateNodeInOntology);
+                level.getNodesToBeActivated().forEach(node -> refineCalculationHierarchy(node));
                 level.getNodesToBeActivated().clear();
             }
         }
@@ -32,9 +33,24 @@ public class SASOntologyNotifyProcessor extends SASProcessor {
     private void activateNodeInOntology(Node node) {
         ConstructQuery cq = QueryFabric.prepareActivationString(node.name());
         executer.executeQuery(cq);
-        if(!cq.getResult().isEmpty()){
+        if (!cq.getResult().isEmpty()) {
             executer.commitResults(cq.getResult());
             executer.arm();
         }
+    }
+
+    private void refineCalculationHierarchy(Node node) {
+        SelectQueryHolder sqh = (SelectQueryHolder) executer
+                .executeQuery(QueryFabric.collectNodesToBeRefined(node.name()));
+        if(!sqh.isEmpty()) {
+            sqh.asStream().forEach(result -> addCalculationLink(node, (Integer) result[0], (String) result[1]));
+        }
+    }
+
+    private void addCalculationLink(Node node, Integer levelNum, String nodeName) {
+        Node refinedNode = getLevelHolder().getLevel(levelNum).retrieveNode(nodeName);
+        node.pushAsDonor(refinedNode);
+        node.subscribe(refinedNode);
+        refinedNode.processNode();
     }
 }

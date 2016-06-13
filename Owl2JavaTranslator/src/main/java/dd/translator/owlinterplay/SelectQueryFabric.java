@@ -176,6 +176,16 @@ public final class SelectQueryFabric {
         );
     }
 
+    public static SelectQueryHolder isAssociativeRelation(String relationName){
+        return new SelectQueryHolder(
+                "SELECT ?r " +
+                        "WHERE{ " +
+                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   ?r rdfs:subPropertyOf* core2ed:associative ." +
+                        "}"
+        );
+    }
+
     public static SelectQueryHolder collectGenerativeInitialNodes() {
         return new SelectQueryHolder(
                 "SELECT ?nd " +
@@ -399,6 +409,18 @@ public final class SelectQueryFabric {
                         "   ?nd core2ed:implement ?cu ." +
                         "   ?cu a core2ed:GenerativeInitialCU ." +
                         "   ?cu core2ed:hasDerivative ?d ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectGenericBases(String nodeName){
+        return new SelectQueryHolder(
+                "SELECT ?base ?type " +
+                        "WHERE {" +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   ?nd core2ed:implement ?cu ." +
+                        "   ?cu core2ed:hasBase ?base ." +
+                        "   ?base rdf:type ?type ." +
                         "}"
         );
     }

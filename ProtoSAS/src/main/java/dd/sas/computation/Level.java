@@ -1,9 +1,6 @@
 package dd.sas.computation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Sergey on 18.05.2016.
@@ -14,8 +11,8 @@ public class Level {
 
     private Map<String, Node> nodeRegister = new HashMap<>();
 
-    private List<Node> nodesToBeProcessed = new ArrayList<>();
-    private List<Node> nodesToBeActivated = new ArrayList<>();
+    private Set<Node> nodesToBeProcessed = new HashSet<>();
+    private Set<Node> nodesToBeActivated = new HashSet<>();
 
     public Level(int number) {
         this.number = number;
@@ -32,11 +29,11 @@ public class Level {
         nodesToBeActivated.add(node);
     }
 
-    public List<Node> getNodesToBeActivated(){
+    public Set<Node> getNodesToBeActivated(){
         return nodesToBeActivated;
     }
 
-    public List<Node> getNodesToBeProcessed(){
+    public Set<Node> getNodesToBeProcessed(){
         return nodesToBeProcessed;
     }
 

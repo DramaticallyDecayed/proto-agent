@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 20.05.2016.
  */
-public class AssociativePlainNodeExtender extends ProgramElementGenerator {
+public class AssociativePlainNodeExtender extends NodeExtender {
 
     public AssociativePlainNodeExtender(ProgramStructureGenerator psg) {
         super(psg);
@@ -20,7 +20,7 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
 
     @Override
     public List<String> receiveData() {
-        SelectQueryHolder         sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
+        SelectQueryHolder sqh = TranslatorOntologyHandler.INSTANCE.executeQuery(
                 SelectQueryFabric.collectAssociativePlainNodes());
         return sqh.getDisk("nd");
     }
@@ -42,71 +42,56 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
                 .map(record -> addDerivativeCreator(jdc,
                         (String) record[0])
                 )
+                .collect(Collectors.toList())
+                .stream()
+                .map(name -> treatInverse(jdc, name))
                 .collect(Collectors.toList());
         return jdc;
     }
 
-    private JDefinedClass addDerivativeCreator(JDefinedClass jdc, String derivativeName) {
-        String derivativeClassName = ObjectPropertyGenerator
-                .composeName(ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
-        JDefinedClass derivativeClass = getPsg().getCm()._getClass(derivativeClassName);
+    private String addDerivativeCreator(JDefinedClass jdc, String derivativeName) {
 
+        ObjectProperty relation = new ObjectProperty(derivativeName);
+        relation = new ObjectPropertyFiller(getPsg()).fillObjectPropertyWithData(relation);
 
-        JMethod newRelationMethod = addNewDerivativeMethod(jdc, derivativeName, derivativeClass);
+        JMethod newRelationMethod = addNewDerivativeMethod(jdc, derivativeName, relation.getPropertyClass());
 
 
         //-------------------------------------------------------------------------------
 
-        JDefinedClass domainClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.collectDomains(derivativeName))
+
+        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.isAssociativeRelation(
+                ProgramGenerationUtils.makeFirsLetterLow(derivativeName))
         );
+        if(!sqh.isEmpty()) {
+            JMethod creator = jdc.method(
+                    JMod.PRIVATE,
+                    relation.getPropertyClass(),
+                    "fill" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
 
-        JDefinedClass realDomainClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.inferRealDomain(
-                        ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
-                        derivativeName)));
+            JVar derivativeParam = creator.param(relation.getPropertyClass(), "relation");
+            JVar domainParam = creator.param(relation.getPropertyDomain(), "domain");
+            JVar rangeParam = creator.param(relation.getPropertyRange(), "range");
 
-        JDefinedClass rangeClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.collectRanges(derivativeName))
-        );
+            creator.body().invoke(derivativeParam, relation.getDomainSetMethod()).arg(domainParam);
+            creator.body().invoke(derivativeParam, relation.getRangeSetMethod()).arg(rangeParam);
+            creator.body()._return(derivativeParam);
 
-        JDefinedClass realRangeClass = getRelationDefinerClass(
-                executeQuery(SelectQueryFabric.inferRealRange(
-                        ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
-                        derivativeName)));
+            //---------------------------------------------------------------------
 
-        JMethod creator = jdc.method(
-                JMod.PRIVATE,
-                derivativeClass,
-                "fill" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
-
-        JVar derivativeVar = creator.param(derivativeClass, "relation");
-        JVar domainVar = creator.param(realDomainClass, "domain");
-        JVar rangeVar = creator.param(realRangeClass, "range");
-
-        JMethod donorSetter = derivativeClass.getMethod("setDomain", new JType[]{domainClass});
-        JMethod rangeSetter = derivativeClass.getMethod("setRange", new JType[]{rangeClass});
-
-
-        creator.body().invoke(derivativeVar, donorSetter).arg(domainVar);
-        creator.body().invoke(derivativeVar, rangeSetter).arg(rangeVar);
-        creator.body()._return(derivativeVar);
-
-        //---------------------------------------------------------------------
-
-        JMethod newDerivativeMethod = jdc.method(JMod.PRIVATE, derivativeClass, "newDerivative");
-        newDerivativeMethod.param(realDomainClass, "domain");
-        newDerivativeMethod.param(realRangeClass, "range");
-        newDerivativeMethod
-                .body()
-                ._return(
-                        JExpr.invoke(creator)
-                                .arg(JExpr.invoke(newRelationMethod))
-                                .arg(domainVar)
-                                .arg(rangeVar)
-                );
-
-        return jdc;
+            JMethod newDerivativeMethod = jdc.method(JMod.PRIVATE, relation.getPropertyClass(), "newDerivative");
+            newDerivativeMethod.param(relation.getPropertyDomain(), "domain");
+            newDerivativeMethod.param(relation.getPropertyRange(), "range");
+            JVar derivativeVar = newDerivativeMethod.body()
+                    .decl(relation.getPropertyClass(), derivativeName)
+                    .init(JExpr.invoke(creator)
+                            .arg(JExpr.invoke(newRelationMethod))
+                            .arg(domainParam)
+                            .arg(rangeParam));
+            initInverseRelation(jdc, relation, newDerivativeMethod, derivativeVar);
+            newDerivativeMethod.body()._return(derivativeVar);
+        }
+        return derivativeName;
     }
 
     private JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeClass) {
@@ -116,11 +101,6 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
         return newRelationMethod;
     }
 
-    private JDefinedClass getNodeClass(String name) {
-        String nodeClassName = NodeGenerator.composeName(ProgramGenerationUtils.makeFirsLetterUp(name));
-        return getPsg().getCm()._getClass(nodeClassName);
-    }
-
 
     //TODO:move to class working with ontology objects
     private JDefinedClass getRelationDefinerClass(SelectQueryHolder sqh) {
@@ -128,4 +108,5 @@ public class AssociativePlainNodeExtender extends ProgramElementGenerator {
         String domainClassName = ProgramGenerationUtils.composeName(featureName);
         return getPsg().getCm()._getClass(domainClassName);
     }
+
 }

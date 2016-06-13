@@ -29,13 +29,17 @@ public class SASOntologyProcessor extends SASProcessor {
     public void process() {
         if(queryExecuter.isArmed()) {
             System.out.println("-------------- Ontology cycle start ---------------");
-            queryExecuter.runInference();
-            addNewLevels(getLevelHolder());
-            addNewNodes();
-            queryExecuter.commitResults();
+            extendCalculationHierarchy();
             queryExecuter.disarm();
             System.out.println("-------------- Ontology cycle end---------------");
         }
+    }
+
+    private void extendCalculationHierarchy() {
+        queryExecuter.runInference();
+        addNewLevels(getLevelHolder());
+        addNewNodes();
+        queryExecuter.commitResults();
     }
 
     private void addNewLevels(LevelHolder levelHolder) {
@@ -79,6 +83,7 @@ public class SASOntologyProcessor extends SASProcessor {
             for(String donorName : (List<String>)sqh.getDisk("donor")){
                 subscribeNode(node, donorName);
             }
+            node.processNode();
         }
         return node;
     }
@@ -89,8 +94,6 @@ public class SASOntologyProcessor extends SASProcessor {
         Integer levelNum = (Integer)sqh.getTheFirstResult();
         Node donor = getLevelHolder().getLevel(levelNum).retrieveNode(donorName);
         donor.subscribe(node);
-        //node.setDonor(donor, donor.getClass().getSuperclass());
-        //node.setDonor(donor);
         donor.pushAsDonor(node);
     }
 

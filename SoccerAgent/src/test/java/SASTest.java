@@ -3,8 +3,8 @@ import dd.ontologypart.OntologyHandler;
 import dd.sas.SAS;
 import dd.sas.computation.WrappingGetter;
 import dd.sas.presentation.WorldEntity;
-import dd.soccer.perception.perceptingobjects.BodyState;
 import dd.soccer.perception.perceptingobjects.Line;
+import dd.soccer.perception.perceptingobjects.BodyState;
 import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
 import dd.soccer.sas.Perceptor2SASAdapterImpl;
 import dd.soccer.sas.computation.node.Node_cu_Ball;
@@ -83,27 +83,46 @@ public class SASTest {
         long end = System.nanoTime();
         System.out.println(end - start);
 
+        fillAdapterWithSomeObjects_1(adapter);
+
+        start = System.nanoTime();
+        sas.cycle();
+        end = System.nanoTime();
+        System.out.println(end - start);
+
+        start = System.nanoTime();
+        sas.cycle();
+        end = System.nanoTime();
+        System.out.println(end - start);
+
+        fillAdapterWithSomeObjects_2(adapter);
+
+        start = System.nanoTime();
+        sas.cycle();
+        end = System.nanoTime();
+        System.out.println(end - start);
+
+
+        start = System.nanoTime();
+        sas.cycle();
+        end = System.nanoTime();
+        System.out.println(end - start);
+    }
+
+    private void fillAdapterWithSomeObjects_1(Perceptor2SASAdapterImpl adapter) {
         BodyState bodyState = new BodyState();
         adapter.setBodystate(bodyState);
-        Line line = new Line("l", "1.0 2.0");
-        List<NavigatingLandmark> landmarkList = new ArrayList<>();
-        landmarkList.add(line);
-        adapter.setNavigatingLandmarks(landmarkList);
-
 
         CoordinateCenter coordinateCenter = new CoordinateCenterC();
         coordinateCenter.setX(0.0);
         coordinateCenter.setY(0.0);
         adapter.setCoordinateCenter(coordinateCenter);
+    }
 
-        start = System.nanoTime();
-        sas.cycle();
-        end = System.nanoTime();
-        System.out.println(end - start);
-
-        start = System.nanoTime();
-        sas.cycle();
-        end = System.nanoTime();
-        System.out.println(end - start);
+    private void fillAdapterWithSomeObjects_2(Perceptor2SASAdapterImpl adapter) {
+        Line line = new Line("l", "1.0 2.0");
+        List<NavigatingLandmark> landmarkList = new ArrayList<>();
+        landmarkList.add(line);
+        adapter.setNavigatingLandmarks(landmarkList);
     }
 }
