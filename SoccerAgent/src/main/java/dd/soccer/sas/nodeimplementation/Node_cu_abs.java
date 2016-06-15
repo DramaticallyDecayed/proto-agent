@@ -2,6 +2,7 @@ package dd.soccer.sas.nodeimplementation;
 
 import dd.sas.computation.Level;
 import dd.sas.computation.WrappingGetter;
+import dd.soccer.sas.worldentity.Point;
 
 /**
  * Created by Sergey on 10.06.2016.
@@ -9,30 +10,19 @@ import dd.sas.computation.WrappingGetter;
 public class Node_cu_abs extends dd.soccer.sas.computation.node.Node_cu_abs {
     public Node_cu_abs(Level level) {
         super(level);
-        System.out.println("CREATED");
     }
 
     @Override
     public Boolean customProcess() {
-
-        System.out.print("DO SOMETHING with ");
-        if(getPointList() != null){
-            System.out.print(getPointList().size());
-        }else{
-            System.out.print(" nothing");
+        if (getPointList() != null && getCoordinateCenterList() != null) {
+            if (!(getPointList().isEmpty() || getCoordinateCenterList().isEmpty())) {
+                for(Point point : getPointList()) {
+                    newDerivative(getCoordinateCenterList().get(0), point);
+                }
+                //System.out.println("GENERATE ABS AND INVERSE_ABS!!!");
+                return true;
+            }
         }
-        System.out.println("");
-
         return false;
-    }
-
-    public void fillBases(Class c, WrappingGetter wg) {
-        System.out.println("FILL WITH SOMETHING: " + c.getSimpleName() + " : " + wg.getObjectList().size());
-        super.fillBases(c, wg);
-    }
-
-    public void dropDerivative() {
-        System.out.println("DROP SOMETHING");
-        super.dropDerivative();
     }
 }

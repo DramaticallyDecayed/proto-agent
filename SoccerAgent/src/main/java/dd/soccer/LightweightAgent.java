@@ -84,7 +84,7 @@ public class LightweightAgent {
                             } else if (es instanceof Flag) {
                                 navigatingLandmarkList.add((Flag) es);
                             } else if (es instanceof Goal) {
-                                navigatingLandmarkList.add((Goal) es);
+                                //navigatingLandmarkList.add((Goal) es);
                             } else if (es instanceof Player) {
                                 playerList.add((Player) es);
                             } else if (es instanceof BodyState) {

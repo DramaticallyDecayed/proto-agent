@@ -1,10 +1,14 @@
 package dd.soccer.sas;
 
 import dd.sas.computation.Node;
-import dd.soccer.perception.perceptingobjects.BodyState;
-import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
+import dd.soccer.perception.perceptingobjects.*;
 import dd.soccer.sas.computation.node.*;
 import dd.soccer.sas.worldentity.*;
+import dd.soccer.sas.worldentity.Ball;
+import dd.soccer.sas.worldentity.Flag;
+import dd.soccer.sas.worldentity.Goal;
+import dd.soccer.sas.worldentity.Line;
+import dd.soccer.sas.worldentity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +30,7 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     private List<Ego> egoList;
     private List<EgoTeam> egoTeamList;
     private List<RivalTeam> rivalTeamList;
+    private List<Goal> goalList;
 
     public void setBall(dd.soccer.perception.perceptingobjects.Ball ball) {
         Ball sasBall = new BallC();
@@ -52,6 +57,8 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
             sasLandmark.setDistance(landmark.getDistance());
             sasLandmark.setX(landmark.getX());
             sasLandmark.setY(landmark.getY());
+            sasLandmark.setType(landmark.getType());
+            sasLandmark.setSpecialType(landmark.getSpecialType());
             landmarkList.add(sasLandmark);
         }
         if (subscribers.get(Node_cu_Landmark.NAME) != null) {
@@ -78,6 +85,19 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
         rivalTeamList = new ArrayList<>(1);
         rivalTeamList.add(rivalTeam);
         subscribers.get(Node_cu_RivalTeam.NAME).processNode();
+    }
+
+    public void setGoalList(dd.soccer.perception.perceptingobjects.Goal goal) {
+        Goal sasGoal = new GoalC();
+        sasGoal.setX(goal.getX());
+        sasGoal.setY(goal.getY());
+        sasGoal.setDistance(goal.getDistance());
+        sasGoal.setDirection(goal.getDirection());
+        sasGoal.setType(goal.getType());
+        sasGoal.setSpecialType(goal.getSpecialType());
+        goalList = new ArrayList<>();
+        goalList.add(sasGoal);
+        //subscribers.get(Node_cu_.NAME).processNode();
     }
 
     @Override

@@ -12,12 +12,14 @@ public class Goal extends NavigatingLandmark {
         LEFT("l"),
         RIGHT("r");
 
-        private GoalType(String type) {
+        private String type;
+
+        GoalType(String type) {
             this.type = type;
         }
 
-        private String type;
-        }
+
+    }
 
     private static Map<String, GoalType> mapper;
 
@@ -27,14 +29,15 @@ public class Goal extends NavigatingLandmark {
             mapper.put(ft.type, ft);
         }
     }
+
     private GoalType type;
 
-    public Goal(String typeString, String params){
+    public Goal(String typeString, String params) {
         super(params);
         type = mapper.get(typeString);
     }
 
-    public String toString(){
+    public String toString() {
         return "Goal " + type
                 + " on distance:  " + getDistance()
                 + " and direction: " + getDirection();

@@ -39,7 +39,7 @@ public class GenerativeComplexNodeExtender extends NodeExtender {
     }
 
     private JDefinedClass addDerivative(JDefinedClass jdc) {
-        JMethod newDerivative = jdc.method(JMod.PRIVATE, void.class, "newDerivative");
+        JMethod newDerivative = jdc.method(JMod.PUBLIC, void.class, "newDerivative");
 
         SelectQueryHolder sqh = executeQuery(SelectQueryFabric.retrieveClassDerivative(
                 ProgramGenerationUtils.makeFirsLetterLow(jdc.name()))

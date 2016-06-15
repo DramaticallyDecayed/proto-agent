@@ -73,7 +73,7 @@ public class AssociativeRefiningNodeExtender extends NodeExtender {
         if (!sqh.isEmpty()) {
             ChainedObjectProperty cop = new ChainedObjectProperty(derivativeName);
             cop = new ObjectPropertyFiller(getPsg()).fillObjectPropertyWithData(cop);
-            JMethod newDerivativeMethod = jdc.method(JMod.PRIVATE, derivativeClass, "newDerivative");
+            JMethod newDerivativeMethod = jdc.method(JMod.PUBLIC, derivativeClass, "newDerivative");
             JVar firstVar = newDerivativeMethod.param(cop.getFirstPart(), "first");
             JVar secondVar = newDerivativeMethod.param(cop.getSecondPart(), "second");
             JVar derivativeVar = newDerivativeMethod.body()

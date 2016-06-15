@@ -79,7 +79,7 @@ public class AssociativePlainNodeExtender extends NodeExtender {
 
             //---------------------------------------------------------------------
 
-            JMethod newDerivativeMethod = jdc.method(JMod.PRIVATE, relation.getPropertyClass(), "newDerivative");
+            JMethod newDerivativeMethod = jdc.method(JMod.PUBLIC, relation.getPropertyClass(), "newDerivative");
             newDerivativeMethod.param(relation.getPropertyDomain(), "domain");
             newDerivativeMethod.param(relation.getPropertyRange(), "range");
             JVar derivativeVar = newDerivativeMethod.body()
@@ -89,6 +89,7 @@ public class AssociativePlainNodeExtender extends NodeExtender {
                             .arg(domainParam)
                             .arg(rangeParam));
             initInverseRelation(jdc, relation, newDerivativeMethod, derivativeVar);
+            updateDerivativeList(jdc, derivativeName, newDerivativeMethod, derivativeVar);
             newDerivativeMethod.body()._return(derivativeVar);
         }
         return derivativeName;
@@ -99,14 +100,6 @@ public class AssociativePlainNodeExtender extends NodeExtender {
         newRelationMethod.body()
                 ._return(JExpr._new(derivativeClass));
         return newRelationMethod;
-    }
-
-
-    //TODO:move to class working with ontology objects
-    private JDefinedClass getRelationDefinerClass(SelectQueryHolder sqh) {
-        String featureName = (String) sqh.firstSlice().get("f");
-        String domainClassName = ProgramGenerationUtils.composeName(featureName);
-        return getPsg().getCm()._getClass(domainClassName);
     }
 
 }
