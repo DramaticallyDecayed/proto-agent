@@ -53,6 +53,7 @@ public class Node_cu_abs_seenby extends dd.soccer.sas.computation.node.Node_cu_a
                     double[] result = calculateCoordinates(ls);
                     ego.setX(result[0]);
                     ego.setY(result[1]);
+                    ego.setGlobalDirection(result[2]);
                     return ego;
                 }
             }
@@ -79,6 +80,7 @@ public class Node_cu_abs_seenby extends dd.soccer.sas.computation.node.Node_cu_a
         double cosa = Math.abs(x1 - x2) / d;
         double sina = Math.abs(y1 - y2) / d;
 
+
         double rx = x1 + a * cosa;
         double ry = y1 + a * sina;
 
@@ -89,7 +91,16 @@ public class Node_cu_abs_seenby extends dd.soccer.sas.computation.node.Node_cu_a
         double x = rx - h * sign * sina;
         double y = ry + h * sign * cosa;
 
-        return new double[]{x, y};
+        double angle = normalize(Math.atan2(y1 - y, x1 - x) - Math.toRadians(dir1));
+
+        return new double[]{x, y, angle};
+    }
+
+    private static double normalize(double angle) {
+        if (Math.abs(angle) > Math.PI) {
+            return (-1) * Math.signum(angle) * (2 * Math.PI) + angle;
+        }
+        return angle;
     }
 
 }
