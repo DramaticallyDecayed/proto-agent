@@ -4,10 +4,10 @@ import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Level;
 
 /**
- * Created by Sergey on 01.06.2016.
+ * Created by Sergey on 20.06.2016.
  */
-public class Node_cu_Landmark extends dd.soccer.sas.computation.node.Node_cu_Landmark {
-    public Node_cu_Landmark(Level level) {
+public class Node_cu_Player extends dd.soccer.sas.computation.node.Node_cu_Player {
+    public Node_cu_Player(Level level) {
         super(level);
     }
 

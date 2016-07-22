@@ -4,6 +4,7 @@ import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
 import dd.sas.annotations.NodeMarkup;
 import dd.sas.annotations.NodePart;
+import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Level;
 import dd.sas.computation.Node;
 import dd.translator.owlinterplay.SelectQueryFabric;
@@ -109,7 +110,7 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
         return jdc;
     }
 
-    private void addDerivativeClearRecord(JDefinedClass jdc, JFieldVar derivativeField){
+    private void addDerivativeClearRecord(JDefinedClass jdc, JFieldVar derivativeField) {
         jdc.getMethod("dropDerivative", new JType[]{})
                 .body().invoke(derivativeField, "clear");
     }
@@ -141,7 +142,7 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
         JDefinedClass donorClass = getPsg().getCm()._getClass(NameService.nodeClassName(donorName));
 
         JMethod setDonorMethod = jdc.getMethod("setDonor", new JType[]{donorClass});
-        if(setDonorMethod == null) {
+        if (setDonorMethod == null) {
             setDonorMethod = jdc.method(JMod.PUBLIC, void.class, "setDonor");
             setDonorMethod.annotate(Override.class);
             setDonorMethod.param(donorClass, "node");
@@ -226,10 +227,10 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
     }
 
     private void addCustomProcessMethod(JDefinedClass jdc) {
-        JMethod customProcessMethod = jdc.method(JMod.PUBLIC, void.class, "customProcess");
+        JMethod customProcessMethod = jdc.method(JMod.PUBLIC, CalculationResult.class, "customProcess");
         customProcessMethod.annotate(Override.class);
-        customProcessMethod.type(getPsg().getCm()._ref(Boolean.class));
-        customProcessMethod.body()._return(JExpr.lit(false));
+        customProcessMethod.body()._return(JExpr.direct("CalculationResult.UNKNOWN"));
+
     }
 
     public static String composeName(String name) {

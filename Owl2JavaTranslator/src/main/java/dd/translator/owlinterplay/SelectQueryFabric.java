@@ -158,7 +158,7 @@ public final class SelectQueryFabric {
                         "   ?nd core2ed:dependOn ?donor . " +
                         "   ?donor core2ed:hasDerivative ?cbase . " +
                         "   ?nd core2ed:hasBase ?base ." +
-                        "   ?cbase rdfs:subClassOf* ?base . "+
+                        "   ?cbase rdfs:subClassOf* ?base . " +
                         "   BIND(core2ed:FindPair(?nd, ?cbase) AS ?fbase) ." +
                         "   ?fbase rdf:type ?type ." +
                         "}"
@@ -176,7 +176,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder isAssociativeRelation(String relationName){
+    public static SelectQueryHolder isAssociativeRelation(String relationName) {
         return new SelectQueryHolder(
                 "SELECT ?r " +
                         "WHERE{ " +
@@ -289,6 +289,16 @@ public final class SelectQueryFabric {
                         "   ?nd core2ed:hasDerivative ?inverser ." +
                         "   ?r owl:inverseOf ?inverser ." +
                         "}"
+        );
+    }
+
+    public static SelectQueryHolder findDisjointRelationDerivative(String nodeName, String relationName) {
+        return new SelectQueryHolder(
+                "SELECT ?dd WHERE {" +
+                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   ?nd core2ed:hasDerivative :" + relationName + " ." +
+                        "   ?dd owl:propertyDisjointWith :" + relationName +  " ." +
+                        "} "
         );
     }
 
@@ -413,7 +423,7 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectGenericBases(String nodeName){
+    public static SelectQueryHolder collectGenericBases(String nodeName) {
         return new SelectQueryHolder(
                 "SELECT ?base ?type " +
                         "WHERE {" +

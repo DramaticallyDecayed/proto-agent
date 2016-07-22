@@ -1,5 +1,6 @@
 package dd.soccer.sas.nodeimplementation;
 
+import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Level;
 import dd.soccer.sas.worldentity.VisibleObject;
 
@@ -12,15 +13,15 @@ public class Node_cu_see extends dd.soccer.sas.computation.node.Node_cu_see {
     }
 
     @Override
-    public Boolean customProcess() {
+    public CalculationResult customProcess() {
         if (getViewerList() != null && getVisibleObjectList() != null) {
             if (!(getViewerList().isEmpty() || getVisibleObjectList().isEmpty())) {
                 for (VisibleObject visibleObject : getVisibleObjectList()) {
                     newDerivative(getViewerList().get(0), visibleObject);
                 }
-                return true;
+                return CalculationResult.POSITIVE;
             }
         }
-        return false;
+        return CalculationResult.UNKNOWN;
     }
 }

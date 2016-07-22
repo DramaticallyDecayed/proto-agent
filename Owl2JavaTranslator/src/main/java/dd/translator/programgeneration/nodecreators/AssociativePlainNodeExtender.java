@@ -40,7 +40,7 @@ public class AssociativePlainNodeExtender extends NodeExtender {
         );
         sqh.asStream()
                 .map(record -> addDerivativeCreator(jdc,
-                        (String) record[0])
+                        (String) record[0], getPsg())
                 )
                 .collect(Collectors.toList())
                 .stream()
@@ -49,56 +49,62 @@ public class AssociativePlainNodeExtender extends NodeExtender {
         return jdc;
     }
 
-    private String addDerivativeCreator(JDefinedClass jdc, String derivativeName) {
-
-        ObjectProperty relation = new ObjectProperty(derivativeName);
-        relation = new ObjectPropertyFiller(getPsg()).fillObjectPropertyWithData(relation);
-
-        JMethod newRelationMethod = addNewDerivativeMethod(jdc, derivativeName, relation.getPropertyClass());
-
-
-        //-------------------------------------------------------------------------------
-
-
+    public static String addDerivativeCreator(JDefinedClass jdc, String derivativeName, ProgramStructureGenerator psg) {
         SelectQueryHolder sqh = executeQuery(SelectQueryFabric.isAssociativeRelation(
                 ProgramGenerationUtils.makeFirsLetterLow(derivativeName))
         );
         if(!sqh.isEmpty()) {
-            JMethod creator = jdc.method(
-                    JMod.PRIVATE,
-                    relation.getPropertyClass(),
-                    "fill" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
-
-            JVar derivativeParam = creator.param(relation.getPropertyClass(), "relation");
-            JVar domainParam = creator.param(relation.getPropertyDomain(), "domain");
-            JVar rangeParam = creator.param(relation.getPropertyRange(), "range");
-
-            creator.body().invoke(derivativeParam, relation.getDomainSetMethod()).arg(domainParam);
-            creator.body().invoke(derivativeParam, relation.getRangeSetMethod()).arg(rangeParam);
-            creator.body()._return(derivativeParam);
-
-            //---------------------------------------------------------------------
-
-            JMethod newDerivativeMethod = jdc.method(JMod.PUBLIC, relation.getPropertyClass(), "newDerivative");
-            newDerivativeMethod.param(relation.getPropertyDomain(), "domain");
-            newDerivativeMethod.param(relation.getPropertyRange(), "range");
-            JVar derivativeVar = newDerivativeMethod.body()
-                    .decl(relation.getPropertyClass(), derivativeName)
-                    .init(JExpr.invoke(creator)
-                            .arg(JExpr.invoke(newRelationMethod))
-                            .arg(domainParam)
-                            .arg(rangeParam));
-            initInverseRelation(jdc, relation, newDerivativeMethod, derivativeVar);
-            updateDerivativeList(jdc, derivativeName, newDerivativeMethod, derivativeVar);
-            newDerivativeMethod.body()._return(derivativeVar);
+            newDerivative(jdc, derivativeName, psg);
+        }else{
+            ObjectProperty relation = new ObjectProperty(derivativeName);
+            relation = new ObjectPropertyFiller(psg).fillObjectPropertyWithData(relation);
+            addNewDerivativeMethod(jdc, derivativeName, relation.getPropertyClass());
         }
         return derivativeName;
     }
 
-    private JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeClass) {
-        JMethod newRelationMethod = jdc.method(JMod.PRIVATE, derivativeClass, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
-        newRelationMethod.body()
-                ._return(JExpr._new(derivativeClass));
+    public static void newDerivative(JDefinedClass jdc, String derivativeName, ProgramStructureGenerator psg) {
+        ObjectProperty relation = new ObjectProperty(derivativeName);
+        relation = new ObjectPropertyFiller(psg).fillObjectPropertyWithData(relation);
+
+        JMethod newRelationMethod = addNewDerivativeMethod(jdc, derivativeName, relation.getPropertyClass());
+
+        JMethod creator = jdc.method(
+                JMod.PRIVATE,
+                relation.getPropertyClass(),
+                "fill" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+
+        JVar derivativeParam = creator.param(relation.getPropertyClass(), "relation");
+        JVar domainParam = creator.param(relation.getPropertyDomain(), "domain");
+        JVar rangeParam = creator.param(relation.getPropertyRange(), "range");
+
+        creator.body().invoke(derivativeParam, relation.getDomainSetMethod()).arg(domainParam);
+        creator.body().invoke(derivativeParam, relation.getRangeSetMethod()).arg(rangeParam);
+        creator.body()._return(derivativeParam);
+
+        //---------------------------------------------------------------------
+
+        JMethod newDerivativeMethod = jdc.method(JMod.PUBLIC, relation.getPropertyClass(), "newDerivative");
+        newDerivativeMethod.param(relation.getPropertyDomain(), "domain");
+        newDerivativeMethod.param(relation.getPropertyRange(), "range");
+        JVar derivativeVar = newDerivativeMethod.body()
+                .decl(relation.getPropertyClass(), derivativeName)
+                .init(JExpr.invoke(creator)
+                        .arg(JExpr.invoke(newRelationMethod))
+                        .arg(domainParam)
+                        .arg(rangeParam));
+        initInverseRelation(jdc, relation, newDerivativeMethod, derivativeVar);
+        updateDerivativeList(jdc, derivativeName, newDerivativeMethod, derivativeVar);
+        newDerivativeMethod.body()._return(derivativeVar);
+    }
+
+    private static JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeClass) {
+        JMethod newRelationMethod = jdc.getMethod("new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName), new JType[]{});
+        if(newRelationMethod == null){
+            newRelationMethod = jdc.method(JMod.PRIVATE, derivativeClass, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
+            newRelationMethod.body()
+                    ._return(JExpr._new(derivativeClass));
+        }
         return newRelationMethod;
     }
 

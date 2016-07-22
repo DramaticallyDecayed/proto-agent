@@ -27,7 +27,7 @@ public enum TranslatorOntologyHandler{
      */
     private void prepareForTranslation() {
         bmi.insertIndividual(importOntologyNS, "ElaborationGeneration", "elaborationGeneration");
-        bmi.insertIndividual(importOntologyNS, "NDReification", "ndReification");
+        bmi.insertIndividual(importOntologyNS, "NDActivation", "ndActivation");
         bmi.insertIndividual(importOntologyNS, "ComputedClassGeneration", "computedClassGeneration");
     }
 

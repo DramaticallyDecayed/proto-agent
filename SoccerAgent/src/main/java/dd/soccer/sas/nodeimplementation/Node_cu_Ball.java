@@ -1,5 +1,6 @@
 package dd.soccer.sas.nodeimplementation;
 
+import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Level;
 
 /**
@@ -11,7 +12,7 @@ public class Node_cu_Ball extends dd.soccer.sas.computation.node.Node_cu_Ball {
     }
 
     @Override
-    public Boolean customProcess(){
-        return true;
+    public CalculationResult customProcess(){
+        return CalculationResult.POSITIVE;
     }
 }

@@ -25,6 +25,7 @@ public abstract class WorldEntityInterfaceGeneration extends ProgramElementGener
         interfaceNames.stream()
                 .map(name -> ProgramGenerationUtils.composeName(name))
                 .map(name -> createInterface(name))
+                .collect(Collectors.toList()).stream()
                 .map(jdc -> fillWithGetters(jdc))
                 .map(jdc -> elaborate(jdc))
                 .map(jdc -> subclass(jdc))

@@ -30,4 +30,12 @@ public class Player extends ObservableSoccerObject {
                 + " distance: " + getDistance()
                 + " direction: " + getDirection();
     }
+
+    public String getCommandName(){
+        return commandName;
+    }
+
+    public Integer getNumber(){
+        return number;
+    }
 }

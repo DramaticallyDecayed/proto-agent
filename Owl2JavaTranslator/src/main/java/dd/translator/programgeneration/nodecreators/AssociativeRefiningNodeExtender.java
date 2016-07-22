@@ -86,6 +86,18 @@ public class AssociativeRefiningNodeExtender extends NodeExtender {
             initInverseRelation(jdc, cop, newDerivativeMethod, derivativeVar);
             updateDerivativeList(jdc, derivativeName, newDerivativeMethod, derivativeVar);
             newDerivativeMethod.body()._return(derivativeVar);
+
+            treatPropertyDisjoint(jdc, derivativeName);
+        }
+    }
+
+    private void treatPropertyDisjoint(JDefinedClass jdc, String derivativeName) {
+        SelectQueryHolder sqh;
+        sqh = executeQuery(SelectQueryFabric.findDisjointRelationDerivative(
+                ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
+                derivativeName));
+        if (!sqh.isEmpty()) {
+            AssociativePlainNodeExtender.newDerivative(jdc, (String) sqh.firstSlice().get("dd"), getPsg());
         }
     }
 

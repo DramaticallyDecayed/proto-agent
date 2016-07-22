@@ -46,7 +46,7 @@ public abstract class NodeExtender extends ProgramElementGenerator {
         );
     }
 
-    public void initInverseRelation(JDefinedClass jdc, ObjectProperty cop, JMethod newDerivativeMethod, JVar derivativeVar) {
+    public static void initInverseRelation(JDefinedClass jdc, ObjectProperty cop, JMethod newDerivativeMethod, JVar derivativeVar) {
         if (cop.hasInverse()) {
             JMethod inverseRelationInit = jdc.method(JMod.PRIVATE, void.class, "init" + cop.getInverseProperty().name());
             inverseRelationInit.param(cop.getPropertyClass(), "relation");
@@ -58,7 +58,6 @@ public abstract class NodeExtender extends ProgramElementGenerator {
         SelectQueryHolder sqh = executeQuery(SelectQueryFabric.findInverseRelationDerivative(
                 ProgramGenerationUtils.makeFirsLetterLow(jdc.name()),
                 derivativeName));
-
         if (!sqh.isEmpty()) {
             ObjectProperty relation = new ObjectProperty(derivativeName);
             relation = new ObjectPropertyFiller(getPsg()).fillObjectPropertyWithData(relation);
@@ -84,7 +83,7 @@ public abstract class NodeExtender extends ProgramElementGenerator {
         return jdc;
     }
 
-    public void updateDerivativeList(JDefinedClass jdc, String derivativeName, JMethod newDerivativeMethod, JVar derivativeVar) {
+    public static void updateDerivativeList(JDefinedClass jdc, String derivativeName, JMethod newDerivativeMethod, JVar derivativeVar) {
         JFieldVar derivativeList = jdc.fields().get(derivativeName + "List");
         newDerivativeMethod.body().add(derivativeList.invoke("add").arg(derivativeVar));
     }

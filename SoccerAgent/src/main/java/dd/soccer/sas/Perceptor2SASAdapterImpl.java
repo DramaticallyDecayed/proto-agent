@@ -1,5 +1,6 @@
 package dd.soccer.sas;
 
+import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Node;
 import dd.soccer.perception.perceptingobjects.*;
 import dd.soccer.sas.computation.node.*;
@@ -31,6 +32,7 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     private List<EgoTeam> egoTeamList;
     private List<RivalTeam> rivalTeamList;
     private List<Goal> goalList;
+    private List<Player> playerList;
 
     public void setBall(dd.soccer.perception.perceptingobjects.Ball ball) {
         Ball sasBall = new BallC();
@@ -100,6 +102,21 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
         //subscribers.get(Node_cu_.NAME).processNode();
     }
 
+    public void setPlayerList(List<dd.soccer.perception.perceptingobjects.Player> players) {
+        if (!players.isEmpty()) {
+            playerList = new ArrayList<>();
+            for (dd.soccer.perception.perceptingobjects.Player player : players) {
+                Player sasPlayer = new PlayerC();
+                sasPlayer.setDistance(player.getDistance());
+                sasPlayer.setDirection(player.getDirection());
+                playerList.add(sasPlayer);
+            }
+            if (subscribers.get(Node_cu_Player.NAME) != null) {
+                subscribers.get(Node_cu_Player.NAME).processNode();
+            }
+        }
+    }
+
     @Override
     public List<Ball> getBallList() {
         return ballList;
@@ -127,7 +144,7 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
 
     @Override
     public List<Player> getPlayerList() {
-        return null;
+        return playerList;
     }
 
     @Override
@@ -166,8 +183,8 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     }
 
     @Override
-    public Boolean customProcess() {
-        return false;
+    public CalculationResult customProcess() {
+        return CalculationResult.UNKNOWN;
     }
 
     @Override

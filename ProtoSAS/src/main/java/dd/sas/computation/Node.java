@@ -42,7 +42,8 @@ public abstract class Node implements Processable, Activable {
     public void process() {
         dropDerivative();
         pullData();
-        if (customProcess()) {
+        CalculationResult result  = customProcess();
+        if (result == CalculationResult.POSITIVE || result == CalculationResult.NEGATIVE) {
             activate();
         }
         dropBases();
@@ -93,7 +94,7 @@ public abstract class Node implements Processable, Activable {
 
     abstract public void dropDerivative();
 
-    abstract public Boolean customProcess();
+    abstract public CalculationResult customProcess();
 
     abstract public String name();
 

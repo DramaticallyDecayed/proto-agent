@@ -92,6 +92,7 @@ public class LightweightAgent {
                             }
                         }
                         adapter.setNavigatingLandmarks(navigatingLandmarkList);
+                        adapter.setPlayerList(playerList);
                     }
                 }
                 long start = System.nanoTime();

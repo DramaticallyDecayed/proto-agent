@@ -1,5 +1,6 @@
 package dd.soccer.sas.nodeimplementation;
 
+import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Level;
 
 /**
@@ -13,12 +14,12 @@ public class Node_cu_CoordinateCenter extends dd.soccer.sas.computation.node.Nod
         super(level);
     }
 
-    public Boolean customProcess(){
+    public CalculationResult customProcess(){
         if(!introduced){
             introduced = !introduced;
-            return true;
+            return CalculationResult.POSITIVE;
         }
-        return false;
+        return CalculationResult.UNKNOWN;
     }
 
 }

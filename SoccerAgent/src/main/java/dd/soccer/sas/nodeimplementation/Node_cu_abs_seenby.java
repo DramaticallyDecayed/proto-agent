@@ -1,5 +1,6 @@
 package dd.soccer.sas.nodeimplementation;
 
+import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Level;
 import dd.soccer.sas.objectproperty.Abs;
 import dd.soccer.sas.objectproperty.Seenby;
@@ -21,7 +22,7 @@ public class Node_cu_abs_seenby extends dd.soccer.sas.computation.node.Node_cu_a
 
 
     @Override
-    public Boolean customProcess() {
+    public CalculationResult customProcess() {
         if (getAbsList() != null && getSeenbyList() != null) {
             if (!(getAbsList().isEmpty() || getSeenbyList().isEmpty())) {
                 Ego ego = (Ego) getSeenbyList().get(0).getRange();
@@ -36,11 +37,11 @@ public class Node_cu_abs_seenby extends dd.soccer.sas.computation.node.Node_cu_a
                     seenby.setRange(newEgo);
                     //TODO: think about the used approach.. really we do not need two relations but only its domain and range
                     newDerivative(abs, seenby);
-                    return true;
+                    return CalculationResult.POSITIVE;
                 }
             }
         }
-        return false;
+        return CalculationResult.UNKNOWN;
     }
 
     private Ego calculateAbsoluteCoordinates(Ego ego, List<Landmark> landmarks) {
