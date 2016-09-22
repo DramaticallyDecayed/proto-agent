@@ -63,6 +63,9 @@ public class SelectQueryHolder extends QueryHolder implements Iterable<Map<Strin
 
     private Object decodeLiteralType(Literal literal) {
         String dataTypeURI = literal.getDatatypeURI();
+        if(dataTypeURI == null){
+            return literal.getString();
+        }
         if (dataTypeURI.contains("string")) {
             return literal.getString();
         } else if (dataTypeURI.contains("integer")) {

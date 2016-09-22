@@ -297,7 +297,7 @@ public final class SelectQueryFabric {
                 "SELECT ?dd WHERE {" +
                         "   BIND(:" + nodeName + " AS ?nd) ." +
                         "   ?nd core2ed:hasDerivative :" + relationName + " ." +
-                        "   ?dd owl:propertyDisjointWith :" + relationName +  " ." +
+                        "   ?dd owl:propertyDisjointWith :" + relationName + " ." +
                         "} "
         );
     }
@@ -431,6 +431,68 @@ public final class SelectQueryFabric {
                         "   ?nd core2ed:implement ?cu ." +
                         "   ?cu core2ed:hasBase ?base ." +
                         "   ?base rdf:type ?type ." +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectOutPropertyFlows(String nodeName) {
+        return new SelectQueryHolder("SELECT ?d ?p ?r " +
+                "WHERE { " +
+                "    BIND(:" + nodeName + " AS ?node) ." +
+                "   ?node core2ed:outFlow ?outFlow ." +
+                "   ?outFlow core2ed:domainPropertyOfFlow ?d ." +
+                "   ?outFlow core2ed:rangePropertyOfFlow ?r ." +
+                "   ?outFlow core2ed:propertyOfFlow ?p ." +
+                "}"
+        );
+    }
+
+    public static SelectQueryHolder collectOutObjectFlows(String nodeName) {
+        return new SelectQueryHolder("SELECT ?obj " +
+                "WHERE { " +
+                "   BIND(:" + nodeName + " AS ?node) ." +
+                "   ?node core2ed:outFlow ?outFlow ." +
+                "   ?outFlow core2ed:objectOfFlow ?obj ." +
+                "}");
+    }
+
+    public static SelectQueryHolder collectDonorFlows(String nodeName, String donorName) {
+        return new SelectQueryHolder(
+                "SELECT DISTINCT ?methodName " +
+                        "WHERE{ " +
+                        "   BIND(:" + nodeName + " AS ?node) . " +
+                        "   ?node core2ed:outFlow ?outFlow . " +
+                        "   ?outFlow core2ed:inFlow ?inFlow . " +
+                        "   :" + donorName + " core2ed:outFlow ?inFlow ." +
+                        "   OPTIONAL{" +
+                        "       ?inFlow core2ed:domainPropertyOfFlow ?d ." +
+                        "       ?inFlow core2ed:rangePropertyOfFlow ?r ." +
+                        "       ?inFlow core2ed:propertyOfFlow ?p ." +
+                        "   }" +
+                        "   OPTIONAL{" +
+                        "       ?inFlow core2ed:objectOfFlow ?o ." +
+                        "   }" +
+                        "   BIND(" +
+                        "       IF(EXISTS{?inFlow a core2ed:ObjectFlow} ," +
+                        "           afn:localname(?o)," +
+                        "           fn:concat(afn:localname(?d),\"_\", afn:localname(?p), \"_\",afn:localname(?r)))" +
+                        "           AS ?methodName" +
+                        "   )" +
+                        "}"
+        );
+    }
+
+    public static SelectQueryHolder collectNodeInFlows(String nodeName){
+        return new SelectQueryHolder(
+                "SELECT DISTINCT ?inFlow ?entity ?type " +
+                        "WHERE {" +
+                        "    BIND(:" + nodeName + " AS ?node) ." +
+                        "   ?node core2ed:outFlow ?outFlow ." +
+                        "   ?outFlow core2ed:inFlow ?inFlow ." +
+                        "   {?inFlow core2ed:objectOfFlow ?entity}" +
+                        "   UNION" +
+                        "   {?inFlow core2ed:propertyOfFlow ?entity}" +
+                        "   ?entity rdf:type ?type ." +
                         "}"
         );
     }

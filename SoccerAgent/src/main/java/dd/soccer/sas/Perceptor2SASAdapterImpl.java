@@ -109,6 +109,8 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
                 Player sasPlayer = new PlayerC();
                 sasPlayer.setDistance(player.getDistance());
                 sasPlayer.setDirection(player.getDirection());
+                sasPlayer.setNumber(player.getNumber());
+                sasPlayer.setTeamName(player.getCommandName());
                 playerList.add(sasPlayer);
             }
             if (subscribers.get(Node_cu_Player.NAME) != null) {

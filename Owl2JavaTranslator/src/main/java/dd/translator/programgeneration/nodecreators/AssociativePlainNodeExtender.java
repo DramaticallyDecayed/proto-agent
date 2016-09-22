@@ -2,6 +2,9 @@ package dd.translator.programgeneration.nodecreators;
 
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
+import dd.sas.annotations.NodeFieldMarkup;
+import dd.sas.annotations.NodeMethodMarkUp;
+import dd.sas.annotations.NodePart;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
 import dd.translator.programgeneration.*;
@@ -12,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 20.05.2016.
  */
-public class AssociativePlainNodeExtender extends NodeExtender {
+public class AssociativePlainNodeExtender extends AssociativeExtender {
 
     public AssociativePlainNodeExtender(ProgramStructureGenerator psg) {
         super(psg);
@@ -31,6 +34,7 @@ public class AssociativePlainNodeExtender extends NodeExtender {
         elementNames.stream()
                 .map(name -> getNodeClass(name))
                 .map(jdc -> addCreator(jdc))
+                .map(jdc -> addDerivativeGetter(jdc))
                 .collect(Collectors.toList());
     }
 
@@ -53,9 +57,9 @@ public class AssociativePlainNodeExtender extends NodeExtender {
         SelectQueryHolder sqh = executeQuery(SelectQueryFabric.isAssociativeRelation(
                 ProgramGenerationUtils.makeFirsLetterLow(derivativeName))
         );
-        if(!sqh.isEmpty()) {
+        if (!sqh.isEmpty()) {
             newDerivative(jdc, derivativeName, psg);
-        }else{
+        } else {
             ObjectProperty relation = new ObjectProperty(derivativeName);
             relation = new ObjectPropertyFiller(psg).fillObjectPropertyWithData(relation);
             addNewDerivativeMethod(jdc, derivativeName, relation.getPropertyClass());
@@ -100,7 +104,7 @@ public class AssociativePlainNodeExtender extends NodeExtender {
 
     private static JMethod addNewDerivativeMethod(JDefinedClass jdc, String derivativeName, JDefinedClass derivativeClass) {
         JMethod newRelationMethod = jdc.getMethod("new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName), new JType[]{});
-        if(newRelationMethod == null){
+        if (newRelationMethod == null) {
             newRelationMethod = jdc.method(JMod.PRIVATE, derivativeClass, "new" + ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
             newRelationMethod.body()
                     ._return(JExpr._new(derivativeClass));

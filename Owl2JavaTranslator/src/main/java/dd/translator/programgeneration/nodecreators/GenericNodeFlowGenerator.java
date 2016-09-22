@@ -1,4 +1,4 @@
-package dd.translator.programgeneration;
+package dd.translator.programgeneration.nodecreators;
 
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
@@ -10,17 +10,18 @@ import dd.sas.computation.Level;
 import dd.sas.computation.Node;
 import dd.translator.owlinterplay.SelectQueryFabric;
 import dd.translator.owlinterplay.TranslatorOntologyHandler;
+import dd.translator.programgeneration.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by Sergey on 06.06.2016.
+ * Created by Sergey on 29.08.2016.
  */
-public class GenericNodeGenerator extends ProgramElementGenerator {
+public class GenericNodeFlowGenerator extends ProgramElementGenerator {
 
-    public GenericNodeGenerator(ProgramStructureGenerator psg) {
+    public GenericNodeFlowGenerator(ProgramStructureGenerator psg) {
         super(psg);
     }
 
@@ -52,11 +53,53 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
     }
 
     private JDefinedClass addGenericBaseGetters(JDefinedClass jdc) {
-        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.collectGenericBases(
-                ProgramGenerationUtils.makeFirsLetterLow(jdc.name()))
-        );
-        sqh.asStream().forEach(result -> addGenericBaseGetter(jdc, (String) result[0], (String) result[1]));
+        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.collectNodeInFlows(
+                ProgramGenerationUtils.makeFirsLetterLow(jdc.name())));
+        if (!sqh.isEmpty()) {
+            sqh
+                    .asStream()
+                    .forEach(result -> addInFlowGetter(
+                            ((String) result[0]).replace("df_", ""),
+                            (String) result[1],
+                            (String) result[2],
+                            jdc)
+                    );
+        } else {
+            //leave for backward compatibility for those entities that are not moved to new computation concept
+            sqh = executeQuery(SelectQueryFabric.collectGenericBases(
+                    ProgramGenerationUtils.makeFirsLetterLow(jdc.name()))
+            );
+            sqh.asStream()
+                    .forEach(result -> addGenericBaseGetter(jdc, (String) result[0], (String) result[1]));
+        }
         return jdc;
+    }
+
+    private void addInFlowGetter(
+            String inFlowName,
+            String entityName,
+            String type,
+            JDefinedClass jdc
+    ) {
+        JDefinedClass entityGenericClass = getGenericEntityClass(entityName, type);
+        JClass returnCommonClass = getPsg().getCm().ref(List.class);
+        JClass returnFinalClass = returnCommonClass.narrow(entityGenericClass);
+
+        JMethod genericBaseGetter = jdc.method(
+                JMod.PUBLIC,
+                returnFinalClass,
+                "get" + inFlowName + "List");
+
+        genericBaseGetter.annotate(NodeMethodMarkUp.class).param("present", NodePart.BASE.getValue());
+
+        genericBaseGetter
+                .body()
+                ._return(JExpr.cast(returnFinalClass,
+                        JExpr.invoke(
+                                JExpr.invoke("getBaseMapN"), "get")
+                                .arg(inFlowName)
+                        )
+                );
     }
 
     private void addGenericBaseGetter(JDefinedClass jdc, String genericBaseName, String genericBaseType) {
@@ -118,7 +161,7 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
     }
 
     private JDefinedClass addBases(JDefinedClass jdc) {
-        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.collectNodeGenericBases(
+        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.collectNodeBases(
                 ProgramGenerationUtils.makeFirsLetterLow(jdc.name()))
         );
         if (!sqh.isEmpty()) {
@@ -126,8 +169,8 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
                     .map(record -> addBase(jdc,
                             (String) record[0],
                             (String) record[1],
-                            (String) record[2],
-                            (String) record[3])
+                            (String) record[2]
+                            )
                     )
                     .collect(Collectors.toList());
         }
@@ -137,7 +180,6 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
     private JDefinedClass addBase(
             JDefinedClass jdc,
             String donorName,
-            String entityGenericName,
             String entityConcreteName,
             String entityType) {
 
@@ -150,18 +192,41 @@ public class GenericNodeGenerator extends ProgramElementGenerator {
             setDonorMethod.param(donorClass, "node");
         }
 
-        JDefinedClass entityGenericClass = getGenericEntityClass(entityGenericName, entityType);
+        JDefinedClass entityClass = getGenericEntityClass(entityConcreteName, entityType);
 
         JDefinedClass oxidizingInterface = getPsg().getCm()._getClass(donorClass.fullName() + "Oxidizing");
         jdc._implements(oxidizingInterface);
 
 
+        SelectQueryHolder sqh = executeQuery(SelectQueryFabric.collectDonorFlows(
+                ProgramGenerationUtils.makeFirsLetterLow(jdc.name()), donorName)
+        );
+        if (!sqh.isEmpty()) {
+            fillDonorFlows(sqh, setDonorMethod);
+        } else {
+            //leave to be compatible with those nodes that are not covered with flow
+            setDonorMethod
+                    .body()
+                    .invoke("fillDonor")
+                    .arg(entityClass.dotclass())
+                    .arg(JExpr.direct("node::get" + ProgramGenerationUtils.makeFirsLetterUp(entityConcreteName) + "List"));
+        }
+        return jdc;
+    }
+
+    private void fillDonorFlows(
+            SelectQueryHolder sqh,
+            JMethod setDonorMethod
+    ) {
+        sqh.getDisk("methodName").stream().forEach(x -> fillDonorFlow((String) x, setDonorMethod));
+    }
+
+    private void fillDonorFlow(String donorFlowName, JMethod setDonorMethod) {
         setDonorMethod
                 .body()
                 .invoke("fillDonor")
-                .arg(entityGenericClass.dotclass())
-                .arg(JExpr.direct("node::get" + ProgramGenerationUtils.makeFirsLetterUp(entityConcreteName) + "List"));
-        return jdc;
+                .arg(donorFlowName)
+                .arg(JExpr.direct("node::get" + donorFlowName + "List"));
     }
 
     private JDefinedClass getGenericEntityClass(String entityGenericName, String entityType) {

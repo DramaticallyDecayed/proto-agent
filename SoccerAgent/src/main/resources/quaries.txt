@@ -1,0 +1,84 @@
+=========================================================================================
+Alternative function banch for checking on base instansiation
+
+CountBaseClasses
+SELECT COUNT(?base)
+WHERE {
+    ?arg :base ?base .
+}
+
+CountBases
+SELECT COUNT(?base)
+WHERE {
+    ?arg :base ?base .
+    FILTER (:CountForBases(?base) > 0) .
+}
+
+CountForBases
+SELECT COUNT(?i)
+WHERE {
+    ?sc (rdfs:subClassOf)* ?arg .
+    ?i a ?sc .
+}
+
+FindBindedCalcDep
+SELECT ?calc
+WHERE {
+    ?calc a :CalculationDependency .
+    BIND (:CountBases(?calc) AS ?x1) .
+    BIND (:CountBaseClasses(?calc) AS ?x2) .
+    FILTER (?x1 = ?x2) .
+}
+
+CalculationDependecy old rule: create node if all base dependencies are satisfied
+CONSTRUCT {
+    ?p a :Node .
+    ?p :base ?bc .
+    ?p :derivative ?d .
+}
+WHERE {
+    {
+        SELECT ?calc
+        WHERE {
+            ?calc a :CalculationDependency .
+            BIND (:CountBases(?calc) AS ?x1) .
+            BIND (:CountBaseClasses(?calc) AS ?x2) .
+            FILTER (?x1 = ?x2) .
+        }
+    } .
+    ?calc :base ?bc .
+    ?calc :derivative ?d .
+    ?sc (rdfs:subClassOf)* ?bc .
+    ?bi a ?sc .
+    BIND (afn:namespace(?sc) AS ?ns) .
+    BIND (IRI(fn:concat(?ns, fn:concat("node_", afn:localname(?calc)))) AS ?p) .
+    FILTER NOT EXISTS {
+        ?en a :Node .
+        ?en :base ?sc .
+    } .
+}
+
+CalculationDependency rule: activates node related to calculation dependencies if all its base dependencies are satisfied
+CONSTRUCT {
+    ?node :isNodeActive true .
+}
+WHERE {
+    {
+        SELECT ?calc
+        WHERE {
+            ?calc a :CalculationDependency .
+            BIND (:CountBases(?calc) AS ?x1) .
+            BIND (:CountBaseClasses(?calc) AS ?x2) .
+            FILTER (?x1 = ?x2) .
+        }
+    } .
+    ?calc :node ?node .
+}
+===========================================================================================
+SELECT MAX(?id)
+WHERE {
+	BIND(:node_CalculationDependency_2 AS ?node) . 
+	?node :base ?base .
+	?nodeBase :derivative ?base .
+	?nodeBase :levelId ?id .
+}

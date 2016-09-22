@@ -2,7 +2,7 @@ package dd.translator.programgeneration;
 
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
-import dd.sas.annotations.NodeMarkup;
+import dd.sas.annotations.NodeFieldMarkup;
 import dd.sas.annotations.NodePart;
 import dd.sas.computation.Level;
 import dd.sas.computation.Node;
@@ -62,7 +62,7 @@ public class NodeGenerator extends ProgramElementGenerator {
 
     private JDefinedClass addDerivative(JDefinedClass jdc, String name, String type) {
         JFieldVar derivativeField = generateBaseField(jdc, name, type);
-        derivativeField.annotate(NodeMarkup.class).param("present", NodePart.DERIVATIVE.getValue());
+        derivativeField.annotate(NodeFieldMarkup.class).param("present", NodePart.DERIVATIVE.getValue());
         ProgramGenerationUtils.addGetter(
                 jdc,
                 derivativeField.name(),
@@ -90,9 +90,9 @@ public class NodeGenerator extends ProgramElementGenerator {
 
     private JDefinedClass addBase(JDefinedClass jdc, String donor, String name, String type) {
         JFieldVar baseField = generateBaseField(jdc, name, type);
-        baseField.annotate(NodeMarkup.class).param("present", NodePart.BASE.getValue());
+        baseField.annotate(NodeFieldMarkup.class).param("present", NodePart.BASE.getValue());
         JFieldVar donorField = generateDonorField(jdc, donor);
-        donorField.annotate(NodeMarkup.class).param("present", NodePart.DONOR.getValue());
+        donorField.annotate(NodeFieldMarkup.class).param("present", NodePart.DONOR.getValue());
         generateDonorPullStage(jdc, donorField, baseField);
         return jdc;
     }

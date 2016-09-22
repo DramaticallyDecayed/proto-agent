@@ -1,0 +1,69 @@
+CONSTRUCT{
+	?node core2ed:basedOnFlow ?donorFlowf .
+	?node core2ed:basedOnFlow ?donorFlows .
+	?df a core2ed:ConfluentFlow .
+	?df core2ed:propertyOfFlow ?derivative .
+	?df core2ed:domainPropertyOfFlow ?dfD .
+	?df core2ed:rangePropertyOfFlow ?dsR .
+	?df core2ed:firstAxiomFlow ?donorFlowf .
+	?df core2ed:secondAxiomFlow ?donorFlows .
+	?node core2ed:deriveOutFlow ?df .
+}
+WHERE{
+##chose appropriate node
+	?node a core2ed:Node .
+	?node core2ed:implement ?cu .
+    ?cu a core2ed:AssociativeRefiningCU .
+##get two types of bases
+	?node core2ed:hasBase ?basef .
+	?node core2ed:hasBase ?bases .
+##align bases with axiom construction
+	?node core2ed:hasDerivative ?derivative .
+	?derivative owl:propertyChainAxiom ?axiom .
+	?axiom rdf:first ?basef .
+	?axiom rdf:rest/rdf:first ?bases .
+##find all in confluent flows for the first part of the axiom
+	?node core2ed:dependOn ?donorf .
+	?donorf core2ed:deriveOutFlow ?donorFlowf .
+	?donorFlowf a/rdfs:subClassOf* core2ed:ConfluentFlow .
+	?donorFlowf core2ed:propertyOfFlow ?basef .
+##find all in confluent flows for the second part of the axiom
+  ?node core2ed:dependOn ?donors .
+	?donorFlows a/rdfs:subClassOf* core2ed:ConfluentFlow .
+	?donors core2ed:deriveOutFlow ?donorFlows .
+	?donorFlows core2ed:propertyOfFlow ?bases .
+##check intersection
+	?donorFlowf core2ed:rangePropertyOfFlow ?intersection .
+	?donorFlows core2ed:domainPropertyOfFlow ?intersection .
+## constuct elements
+	?donorFlowf core2ed:domainPropertyOfFlow ?dfD .
+	?donorFlows core2ed:rangePropertyOfFlow ?dsR .
+	BIND (afn:namespace(?node) AS ?ns) .
+	BIND (IRI(fn:concat(?ns, "df_", afn:localname(?dfD), "_", afn:localname(?derivative), "_", afn:localname(?dsR))) AS ?df) .
+	MINUS{
+		?derivative rdfs:domain ?dfD .
+		?derivative rdfs:range ?dsR .
+	}
+}
+=====================================================
+# #construct main outputflow of the node
+CONSTRUCT {
+    ?out_df a :MainFlow .
+    ?out_df :propertyOfFlow ?derivative .
+    ?out_df :domainPropertyOfFlow ?domain .
+    ?out_df :rangePropertyOfFlow ?range .
+    ?node :outFlow ?out_df .
+}
+WHERE {
+    ?node a :Node .
+    ?node :implement ?cu .
+    ?cu a :AssociativePlainCU .
+    ?node :hasDerivative ?derivative .
+    ?derivative rdfs:domain ?domain .
+    ?derivative rdfs:range ?range .
+    MINUS {
+        ?domain ?derivative ?range .
+    } .
+    BIND (afn:namespace(?node) AS ?ns) .
+    BIND (IRI(fn:concat(?ns, "df_", afn:localname(?domain), "_", afn:localname(?derivative), "_", afn:localname(?range))) AS ?out_df) .
+}

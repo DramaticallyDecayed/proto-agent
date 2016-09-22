@@ -17,7 +17,13 @@ public abstract class Node implements Processable, Activable {
 
     private DerivativeActivable activator;
     private Map<Class, List<WrappingGetter>> donorMap = new HashMap<>();
+
+    private Map<String, List<WrappingGetter>> donorMapN = new HashMap<>();
+
     private Map<Class, List<? extends WorldEntity>> baseMap = new HashMap<>();
+    private Map<String, List<? extends WorldEntity>> baseMapN = new HashMap<>();
+
+    private Map<String, List<? extends WorldEntity>> derivativeMap = new HashMap<>();
     private List<Node> subscribers = new ArrayList<>();
 
     /**
@@ -72,6 +78,13 @@ public abstract class Node implements Processable, Activable {
                 fillBases(c, wg);
             }
         }
+
+        //new version with data flow differentiation
+        for (String s : donorMapN.keySet()) {
+            for (WrappingGetter wg : donorMapN.get(s)) {
+                fillBases(s, wg);
+            }
+        }
     }
 
     public void fillDonor(Class c, WrappingGetter wg) {
@@ -81,11 +94,25 @@ public abstract class Node implements Processable, Activable {
         donorMap.get(c).add(wg);
     }
 
+    public void fillDonor(String s, WrappingGetter wg) {
+        if (donorMapN.get(s) == null) {
+            donorMapN.put(s, new ArrayList<>());
+        }
+        donorMapN.get(s).add(wg);
+    }
+
     public void fillBases(Class c, WrappingGetter wg) {
         if (baseMap.get(c) == null) {
             baseMap.put(c, new ArrayList<>());
         }
         baseMap.get(c).addAll(wg.getObjectList());
+    }
+
+    public void fillBases(String s, WrappingGetter wg) {
+        if (baseMapN.get(s) == null) {
+            baseMapN.put(s, new ArrayList<>());
+        }
+        baseMapN.get(s).addAll(wg.getObjectList());
     }
 
     public void dropBases(){
@@ -129,4 +156,11 @@ public abstract class Node implements Processable, Activable {
         return baseMap;
     }
 
+    public Map<String, List<? extends WorldEntity>> getBaseMapN() {
+        return baseMapN;
+    }
+
+    public Map<String, List<? extends WorldEntity>> getDerivativeMap() {
+        return derivativeMap;
+    }
 }

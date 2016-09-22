@@ -60,7 +60,7 @@ public final class ProgramGenerationUtils {
             String paramName,
             JType paramType) {
         JFieldVar paramField = c.field(JMod.PRIVATE, paramType, paramName);
-        addGetter(c, paramName, paramType, JMod.PUBLIC, paramField );
+        addGetter(c, paramName, paramType, JMod.PUBLIC, paramField);
         createFieldWithSetter(c, paramName, paramType, paramField);
         return paramField;
     }
@@ -102,9 +102,11 @@ public final class ProgramGenerationUtils {
                 ._return(paramField);
     }
 
-    public static void addGetter(JDefinedClass getterOwner, String getterName, JType getterType, int aPublic, JFieldVar paramField) {
-        getterOwner.method(aPublic, getterType, "get" + makeFirsLetterUp(getterName)).body()
+    public static JMethod addGetter(JDefinedClass getterOwner, String getterName, JType getterType, int aPublic, JFieldVar paramField) {
+        JMethod getter = getterOwner.method(aPublic, getterType, "get" + makeFirsLetterUp(getterName));
+        getter.body()
                 ._return(paramField);
+        return getter;
     }
 
     public static JDefinedClass createClass(JCodeModel jcm, String className) {

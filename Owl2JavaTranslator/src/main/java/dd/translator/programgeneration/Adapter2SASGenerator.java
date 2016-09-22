@@ -2,7 +2,7 @@ package dd.translator.programgeneration;
 
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.SelectQueryHolder;
-import dd.sas.annotations.NodeMarkup;
+import dd.sas.annotations.NodeFieldMarkup;
 import dd.sas.annotations.NodePart;
 import dd.sas.computation.Level;
 import dd.sas.computation.Node;
@@ -64,7 +64,7 @@ public class Adapter2SASGenerator extends ProgramElementGenerator {
                 nodeFieldName,
                 adapter);
         JFieldVar donorField = nodeClass.fields().get(nodeFieldName);
-        donorField.annotate(NodeMarkup.class).param("present", NodePart.DONOR.getValue());
+        donorField.annotate(NodeFieldMarkup.class).param("present", NodePart.DONOR.getValue());
         return donorField;
     }
 

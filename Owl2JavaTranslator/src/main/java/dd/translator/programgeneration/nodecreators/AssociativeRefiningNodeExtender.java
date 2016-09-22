@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Sergey on 21.05.2016.
  */
-public class AssociativeRefiningNodeExtender extends NodeExtender {
+public class AssociativeRefiningNodeExtender extends AssociativeExtender {
 
     public AssociativeRefiningNodeExtender(ProgramStructureGenerator psg) {
         super(psg);
@@ -33,6 +33,7 @@ public class AssociativeRefiningNodeExtender extends NodeExtender {
         elementNames.stream()
                 .map(name -> getNodeClass(name))
                 .map(jdc -> addCreator(jdc))
+                .map(jdc -> addDerivativeGetter(jdc))
                 .collect(Collectors.toList());
     }
 
