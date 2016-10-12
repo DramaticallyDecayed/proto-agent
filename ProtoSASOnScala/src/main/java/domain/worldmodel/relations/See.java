@@ -1,6 +1,8 @@
-package domain.worldmodel;
+package domain.worldmodel.relations;
 
 import dd.sas.pipeline.worldmodel.Relation;
+import domain.worldmodel.worldobjects.Viewer;
+import domain.worldmodel.worldobjects.VisibleObject;
 
 /**
  * Created by Sergey on 02.10.2016.

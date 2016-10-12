@@ -6,6 +6,7 @@ import dd.sas.pipeline.worldmodel.Relation
 import domain._
 import domain.calculation.structure.nodes.{Node_cu_ball, Node_cu_ego, Node_cu_player, Node_cu_see}
 import domain.worldmodel._
+import domain.worldmodel.worldobjects._
 
 def expression[D <: Viewer, R <: VisibleObject](d: D, r: R): Relation[D, R] = {
   d compute()

@@ -1,10 +1,8 @@
 package domain.calculation.processors;
 
 import dd.sas.pipeline.calculation.processors.associativeprocessors.AssociativeProcessor;
-import dd.sas.pipeline.calculation.structures.nodes.AdapterFunction2;
-import domain.worldmodel.*;
-import scala.Function1;
-import scala.Function2;
+import domain.worldmodel.relations.See;
+import domain.worldmodel.worldobjects.*;
 
 import java.util.function.BiFunction;
 
@@ -16,10 +14,9 @@ public class SeeProcessor extends AssociativeProcessor<Viewer, VisibleObject> {
     @Override
     public <D extends Viewer, R extends VisibleObject>
     See<D, R> expression(D d, R r) {
-        System.out.println(d + " " + r);
+        System.out.println(this.getClass().getSimpleName() + " " + d + " " + r);
         return new See<>(d, r);
     }
-
 
     public BiFunction<Ego, Ball, See<Ego, Ball>> ego_see_ball() {
         return (Ego ego, Ball ball) -> expression(ego, ball);
@@ -28,7 +25,5 @@ public class SeeProcessor extends AssociativeProcessor<Viewer, VisibleObject> {
     public BiFunction<Ego, Player, See<Ego, Player>> ego_see_player() {
         return (Ego ego, Player player) -> expression(ego, player);
     }
-
-
 
 }
