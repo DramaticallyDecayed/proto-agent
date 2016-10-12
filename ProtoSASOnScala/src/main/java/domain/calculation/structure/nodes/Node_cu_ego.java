@@ -11,7 +11,7 @@ import domain.worldmodel.Ego;
 public class Node_cu_ego extends InitialGenerativeNode<Ego> {
     public Node_cu_ego(Level level) {
         super(level);
-        setOutFlow(new InitialGenerativeFlow<>(this, () -> new Ego()));
+        setOutFlow(new InitialGenerativeFlow<>(this));
     }
 
 }

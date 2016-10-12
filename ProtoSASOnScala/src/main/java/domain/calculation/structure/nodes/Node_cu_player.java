@@ -12,6 +12,6 @@ public class Node_cu_player extends InitialGenerativeNode<Player> {
 
     public Node_cu_player(Level level) {
         super(level);
-        setOutFlow(new InitialGenerativeFlow<>(this, () -> new Player()));
+        setOutFlow(new InitialGenerativeFlow<>(this));
     }
 }

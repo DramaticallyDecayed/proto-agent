@@ -28,7 +28,7 @@ public class Node_cu_see extends Node {
 
     public void setDonor(Node_cu_ego node) {
         ego_see_ball_flow.setDomainFlow(node.getOutFlow());
-        ego_see_ball_flow.setDomainFlow(node.getOutFlow());
+        ego_see_player_flow.setDomainFlow(node.getOutFlow());
     }
 
     public void setDonor(Node_cu_ball node) {

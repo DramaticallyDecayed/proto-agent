@@ -1,6 +1,7 @@
 package dd.sas.pipeline.calculation.structures.nodes.generativeNodes
 
 import dd.sas.pipeline.calculation.structures.Level
+import dd.sas.pipeline.calculation.structures.flows.Flow
 import dd.sas.pipeline.calculation.structures.flows.generativeflows.{InitialGenerativeFlow, ObjectFlow}
 import dd.sas.pipeline.calculation.structures.nodes.Node
 import dd.sas.pipeline.worldmodel.WorldObject
@@ -11,9 +12,7 @@ import dd.sas.pipeline.worldmodel.WorldObject
 class InitialGenerativeNode[WO <: WorldObject]
 (level: Level) extends Node(level) {
 
-  private var initialObjectFlow: ObjectFlow[WO] = _
+  def setOutFlow(initialObjectFlow: InitialGenerativeFlow[WO]) = addUpdatableFlows(initialObjectFlow)
 
-  def getOutFlow = initialObjectFlow
-
-  def setOutFlow(initialObjectFlow: ObjectFlow[WO]) = this.initialObjectFlow = initialObjectFlow
+  def getOutFlow():InitialGenerativeFlow[WO] = getOutFlow(0).asInstanceOf[InitialGenerativeFlow[WO]]
 }

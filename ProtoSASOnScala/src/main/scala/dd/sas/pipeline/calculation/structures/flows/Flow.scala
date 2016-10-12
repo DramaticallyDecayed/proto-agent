@@ -3,26 +3,27 @@ package dd.sas.pipeline.calculation.structures.flows
 import dd.sas.pipeline.calculation.structures.nodes.Node
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
   * Created by Sergey on 24.09.2016.
   */
-abstract class Flow(node: Node) {
+abstract class Flow(node: Node){
 
-  private var toBeUpdated: Boolean = false
-  private var acceptors = List[(Flow) => Unit]()
+  private var toBeProcessed: Boolean = false
+  private var acceptors = ListBuffer[(Flow) => Unit]()
 
   var donors = mutable.HashMap[Flow, (Flow) => Unit]()
 
-  def process: Unit = {
+  def process(): Unit = {
     customProcess
-    toBeUpdated = false
+    toBeProcessed = false
   }
 
   def customProcess: Unit
 
   def subscribe(acceptor: (Flow) => Unit): Unit = {
-    acceptors ::= acceptor
+    acceptors += acceptor
   }
 
   def resubcribe() = {
@@ -32,12 +33,12 @@ abstract class Flow(node: Node) {
 
   def inform() = {
     acceptors.foreach(x => x(this))
-    acceptors = List[(Flow) => Unit]()
+    acceptors.clear()
   }
 
   def setToBeUpdated(): Unit = {
-    if (!toBeUpdated) {
-      toBeUpdated = true
+    if (!toBeProcessed) {
+      toBeProcessed = true
       node.addUpdatableFlows(this)
     }
   }
