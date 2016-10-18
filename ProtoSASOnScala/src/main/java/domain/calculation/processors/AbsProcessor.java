@@ -15,13 +15,17 @@ public class AbsProcessor extends AssociativeProcessor<CoordinateCenter, Point> 
 
     @Override
     public <D extends CoordinateCenter, R extends Point>
-    Abs<D, R> expression(D d, R r) {
-        System.out.println(this.getClass().getSimpleName() + " " + d + " " + r);
+    Abs<D, R> customCommonExpression(D d, R r) {
+        System.out.println(this.getClass().getSimpleName()
+                + " "
+                + d.getClass().getSimpleName()
+                + " "
+                + r.getClass().getSimpleName());
         return new Abs<>(d, r);
     }
 
-    public BiFunction<CoordinateCenter, Landmark, Abs<CoordinateCenter, Landmark>> ball_seenby_ego() {
-        return (CoordinateCenter coordinateCenter, Landmark landmark) -> expression(coordinateCenter, landmark);
+    public BiFunction<CoordinateCenter, Landmark, Abs<CoordinateCenter, Landmark>> coordinatecenter_abs_landmark() {
+        return (CoordinateCenter coordinateCenter, Landmark landmark) -> customCommonExpression(coordinateCenter, landmark);
     }
 
 

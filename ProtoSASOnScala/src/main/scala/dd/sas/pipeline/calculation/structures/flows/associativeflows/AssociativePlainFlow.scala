@@ -15,19 +15,29 @@ class AssociativePlainFlow[D <: WorldObject, R <: WorldObject, S <: Relation[D, 
 
   private var domainFlow: ObjectFlow[D] = _
   private var rangeFlow: ObjectFlow[R] = _
-
   private var result: List[S] = _
+
+  private var customProcessVar: () => Unit = () => {
+    if(domainFlow != null && rangeFlow != null){
+      customProcessVar = customProcessActivated
+      customProcessActivated()
+    }
+  }
 
   override def apply(): List[S] = {
     result
   }
 
-  override def customProcess: Unit = {
+  def customProcessActivated(): Unit = {
     result = for {
       d <- domainFlow()
       r <- rangeFlow()
     } yield expression(d, r)
     resubcribe()
+  }
+
+  override def customProcess(): Unit ={
+    customProcessVar()
   }
 
 

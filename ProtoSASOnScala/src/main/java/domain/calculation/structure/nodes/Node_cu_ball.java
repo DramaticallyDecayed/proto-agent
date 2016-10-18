@@ -11,6 +11,5 @@ import domain.worldmodel.worldobjects.Ball;
 public class Node_cu_ball extends InitialGenerativeNode<Ball> {
     public Node_cu_ball(Level level) {
         super(level);
-        setOutFlow(new InitialGenerativeFlow<>(this));
     }
 }

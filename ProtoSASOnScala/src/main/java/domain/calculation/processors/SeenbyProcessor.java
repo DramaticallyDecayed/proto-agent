@@ -13,17 +13,21 @@ public class SeenbyProcessor extends AssociativeProcessor<VisibleObject, Viewer>
 
     @Override
     public <D extends VisibleObject, R extends Viewer>
-    Seenby<D, R> expression(D d, R r) {
+    Seenby<D, R> customCommonExpression(D d, R r) {
         System.out.println(this.getClass().getSimpleName() + " " + d + " " + r);
         return new Seenby<>(d, r);
     }
 
     public BiFunction<Ball, Ego, Seenby<Ball, Ego>> ball_seenby_ego() {
-        return (Ball ball, Ego ego) -> expression(ball, ego);
+        return (Ball ball, Ego ego) -> customCommonExpression(ball, ego);
     }
 
     public BiFunction<Player, Ego, Seenby<Player, Ego>> player_seenby_ego() {
-        return (Player player, Ego ego) -> expression(player, ego);
+        return (Player player, Ego ego) -> customCommonExpression(player, ego);
+    }
+
+    public BiFunction<Landmark, Ego, Seenby<Landmark, Ego>> landmark_seenby_ego() {
+        return (Landmark landmark, Ego ego) -> customCommonExpression(landmark, ego);
     }
 
 }

@@ -15,7 +15,7 @@ abstract class Node(level: Level) {
   private var outFlows: ListBuffer[Flow] = ListBuffer[Flow]()
 
   def process(): Unit = {
-    println(this + " flows = " + outFlows.size)
+    println("Node: " + this.getClass.getCanonicalName + " flows = " + outFlows.size)
     outFlows foreach (_.process)
     outFlows.clear()
     toBeProcessed = false

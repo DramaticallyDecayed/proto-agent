@@ -14,5 +14,5 @@ class InitialGenerativeNode[WO <: WorldObject]
 
   def setOutFlow(initialObjectFlow: InitialGenerativeFlow[WO]) = addUpdatableFlows(initialObjectFlow)
 
-  def getOutFlow():InitialGenerativeFlow[WO] = getOutFlow(0).asInstanceOf[InitialGenerativeFlow[WO]]
+  def getOutFlow(): InitialGenerativeFlow[WO] = getOutFlow(0).asInstanceOf[InitialGenerativeFlow[WO]]
 }

@@ -1,11 +1,9 @@
 package domain.worldmodel.worldobjects;
 
-import domain.worldmodel.JavaWorldObjectConnector;
-
 /**
  * Created by Sergey on 12.10.2016.
  */
-public class Landmark implements Point {
+public class Landmark implements Point, VisibleObject {
     @Override
     public String name() {
         return "Landmark";

@@ -20,7 +20,7 @@ abstract class Flow(node: Node){
     toBeProcessed = false
   }
 
-  def customProcess: Unit
+  def customProcess(): Unit = ???
 
   def subscribe(acceptor: (Flow) => Unit): Unit = {
     acceptors += acceptor

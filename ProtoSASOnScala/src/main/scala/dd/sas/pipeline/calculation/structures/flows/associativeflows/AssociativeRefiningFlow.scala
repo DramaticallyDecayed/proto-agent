@@ -22,7 +22,14 @@ class AssociativeRefiningFlow
     result
   }
 
-  override def customProcess: Unit = {
+  private var customProcessVar: () => Unit = () => {
+    if(firstFlow != null && secondFlow != null){
+      customProcessVar = customProcessActivated
+      customProcessActivated()
+    }
+  }
+
+  def customProcessActivated(): Unit = {
     result = for {
       first <- firstFlow()
       second <- secondFlow()
@@ -31,6 +38,9 @@ class AssociativeRefiningFlow
     resubcribe()
   }
 
+  override def customProcess(): Unit ={
+    customProcessVar()
+  }
 
   def setDomainFlow(domainFlow: Flow): Unit = {
     this.firstFlow = domainFlow.asInstanceOf[RelationFlow[D, M, Relation[D, M]]]
