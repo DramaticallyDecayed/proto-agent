@@ -4,6 +4,9 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +15,7 @@ import java.util.Map;
  */
 public class CSV2ModelTranslator {
 
-    private final static Map<String, String> prefix;
+    public final static Map<String, String> prefix;
 
     static {
         prefix = new HashMap<>();
@@ -28,17 +31,18 @@ public class CSV2ModelTranslator {
     private static Map<Integer, RDFNodeWrapper> column2Scheme = new HashMap<>();
     private static Map<String, Integer> columnName2ColumnIndex = new HashMap<>();
 
-    public static Model constructModel(CSVBatch csvBatch) throws IOException {
+    public static Model constructModel(
+            CSVBatch csvBatch,
+            Map<String, Integer> columnName2ColumnIndex)
+            throws IOException
+    {
+
+        CSV2ModelTranslator.columnName2ColumnIndex = columnName2ColumnIndex;
+
         Model model = ModelFactory.createDefaultModel();
 
         for (String key : prefix.keySet()) {
             model.setNsPrefix(key, prefix.get(key));
-        }
-
-
-        String[] title = csvBatch.getTitle();
-        for (int i = 0; i < title.length; i++) {
-            columnName2ColumnIndex.put(title[i], i);
         }
 
         RDFNodeWrapper wrapper = new RDFNodeWrapper(
