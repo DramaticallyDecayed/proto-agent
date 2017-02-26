@@ -46,10 +46,14 @@ public class Class2String {
         Field[] fields = o.getClass().getDeclaredFields();
         for (Field field : fields) {
             Method getter = new PropertyDescriptor(field.getName(), o.getClass()).getReadMethod();
+            Object value = getter.invoke(o);
+            if(value == null){
+                continue;
+            }
             sb.append("\t" +
                     PREFIX + ":" + id
                     + " " + PREFIX + ":" + field.getName()
-                    + " " + transform(field.getType().getSimpleName(), getter.invoke(o))
+                    + " " + transform(field.getType().getSimpleName(), value)
                     + ".\n"
             );
         }
@@ -81,10 +85,14 @@ public class Class2String {
         Field[] fields = o.getClass().getDeclaredFields();
         for (Field field : fields) {
             Method getter = new PropertyDescriptor(field.getName(), o.getClass()).getReadMethod();
+            Object value = getter.invoke(o);
+            if(value == null){
+                continue;
+            }
             sb.append("\t" +
                     PREFIX + ":" + id
                     + " " + PREFIX + ":" + field.getName()
-                    + " " + transform(field.getType().getSimpleName(), getter.invoke(o))
+                    + " " + transform(field.getType().getSimpleName(), value)
                     + ".\n"
             );
         }
