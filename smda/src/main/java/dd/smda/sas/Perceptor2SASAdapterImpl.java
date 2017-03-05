@@ -52,22 +52,22 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
         graphStructureRuleList = new ArrayList<>();
         GraphStructureRule graphStructureRule = new GraphStructureRuleC();
         graphStructureRule.setHasRuleString("UrineColor " +
-                "AcidityApprox" +
-                "AmorphousPhosphates" +
-                "Bacteria" +
-                "Bilirubin" +
-                "Creatinine" +
-                "Glucose" +
-                "KetoneBodies" +
-                "Oxalate" +
-                "Protein" +
-                "ProteinAnalyzer" +
-                "RedBloodCells" +
-                "SpecificGravity" +
-                "Urata" +
-                "UricAcidCrystals" +
-                "Urobilinogen" +
-                "WhiteBloodCells");
+                "AcidityApprox " +
+                "AmorphousPhosphates " +
+                "Bacteria " +
+                "Bilirubin " +
+                "Creatinine " +
+                "Glucose " +
+                "KetoneBodies " +
+                "Oxalate " +
+                "Protein " +
+                "ProteinAnalyzer " +
+                "RedBloodCells " +
+                "SpecificGravity " +
+                "Urata " +
+                "UricAcidCrystals " +
+                "Urobilinogen " +
+                "WhiteBloodCells ");
         graphStructureRuleList.add(graphStructureRule);
         if (subscribers.get(Node_cu_GraphStructureRule.NAME) != null) {
             subscribers.get(Node_cu_GraphStructureRule.NAME).processNode();

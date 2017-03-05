@@ -8,12 +8,14 @@ import org.rosuda.REngine.Rserve.RserveException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Sergey on 26.02.2017.
  */
 public class SimpleLM {
-
+    private static final String NUM_COL_NAME = "numericalColumn";
+    private static final String CAT_COL_NAME = "categoricalColumn";
     private static final String FILE_NAME = "SimpleLM.R";
     private static final String PATH = RServer.getPathToFunction(FILE_NAME);
     private RConnection connection;
@@ -31,9 +33,12 @@ public class SimpleLM {
         connection.eval("num <- c(" + "1, 1, 3)");
     }
 
-    public void evalLM() throws RserveException, REXPMismatchException {
+    public List<String> evalLM() throws RserveException, REXPMismatchException {
         REXP result = connection.eval("getCorrelation(num, cat)");
-        System.out.println(Arrays.asList(result.asStrings()));
+        return Arrays.asList(result.asStrings())
+                .stream()
+                .map(x->x.replace(CAT_COL_NAME, ""))
+                .collect(Collectors.toList());
     }
 
     public void loadParameterValues(List<String>[] result) throws RserveException {
