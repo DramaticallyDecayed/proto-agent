@@ -1,10 +1,7 @@
 package dd.smda.datastore;
 
 import dd.sas.presentation.WorldEntity;
-import dd.smda.sas.worldentity.Analysis;
-import dd.smda.sas.worldentity.ParameterBatch;
-import dd.smda.sas.worldentity.Patient;
-import dd.smda.sas.worldentity.PatientGroupRule;
+import dd.smda.sas.worldentity.*;
 
 import java.util.Arrays;
 
@@ -28,16 +25,32 @@ public class DataStoreUtils {
                 + getIdPostfix(analysis);
     }
 
-    public static String getId(Patient patient){
+    public static String getId(Patient patient) {
         return patient.getClass().getInterfaces()[0].getSimpleName().toLowerCase()
                 + "_"
-                + patient.getHasRegisterNumber().replace("/","_");
+                + patient.getHasRegisterNumber().replace("/", "_");
     }
 
-    public static String getId(ParameterBatch parameterBatch, PatientGroupRule patientGroupRule){
+    public static String getId(ParameterBatch parameterBatch, PatientGroupRule patientGroupRule) {
         return parameterBatch.getClass().getInterfaces()[0].getSimpleName().toLowerCase()
                 + "_"
                 + constructBatchIDPostfix(patientGroupRule);
+    }
+
+    public static String getId(ParameterBatch parameterBatch) {
+        return parameterBatch.getClass().getInterfaces()[0].getSimpleName().toLowerCase()
+                + "_"
+                + parameterBatch.getHasID();
+    }
+
+    public static String getId(GraphFragment graphFragment, ParameterBatch batch) {
+        return graphFragment.getClass().getInterfaces()[0].getSimpleName().toLowerCase()
+                + "_"
+                + batch.getHasID()
+                + "_"
+                + graphFragment.getHasIndependentParameter().replace(" ", "_")
+                + "_"
+                + graphFragment.getHasDependentParameter();
     }
 
     public static String constructBatchIDPostfix(PatientGroupRule patientGroupRule) {

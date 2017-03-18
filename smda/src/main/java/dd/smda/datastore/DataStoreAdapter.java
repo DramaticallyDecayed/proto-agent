@@ -62,4 +62,10 @@ public class DataStoreAdapter {
         }
         return list;
     }
+
+    public void delete(String delete) throws Exception {
+        repo.getRepositoryForNamespace(namespace)
+                .prepareUpdate(delete)
+                .evaluate();
+    }
 }

@@ -12,7 +12,6 @@ public class DataStoreWriter {
     private DataStoreAdapter dataStoreAdapter = new DataStoreAdapter();
 
     public void startWrite() {
-        dataStoreAdapter.open();
         sb = new StringBuilder();
         sb.append(Class2String.updatePrefix());
     }
@@ -26,6 +25,7 @@ public class DataStoreWriter {
     }
 
     public void endWrite() throws Exception {
+        dataStoreAdapter.open();
         sb.append(Class2String.updatePostfix());
         dataStoreAdapter.update(sb.toString());
         dataStoreAdapter.close();
