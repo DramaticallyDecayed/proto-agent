@@ -1,0 +1,180 @@
+# baseURI: http://dramaticallydecayed.com/parameter-graph
+# imports: http://dramaticallydecayed.com/core2ed
+# imports: http://dramaticallydecayed.com/parameterized-system
+
+@prefix : <http://dramaticallydecayed.com/parameter-graph#> .
+@prefix arg: <http://spinrdf.org/arg#> .
+@prefix core2ed: <http://dramaticallydecayed.com/core2ed#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix parameterized-system: <http://dramaticallydecayed.com/parameterized-system#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sp: <http://spinrdf.org/sp#> .
+@prefix spin: <http://spinrdf.org/spin#> .
+@prefix spl: <http://spinrdf.org/spl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://dramaticallydecayed.com/parameter-graph>
+  rdf:type owl:Ontology ;
+  owl:imports <https://raw.githubusercontent.com/DramaticallyDecayed/KBBase/flows-with-user-control/KBBase/core2ed.rdf> ;
+  owl:imports <https://raw.githubusercontent.com/DramaticallyDecayed/KBBase/flows-with-user-control/KBBase/parameterized-system.ttl> ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+:TestNDReification
+  rdf:type owl:Class ;
+  spin:rule [
+      rdf:type sp:Construct ;
+      sp:templates (
+          [
+            sp:object [
+                sp:varName "d"^^xsd:string ;
+              ] ;
+            sp:predicate core2ed:hasDerivative ;
+            sp:subject [
+                sp:varName "nd"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+      sp:where (
+          [
+            rdf:type sp:Bind ;
+            sp:expression :node_cu_Analysis ;
+            sp:variable [
+                sp:varName "nd"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "cu"^^xsd:string ;
+              ] ;
+            sp:predicate core2ed:implement ;
+            sp:subject [
+                sp:varName "nd"^^xsd:string ;
+              ] ;
+          ]
+          [
+            sp:object [
+                sp:varName "d"^^xsd:string ;
+              ] ;
+            sp:predicate core2ed:hasDerivative ;
+            sp:subject [
+                sp:varName "cu"^^xsd:string ;
+              ] ;
+          ]
+        ) ;
+    ] ;
+  rdfs:subClassOf core2ed:DevelopmentEntity ;
+.
+:computedClassGeneration
+  rdf:type core2ed:ComputedClassGeneration ;
+.
+:cuWorldGeneration
+  rdf:type core2ed:CUWorldGeneration ;
+.
+:dfGeneration
+  rdf:type core2ed:DFGeneration ;
+.
+:elaborationGeneration
+  rdf:type core2ed:ElaborationGeneration ;
+.
+:levelGeneration
+  rdf:type core2ed:LevelGeneration ;
+.
+:ndGeneration
+  rdf:type core2ed:NDGeneration ;
+.
+parameterized-system:Analysis
+  rdfs:subClassOf core2ed:Percepted ;
+.
+parameterized-system:GraphFragment
+  rdfs:subClassOf core2ed:Complex ;
+.
+parameterized-system:GraphStructureRule
+  rdfs:subClassOf core2ed:Percepted ;
+.
+parameterized-system:GroupRule
+  rdfs:subClassOf core2ed:Percepted ;
+.
+parameterized-system:ParameterBatch
+  rdfs:subClassOf core2ed:Complex ;
+.
+parameterized-system:ParameterizedConcept
+  rdfs:subClassOf core2ed:WorldHLConcept ;
+.
+parameterized-system:PatientGroupRule
+  rdfs:subClassOf core2ed:Complex ;
+.
+parameterized-system:analysisFormBatch
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+  owl:propertyChainAxiom (
+      parameterized-system:includeParameter
+      parameterized-system:parameterFormBatch
+    ) ;
+.
+parameterized-system:beGroupRuleBaseFor
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+.
+parameterized-system:bePatientBaseFor
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+.
+parameterized-system:bePatientGroupRuleFor
+  rdfs:subPropertyOf core2ed:associative ;
+.
+parameterized-system:describePatient
+  rdfs:subPropertyOf core2ed:generative ;
+.
+parameterized-system:graphStructureRuleFor
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+.
+parameterized-system:hasBatch
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+  owl:propertyChainAxiom (
+      parameterized-system:bePatientBaseFor
+      parameterized-system:restrictBatch
+    ) ;
+.
+parameterized-system:hasFragment
+  rdfs:subPropertyOf core2ed:generative ;
+.
+parameterized-system:hasGraph
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+  owl:propertyChainAxiom (
+      parameterized-system:hasBatch
+      parameterized-system:beBatchFor
+    ) ;
+.
+parameterized-system:includeParameter
+  rdfs:subPropertyOf core2ed:generative ;
+.
+parameterized-system:linearParameterFor
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+  owl:propertyChainAxiom (
+      parameterized-system:parameterFormBatch
+      parameterized-system:linearInervalFor
+    ) ;
+.
+parameterized-system:parameterConcentratorFor
+  rdfs:subPropertyOf core2ed:complex ;
+  rdfs:subPropertyOf core2ed:generative ;
+  owl:propertyChainAxiom (
+      parameterized-system:parameterFormBatch
+      parameterized-system:intervalConcentratorFor
+    ) ;
+.
+parameterized-system:parameterFormBatch
+  rdfs:subPropertyOf core2ed:generative ;
+  owl:propertyChainAxiom (
+      parameterized-system:bePatientGroupRuleFor
+      parameterized-system:restrictBatch
+    ) ;
+.
+parameterized-system:parameterizedProperty
+  rdfs:subPropertyOf core2ed:world ;
+.
