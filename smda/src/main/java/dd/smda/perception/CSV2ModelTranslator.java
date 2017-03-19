@@ -20,6 +20,7 @@ public class CSV2ModelTranslator {
     static {
         prefix = new HashMap<>();
         prefix.put("analysis", "http://dramaticallydecayed.com/analysis#");
+        prefix.put("parametergraph", "http://dramaticallydecayed.com/parameterized-system#");
         prefix.put("hospital", "http://dramaticallydecayed.com/hospital#");
         prefix.put("xsd", "http://www.w3.org/2001/XMLSchema#");
         prefix.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");

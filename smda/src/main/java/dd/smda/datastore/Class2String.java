@@ -19,7 +19,7 @@ import java.util.Date;
  */
 public class Class2String {
 
-    private static final String PREFIX = "analysis";
+    private static final String PREFIX = "parametergraph";
     private static final String XSD = "xsd";
 
     public static void main(String... args) throws IllegalAccessException, IntrospectionException, InvocationTargetException, ParseException {

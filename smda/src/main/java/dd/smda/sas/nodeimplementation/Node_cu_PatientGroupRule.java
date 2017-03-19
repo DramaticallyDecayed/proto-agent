@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  * Created by Sergey on 26.02.2017.
  */
 public class Node_cu_PatientGroupRule extends dd.smda.sas.computation.node.Node_cu_PatientGroupRule {
-    private static final String PREFIX = "analysis";
+    private static final String PREFIX = "parametergraph";
 
     public Node_cu_PatientGroupRule(Level level) {
         super(level);

@@ -31,7 +31,7 @@ public class DataStoreWriter {
         dataStoreAdapter.close();
     }
 
-    public DataStoreAdapter getDataStoreAdapter(){
+    public DataStoreAdapter getDataStoreAdapter() {
         return dataStoreAdapter;
     }
 }

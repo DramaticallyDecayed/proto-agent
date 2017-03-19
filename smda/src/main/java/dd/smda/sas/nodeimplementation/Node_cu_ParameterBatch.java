@@ -16,7 +16,7 @@ import dd.smda.sas.worldentity.PatientGroupRule;
  * Created by Sergey on 26.02.2017.
  */
 public class Node_cu_ParameterBatch extends dd.smda.sas.computation.node.Node_cu_ParameterBatch {
-    private static final String PREFIX = "analysis";
+    private static final String PREFIX = "parametergraph";
     private static final int BATCH_SIZE = 30;
 
     public Node_cu_ParameterBatch(Level level) {
@@ -55,8 +55,8 @@ public class Node_cu_ParameterBatch extends dd.smda.sas.computation.node.Node_cu
                             query.append("prefix " + PREFIX + ":<" + CSV2ModelTranslator.prefix.get(PREFIX) + ">\n" +
                                     "ASK\n" +
                                     "WHERE {\n" +
-                                    "\tBIND(analysis:" + batchID + " AS ?b) .\n" +
-                                    "\t?b analysis:hasSize ?size . \n" +
+                                    "\tBIND(parametergraph:" + batchID + " AS ?b) .\n" +
+                                    "\t?b parametergraph:hasSize ?size . \n" +
                                     "\t FILTER(?size + " + BATCH_SIZE +" > \"" + count + "\"^^xsd:integer) .\n" +
                                     "}");
                             if (!dataStoreAdapter.ask(query.toString())) {

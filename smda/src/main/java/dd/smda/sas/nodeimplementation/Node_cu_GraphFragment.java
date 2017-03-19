@@ -12,12 +12,14 @@ import dd.smda.sas.objectproperty.HasBatch;
 import dd.smda.sas.objectproperty.HasGraph;
 import dd.smda.sas.worldentity.GraphFragment;
 import dd.smda.sas.worldentity.GraphFragmentC;
+import dd.smda.sas.worldentity.ParameterBatch;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RserveException;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import java.util.List;
 public class Node_cu_GraphFragment extends dd.smda.sas.computation.node.Node_cu_GraphFragment {
 
     private static final int BATCH_SIZE = 30;
+    private List<ParameterBatch> batches;
 
     public Node_cu_GraphFragment(Level level) {
         super(level);
@@ -35,7 +38,7 @@ public class Node_cu_GraphFragment extends dd.smda.sas.computation.node.Node_cu_
     @Override
     public CalculationResult customProcess() {
 
-
+        batches = new ArrayList<>();
         if (getHasBatchList() != null && getGraphStructureRuleList() != null) {
             if (!getHasBatchList().isEmpty() && !getGraphStructureRuleList().isEmpty()) {
 
@@ -54,7 +57,7 @@ public class Node_cu_GraphFragment extends dd.smda.sas.computation.node.Node_cu_
                             RServer rServer = new RServer();
                             try {
                                 List<String> concentrateVals = calculateDependencies(result, rServer);
-                                deletePreviousResults(dataStoreAdapter, hasBatch);
+                                batches.add(hasBatch.getRange());
                                 saveResults(dataStoreWriter, hasBatch, linearParam, concentrateVals);
                             } catch (RserveException e) {
                                 e.printStackTrace();
@@ -64,6 +67,9 @@ public class Node_cu_GraphFragment extends dd.smda.sas.computation.node.Node_cu_
                                 rServer.stop();
                             }
                         }
+                    }
+                    for (ParameterBatch batch : batches) {
+                        deletePreviousResults(dataStoreAdapter, batch);
                     }
                     dataStoreAdapter.close();
                     dataStoreWriter.endWrite();
@@ -77,13 +83,13 @@ public class Node_cu_GraphFragment extends dd.smda.sas.computation.node.Node_cu_
         return CalculationResult.UNKNOWN;
     }
 
-    private void deletePreviousResults(DataStoreAdapter dataStoreAdapter, HasBatch hasBatch) throws Exception {
-        String delete  = "prefix analysis:<http://dramaticallydecayed.com/analysis#>\n" +
+    private void deletePreviousResults(DataStoreAdapter dataStoreAdapter, ParameterBatch batch) throws Exception {
+        String delete = "prefix parametergraph:<http://dramaticallydecayed.com/parameterized-system#>\n" +
                 "delete where {\n" +
-                "\t?c a analysis:GraphFragment .\n" +
-                "\tanalysis:" + DataStoreUtils.getId(hasBatch.getRange()) + " analysis:beBatchFor ?c .\n" +
-                "\t?c analysis:hasIndependentParameter ?ip .\n" +
-                " \t?c analysis:hasDependentParameter ?dp .\n" +
+                "\t?c a parametergraph:GraphFragment .\n" +
+                "\tparametergraph:" + DataStoreUtils.getId(batch) + " parametergraph:beBatchFor ?c .\n" +
+                "\t?c parametergraph:hasIndependentParameter ?ip .\n" +
+                " \t?c parametergraph:hasDependentParameter ?dp .\n" +
                 "}";
         dataStoreAdapter.delete(delete);
     }
@@ -134,17 +140,17 @@ public class Node_cu_GraphFragment extends dd.smda.sas.computation.node.Node_cu_
     }
 
     private List<String>[] selectParameterValues(String concentrateParam, DataStoreAdapter dataStoreAdapter, HasBatch hasBatch, String linearParam) throws Exception {
-        String select = "prefix analysis:<http://dramaticallydecayed.com/analysis#>\n" +
+        String select = "prefix parametergraph:<http://dramaticallydecayed.com/parameterized-system#>\n" +
                 "SELECT ?cval ?nval\n" +
                 "WHERE {\n" +
                 hasBatch.getRange().getHasRuleString() +
-                "\t?a analysis:describePatient ?p.\n" +
-                "\t?a analysis:includeParameter ?nparam .\n" +
-                "\t?nparam a analysis:" + linearParam + " .\n" +
-                "\t?nparam analysis:hasValue ?nval .\n" +
-                "\t?a analysis:includeParameter ?cparam .\n" +
-                "\t?cparam a analysis:" + concentrateParam + " .\n" +
-                "\t?cparam analysis:hasValue ?cval .\n" +
+                "\t?a parametergraph:describePatient ?p.\n" +
+                "\t?a parametergraph:includeParameter ?nparam .\n" +
+                "\t?nparam a parametergraph:" + linearParam + " .\n" +
+                "\t?nparam parametergraph:hasValue ?nval .\n" +
+                "\t?a parametergraph:includeParameter ?cparam .\n" +
+                "\t?cparam a parametergraph:" + concentrateParam + " .\n" +
+                "\t?cparam parametergraph:hasValue ?cval .\n" +
                 "}";
 
         return dataStoreAdapter.select(select, "cval", "nval");
