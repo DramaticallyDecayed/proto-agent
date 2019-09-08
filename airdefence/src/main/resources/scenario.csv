@@ -1,0 +1,6 @@
+cycle,type,id,rcs,x,y,vx,vy
+2,ImportantObject,1,-1,400,350,0,0
+2,ImportantObject,2,-1,-250,300,0,0
+3,UnknownAircraft,1,100,-10,1000,10,0
+4,UnknownAircraft,1,100,0,1000,10,0
+5,UnknownAircraft,1,100,10,1000,10,0
