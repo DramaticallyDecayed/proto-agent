@@ -13,7 +13,7 @@ class Perception {
     val LOG = LoggerFactory.getLogger(Perception::class.java)
 
     val importantObjects = mutableListOf<ImportantObject>()
-    val unknownAircraft = mutableListOf<UnknownAircraft>()
+    val unknownAircrafts = mutableListOf<UnknownAircraft>()
 
     var cycleCounter = 0
 
@@ -53,19 +53,20 @@ class Perception {
 
     fun cycle() {
         importantObjects.clear()
-        unknownAircraft.clear()
+        unknownAircrafts.clear()
+
         cycleCounter++
 
         scenario[cycleCounter]
             ?.forEach {
                 when (it.type) {
                     "ImportantObject" -> importantObjects.add(buildimportantObject(it))
-                    "UnknownAircraft" -> unknownAircraft.add(buildUnknownAircraft(it))
+                    "UnknownAircraft" -> unknownAircrafts.add(buildUnknownAircraft(it))
                     else -> throw IllegalArgumentException("Unknown type ${it.type}")
                 }
             }
         LOG.debug("Percept ${importantObjects} important objects")
-        LOG.debug("Percept ${unknownAircraft} unknown aircrafts")
+        LOG.debug("Percept ${unknownAircrafts} unknown aircrafts")
     }
 
     private fun buildimportantObject(perceptedObject: PerceptedObject) =

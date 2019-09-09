@@ -10,7 +10,9 @@ class Node_cu_UnknownAircraft (level: Level) : Node_cu_UnknownAircraft(level) {
     private val LOG = LoggerFactory.getLogger(Node_cu_UnknownAircraft::class.java)
 
     override fun customProcess(): CalculationResult {
-        unknownAircraftList.forEach { LOG.debug("$NAME receive from perception system UnknownAircraft ${it.id}")}
+        unknownAircraftList.forEach {
+            LOG.debug("$NAME receive from perception system UnknownAircraft: ${it.x}")
+        }
         return if(unknownAircraftList.isEmpty())
             CalculationResult.UNKNOWN
         else

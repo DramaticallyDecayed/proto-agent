@@ -8,6 +8,7 @@ import dd.airdefence.sas.worldentity.UnknownAircraft;
 import dd.sas.computation.CalculationResult;
 import dd.sas.computation.Node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,18 +20,20 @@ public class Perceptor2SASAdapterImpl extends Perceptor2SASAdapter {
     private Map<String, Node> subscribers = new HashMap<>();
 
 
-    private List<UnknownAircraft> unknownAircraftList;
-    private List<ImportantObject> importantObjectList;
+    private List<UnknownAircraft> unknownAircraftList = new ArrayList<>();
+    private List<ImportantObject> importantObjectList = new ArrayList<>();
 
     public void setUnknownAircraftList(List<UnknownAircraft> unknownAircraftList){
-        this.unknownAircraftList = unknownAircraftList;
+        this.unknownAircraftList.clear();
+        this.unknownAircraftList.addAll(unknownAircraftList);
         if (!unknownAircraftList.isEmpty() && subscribers.get(Node_cu_UnknownAircraft.NAME) != null) {
             subscribers.get(Node_cu_UnknownAircraft.NAME).processNode();
         }
     }
 
     public void setImportantObjectList(List<ImportantObject> importantObjectList){
-        this.importantObjectList = importantObjectList;
+        this.importantObjectList.clear();
+        this.importantObjectList.addAll(importantObjectList);
         if (!importantObjectList.isEmpty() && subscribers.get(Node_cu_ImportantObject.NAME) != null) {
             subscribers.get(Node_cu_ImportantObject.NAME).processNode();
         }

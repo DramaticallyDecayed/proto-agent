@@ -20,10 +20,12 @@ object Main {
 
         val perception = Perception()
 
+        sas.cycle()
+
         while (true) {
             perception.cycle()
             adapter.importantObjectList = perception.importantObjects
-            adapter.unknownAircraftList = perception.unknownAircraft
+            adapter.unknownAircraftList = perception.unknownAircrafts
             sas.cycle()
         }
 
