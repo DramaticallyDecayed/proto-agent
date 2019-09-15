@@ -15,8 +15,8 @@ class CoveredObject(
     override fun radarSignature(): WorldEntity {
         val importantObject = ImportantObjectC()
         importantObject.id = id
-        importantObject.x = x.toInt()
-        importantObject.y = y.toInt()
+        importantObject.x = x
+        importantObject.y = y
         return importantObject
     }
 

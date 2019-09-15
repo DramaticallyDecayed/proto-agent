@@ -17,7 +17,7 @@ class Radar(
     }
 
     val radarSize = 30.0
-    val radarArea = height / 2.5
+    val radarArea = height / 2.5 * 1.8
 
     val radarShape = RadarShape(this, ColorRGBa.GREEN, program)
 

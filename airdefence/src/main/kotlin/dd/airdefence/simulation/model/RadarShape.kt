@@ -3,7 +3,6 @@ package dd.airdefence.simulation.model
 import org.openrndr.Program
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
-import org.openrndr.shape.Circle
 
 class RadarShape(
     val radar: Radar,
@@ -17,9 +16,12 @@ class RadarShape(
         drawer.circle(radar.x, radar.y, radar.radarSize)
 
 
-        drawer.stroke = ColorRGBa.GREEN.opacify(0.1)
-        drawer.strokeWeight = radar.radarArea
-        val sub1 = Circle(radar.x, radar.y, radar.radarArea).contour.sub(0.02, 0.48)
-        drawer.contour(sub1)
+//        drawer.stroke = ColorRGBa.GREEN.opacify(0.1)
+//        drawer.strokeWeight = radar.radarArea
+//        val sub1 = Circle(radar.x, radar.y, radar.radarArea).contour.sub(0.02, 0.48)
+//        drawer.contour(sub1)
+
+        drawer.fill = ColorRGBa.GREEN.opacify(0.1)
+        drawer.circle(radar.x, radar.y, radar.radarArea )
     }
 }

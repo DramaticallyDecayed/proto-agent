@@ -15,13 +15,14 @@ class FightJet(
     ally: Boolean
 ) : SceneObject(x, y) {
 
+    var destroyed = false
 
     override fun radarSignature(): WorldEntity {
         val unknownAircraft = UnknownAircraftC()
-        unknownAircraft.x = x.toInt()
-        unknownAircraft.y = y.toInt()
-        unknownAircraft.vx = (velocity * cos(head)).toInt()
-        unknownAircraft.vx = (velocity * sin(head)).toInt()
+        unknownAircraft.x = x
+        unknownAircraft.y = y
+        unknownAircraft.vx = velocity * cos(head)
+        unknownAircraft.vy = velocity * sin(head)
         unknownAircraft.id = id
         unknownAircraft.rcs = 5
         return unknownAircraft
@@ -41,13 +42,20 @@ class FightJet(
     }
 
     private fun rotate() {
-        if (flightProgram.size > flightProgramPointer) {
-            if (flightProgram[flightProgramPointer].condition(x, y)) {
+        val condition = flightProgram.size - flightProgramPointer
+        if (condition > 0) {
+            if (condition > 1 && flightProgram[flightProgramPointer].condition(x, y)) {
                 head = flightProgram[flightProgramPointer].head
                 flightProgramPointer++
+            } else if(condition == 1 && flightProgram[flightProgramPointer].condition(x, y)) {
+                destroyed = true
+                flightProgramPointer++
             }
+
         }
     }
+
+    override fun isDestroyed() = destroyed
 
     private fun move() {
         x += velocity * cos(head)

@@ -12,7 +12,7 @@ import kotlin.math.pow
 class Node_cu_AircraftGroup(level: Level) : Node_cu_AircraftGroup(level) {
 
     companion object {
-        const val DISTANCE_TO_BE_GROUP = 60
+        const val DISTANCE_TO_BE_GROUP = 80.0
     }
 
     private val LOG = LoggerFactory.getLogger(Node_cu_AircraftGroup::class.java)
@@ -69,26 +69,27 @@ class Node_cu_AircraftGroup(level: Level) : Node_cu_AircraftGroup(level) {
                             formGroupList.add(formGroup)
                         }
                 }
-
-            aircraftGroupList
-                .map { group ->
-                    val aircraft = formGroupList.find { it.domain.id == group.id }
-                    if (aircraft != null)
-                        GlobalArtist.drawGroup(
-                            aircraft.domain.x.toDouble(),
-                            aircraft.domain.y.toDouble(),
-                            DISTANCE_TO_BE_GROUP.toDouble()
-                        )
-                }
-
-
+            visualize()
             CalculationResult.POSITIVE
         } else {
             CalculationResult.UNKNOWN
         }
     }
 
-    private fun distance(x1: Int, y1: Int, x2: Int, y2: Int) =
+    private fun visualize(){
+        aircraftGroupList
+            .map { group ->
+                val aircraft = formGroupList.find { it.domain.id == group.id }
+                if (aircraft != null)
+                    GlobalArtist.drawGroup(
+                        aircraft.domain.x,
+                        aircraft.domain.y,
+                        DISTANCE_TO_BE_GROUP
+                    )
+            }
+    }
+
+    private fun distance(x1: Double, y1: Double, x2: Double, y2: Double) =
         ((x1 - x2).toFloat().pow(2) + (y1 - y2).toFloat().pow(2)).pow(0.5f).toInt()
 
 

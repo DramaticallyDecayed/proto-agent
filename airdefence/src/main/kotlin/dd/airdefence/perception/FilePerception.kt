@@ -35,10 +35,10 @@ class FilePerception: APerception(mutableListOf(), mutableListOf()){
                         scenarioLine[1],
                         scenarioLine[2].toInt(),
                         scenarioLine[3].toInt(),
-                        scenarioLine[4].toInt(),
-                        scenarioLine[5].toInt(),
-                        scenarioLine[6].toInt(),
-                        scenarioLine[7].toInt()
+                        scenarioLine[4].toDouble(),
+                        scenarioLine[5].toDouble(),
+                        scenarioLine[6].toDouble(),
+                        scenarioLine[7].toDouble()
                     )
                 )
             previousCycle = cycle
@@ -85,10 +85,10 @@ class FilePerception: APerception(mutableListOf(), mutableListOf()){
         val type: String,
         val id: Int,
         val rcs: Int,
-        val x: Int,
-        val y: Int,
-        val vx: Int,
-        val vy: Int
+        val x: Double,
+        val y: Double,
+        val vx: Double,
+        val vy: Double
     )
 
 }

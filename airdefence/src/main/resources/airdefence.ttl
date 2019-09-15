@@ -128,6 +128,7 @@
 :id
   rdf:type owl:DatatypeProperty ;
   rdfs:domain :AircraftGroup ;
+  rdfs:domain :FormatedGroup ;
   rdfs:domain :IdentifiedAircraft ;
   rdfs:domain :ImportantObject ;
   rdfs:domain :UnknownAircraft ;
@@ -215,15 +216,12 @@
 .
 :underFormedGroupDirection
   rdf:type owl:ObjectProperty ;
+  rdfs:comment "15.09.2019-> was a composite property [underGroupDirection, identifiedAsFormation]" ;
   rdfs:domain :ImportantObject ;
   rdfs:label "на пути построенной группы" ;
   rdfs:range :FormatedGroup ;
   rdfs:subPropertyOf core2ed:associative ;
   rdfs:subPropertyOf core2ed:world ;
-  owl:propertyChainAxiom (
-      :underGroupDirection
-      :identifiedAsFormation
-    ) ;
 .
 :underGroupDirection
   rdf:type owl:ObjectProperty ;
@@ -235,27 +233,31 @@
 .
 :vx
   rdf:type owl:DatatypeProperty ;
+  rdfs:domain :FormatedGroup ;
   rdfs:domain :IdentifiedAircraft ;
   rdfs:domain :UnknownAircraft ;
-  rdfs:range xsd:integer ;
+  rdfs:range xsd:double ;
 .
 :vy
   rdf:type owl:DatatypeProperty ;
+  rdfs:domain :FormatedGroup ;
   rdfs:domain :IdentifiedAircraft ;
   rdfs:domain :UnknownAircraft ;
-  rdfs:range xsd:integer ;
+  rdfs:range xsd:double ;
 .
 :x
   rdf:type owl:DatatypeProperty ;
+  rdfs:domain :FormatedGroup ;
   rdfs:domain :IdentifiedAircraft ;
   rdfs:domain :ImportantObject ;
   rdfs:domain :UnknownAircraft ;
-  rdfs:range xsd:integer ;
+  rdfs:range xsd:double ;
 .
 :y
   rdf:type owl:DatatypeProperty ;
+  rdfs:domain :FormatedGroup ;
   rdfs:domain :IdentifiedAircraft ;
   rdfs:domain :ImportantObject ;
   rdfs:domain :UnknownAircraft ;
-  rdfs:range xsd:integer ;
+  rdfs:range xsd:double ;
 .
