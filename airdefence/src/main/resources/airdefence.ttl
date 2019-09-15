@@ -38,7 +38,7 @@
 :FormatedGroup
   rdf:type owl:Class ;
   rdfs:label "Построенная группа" ;
-  rdfs:subClassOf :AircraftGroup ;
+  rdfs:subClassOf core2ed:WorldHLConcept ;
 .
 :IdentifiedAircraft
   rdf:type owl:Class ;
@@ -114,6 +114,17 @@
   rdfs:subPropertyOf core2ed:generative ;
   rdfs:subPropertyOf core2ed:world ;
 .
+:formIdentifiedGroup
+  rdf:type owl:ObjectProperty ;
+  rdfs:domain :IdentifiedAircraft ;
+  rdfs:range :FormatedGroup ;
+  rdfs:subPropertyOf core2ed:generative ;
+  rdfs:subPropertyOf core2ed:world ;
+  owl:propertyChainAxiom (
+      :formGroup
+      :identifiedAsFormation
+    ) ;
+.
 :id
   rdf:type owl:DatatypeProperty ;
   rdfs:domain :AircraftGroup ;
@@ -134,7 +145,6 @@
   rdfs:domain :AircraftGroup ;
   rdfs:label "распознанна как" ;
   rdfs:range :FormatedGroup ;
-  rdfs:subPropertyOf core2ed:generative ;
   rdfs:subPropertyOf core2ed:world ;
 .
 :identify

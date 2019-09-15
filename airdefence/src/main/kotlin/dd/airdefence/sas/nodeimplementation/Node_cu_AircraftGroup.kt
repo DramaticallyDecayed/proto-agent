@@ -3,6 +3,7 @@ package dd.airdefence.sas.nodeimplementation
 import dd.airdefence.sas.computation.node.Node_cu_AircraftGroup
 import dd.airdefence.sas.objectproperty.FormGroup
 import dd.airdefence.sas.worldentity.AircraftGroupC
+import dd.airdefence.simulation.GlobalArtist
 import dd.sas.computation.CalculationResult
 import dd.sas.computation.Level
 import org.slf4j.LoggerFactory
@@ -11,7 +12,7 @@ import kotlin.math.pow
 class Node_cu_AircraftGroup(level: Level) : Node_cu_AircraftGroup(level) {
 
     companion object {
-        const val DISTANCE_TO_BE_GROUP = 30
+        const val DISTANCE_TO_BE_GROUP = 60
     }
 
     private val LOG = LoggerFactory.getLogger(Node_cu_AircraftGroup::class.java)
@@ -59,7 +60,7 @@ class Node_cu_AircraftGroup(level: Level) : Node_cu_AircraftGroup(level) {
                     aircraftGroupList.add(aircraftGroup)
                     it
                         .value
-                        .forEach{ groupped ->
+                        .forEach { groupped ->
                             val formGroup = FormGroup()
                             formGroup.domain = identifiedAircraftList.find { identifiedAircraf ->
                                 identifiedAircraf.id == groupped
@@ -68,6 +69,19 @@ class Node_cu_AircraftGroup(level: Level) : Node_cu_AircraftGroup(level) {
                             formGroupList.add(formGroup)
                         }
                 }
+
+            aircraftGroupList
+                .map { group ->
+                    val aircraft = formGroupList.find { it.domain.id == group.id }
+                    if (aircraft != null)
+                        GlobalArtist.drawGroup(
+                            aircraft.domain.x.toDouble(),
+                            aircraft.domain.y.toDouble(),
+                            DISTANCE_TO_BE_GROUP.toDouble()
+                        )
+                }
+
+
             CalculationResult.POSITIVE
         } else {
             CalculationResult.UNKNOWN
