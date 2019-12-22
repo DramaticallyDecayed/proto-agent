@@ -87,6 +87,7 @@ class Node_cu_AircraftGroup(level: Level) : Node_cu_AircraftGroup(level) {
                         DISTANCE_TO_BE_GROUP
                     )
             }
+        GlobalArtist.drawHierarchy(NAME, level.number, subscribers.map { it.name() })
     }
 
     private fun distance(x1: Double, y1: Double, x2: Double, y2: Double) =

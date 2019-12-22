@@ -17,5 +17,5 @@ public abstract class SASProcessor implements Processable {
     }
 
     @Override
-    public abstract void process();
+    public abstract boolean process();
 }

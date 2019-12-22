@@ -3,7 +3,7 @@ package dd.sas.pipeline.worldmodel
 /**
   * Created by Sergey on 24.09.2016.
   */
-class Relation[D, R](val domain: D, val range: R) {
+class Relation[D, R](val domain: D, val range: R) extends WorldEntity{
   def getDomain: D = domain
 
   def getRange: R = range

@@ -73,7 +73,7 @@ public class GenerativeCompositeNode extends ProgramElementGenerator {
 
             JDefinedClass compositeClass = getRelationClass(compositeName);
             JMethod newDerivativeMethod = jdc.method(
-                    JMod.PRIVATE,
+                    JMod.PUBLIC,
                     compositeClass,
                     "newDerivative");
 

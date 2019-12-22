@@ -2,6 +2,7 @@ package dd.airdefence.sas.nodeimplementation
 
 import dd.airdefence.sas.computation.node.Node_cu_underFormedGroupDirection
 import dd.airdefence.sas.objectproperty.UnderFormedGroupDirection
+import dd.airdefence.simulation.GlobalArtist
 import dd.sas.computation.CalculationResult
 import dd.sas.computation.Level
 import kotlin.math.abs
@@ -32,11 +33,13 @@ class Node_cu_underFormedGroupDirection(level: Level) : Node_cu_underFormedGroup
                         }
                 }
             if (!underFormedGroupDirectionList.isNullOrEmpty()) {
+                visualize()
                 return CalculationResult.POSITIVE
             }
         }
         return CalculationResult.UNKNOWN
     }
 
+    private fun visualize() = GlobalArtist.drawHierarchy(NAME, level.number, subscribers.map { it.name() })
 
 }

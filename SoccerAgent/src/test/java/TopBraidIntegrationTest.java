@@ -1,18 +1,17 @@
-import ch.qos.logback.classic.Level;
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.compose.MultiUnion;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.InfModel;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.reasoner.Reasoner;
-import com.hp.hpl.jena.reasoner.ReasonerRegistry;
-import com.hp.hpl.jena.util.FileUtils;
 import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QuieringUtils;
 import dd.soccer.perception.perceptingobjects.BodyState;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.util.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.topbraid.spin.inference.DefaultSPINRuleComparator;
@@ -42,8 +41,8 @@ public class TopBraidIntegrationTest {
 
     @Before
     public void doBefore(){
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
+//        Logger root root= (Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+//        root.setLevel(Level.INFO);
         SPINModuleRegistry.get().init();
         loadMainModel();
         createModelForNewTriples();
@@ -114,7 +113,7 @@ public class TopBraidIntegrationTest {
     public void testWithTBOWLRLForSeeRelation(){
         owlrlLoad();
         long start = System.currentTimeMillis();
-        SPINInferences.run(ontModel, newTriples, cls2Query, cls2Constructor, null, null, false, SPIN.rule, comparator, null);
+//        SPINInferences.run(ontModel, newTriples, cls2Query, cls2Constructor, null, null, false, SPIN.rule, comparator, null);
         long end = System.currentTimeMillis();
         System.out.println("Inferred triples: " + newTriples.size() + " during " + (end-start));
         showNodes(ontModel);
@@ -126,7 +125,7 @@ public class TopBraidIntegrationTest {
         owlrlLoad();
         insertTestEntity();
         long start = System.currentTimeMillis();
-        SPINInferences.run(ontModel, newTriples, cls2Query, cls2Constructor, null, null, false, SPIN.rule, comparator, null);
+//        SPINInferences.run(ontModel, newTriples, cls2Query, cls2Constructor, null, null, false, SPIN.rule, comparator, null);
         long end = System.currentTimeMillis();
         System.out.println("Inferred triples: " + newTriples.size() + " during " + (end-start));
         showNodes(ontModel);

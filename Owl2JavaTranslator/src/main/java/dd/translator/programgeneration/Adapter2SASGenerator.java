@@ -76,7 +76,16 @@ public class Adapter2SASGenerator extends ProgramElementGenerator {
             pullDataMethod = nodeClass.method(JMod.PUBLIC, void.class, "pullData");
             pullDataMethod.annotate(Override.class);
         }
-        pullDataMethod.body().assign(derivativeField, JExpr.invoke(donorField, derivativeGetter));
+
+        /**
+         * Previously we just assign arrays
+         * pullDataMethod.body().assign(derivativeField, JExpr.invoke(donorField, derivativeGetter));
+         */
+        // Instead we need to copy array content
+        pullDataMethod
+                .body()
+                .invoke(derivativeField, "addAll")
+                .arg(JExpr.invoke(donorField, derivativeGetter));
     }
 
     private void castAdapter2FakeNode(JDefinedClass adapter) {

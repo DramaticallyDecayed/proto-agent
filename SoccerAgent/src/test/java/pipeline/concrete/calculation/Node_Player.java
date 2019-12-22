@@ -1,7 +1,7 @@
 package pipeline.concrete.calculation;
 
 
-import dd.sas.pipeline.calculation.structure.nodes.generativenodes.InitialGenerativeNode;
+import dd.sas.pipeline.calculation.structures.nodes.generativenodes.InitialGenerativeNode;
 import pipeline.concrete.worldmodel.Player;
 
 

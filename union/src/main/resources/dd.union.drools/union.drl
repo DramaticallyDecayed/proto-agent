@@ -1,0 +1,92 @@
+package dd.union.drools
+
+import dd.union.sas.worldentity.Notification;
+import dd.union.sas.worldentity.NF3Statement;
+import dd.union.sas.worldentity.MoveStatement;
+import dd.union.sas.worldentity.MoveStatementC;
+import dd.union.sas.worldentity.DeployStatement;
+import dd.union.sas.worldentity.DeployStatementC;
+import dd.union.sas.worldentity.Location;
+import dd.union.sas.worldentity.DeploymentObject;
+
+import dd.union.sas.objectproperty.InformAboutLocation;
+import dd.union.sas.objectproperty.InformAboutControlObject;
+import dd.union.sas.objectproperty.Belong;
+import dd.union.sas.objectproperty.Dispose;
+import dd.union.sas.objectproperty.StateMoveFrom;
+import dd.union.sas.objectproperty.StateMoveTo;
+import dd.union.sas.objectproperty.StateItIsMoved;
+import dd.union.sas.objectproperty.StateDeployed;
+
+import dd.union.graphstate.InitialState;
+import dd.union.graphstate.FinalState;
+
+rule "Loading SLBM on SB"
+    when
+        nf3_1 : NF3Statement(
+            u1 : Uri,
+            DeployedID == true,
+            Non_deployedID == false,
+            Change > 0
+        )
+        nf3_2 : NF3Statement(
+            u2 : Uri,
+            Uri != u1,
+            DeployedID == false, Non_deployedID == true,
+            Change < 0
+        )
+        nf3_3 : NF3Statement(
+            u3 : Uri,
+            Uri != u1, Uri != u2,
+            DeployedID == false, Non_deployedID == false,
+            Change > 0,
+            DeployedType == true
+        )
+        nf3_4 : NF3Statement(
+            u4 : Uri,
+            Uri != u1, Uri != u2, Uri != u3,
+            DeployedID == false, Non_deployedID == false,
+            Change < 0,
+            Non_deployedType == true
+        )
+        informAboutBase : InformAboutLocation(Domain == nf3_1, base : Range.getName())
+        nf3_1_informControlObject : InformAboutControlObject(Domain == nf3_1, nf3_1_ctrlobj : Range.getName())
+        not(Belong(Domain.getName() == base))
+        informAboutLauncher : InformAboutLocation(Domain == nf3_1, launcher : Range.getName())
+        not(Belong(Range.getName() == launcher))
+
+        inState : InitialState()
+        fnState : FinalState()
+    then
+        Dispose $toBeDeleted = new Dispose();
+        $toBeDeleted.setDomain(informAboutBase.getRange());
+        $toBeDeleted.setRange(nf3_1_informControlObject.getRange());
+        inState.stateRelation($toBeDeleted);
+        Dispose $toBeAdded = new Dispose();
+        $toBeAdded.setDomain(informAboutLauncher.getRange());
+        $toBeAdded.setRange(nf3_1_informControlObject.getRange());
+        fnState.stateRelation($toBeAdded);
+
+        MoveStatement $moveStatement = new MoveStatementC();
+        StateMoveFrom $stateMoveFrom = new StateMoveFrom();
+        $stateMoveFrom.setDomain($moveStatement);
+        $stateMoveFrom.setRange(informAboutBase.getRange());
+        insert($stateMoveFrom);
+        StateMoveTo $stateMoveTo = new StateMoveTo();
+        $stateMoveTo.setDomain($moveStatement);
+        $stateMoveTo.setRange(informAboutLauncher.getRange());
+        insert($stateMoveTo);
+        StateItIsMoved $stateItIsMoved  = new StateItIsMoved();
+        $stateItIsMoved.setDomain($moveStatement);
+        $stateItIsMoved.setRange(nf3_1_informControlObject.getRange());
+        insert($stateItIsMoved);
+
+        DeployStatement $deployStatement = new DeployStatementC();
+        StateDeployed $stateDeployed  = new StateDeployed();
+        $stateDeployed.setDomain($deployStatement);
+        $stateDeployed.setRange(nf3_1_informControlObject.getRange());
+        insert($stateDeployed);
+
+        retract(nf3_1_informControlObject);
+        retract(informAboutLauncher);
+end

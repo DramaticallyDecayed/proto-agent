@@ -1,11 +1,14 @@
 package dd.ontologyinterchanger;
 
-import com.hp.hpl.jena.ontology.Individual;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.util.FileUtils;
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.util.FileUtils;
 import org.topbraid.spin.system.SPINModuleRegistry;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Sergey on 22.11.2015.
@@ -27,6 +30,14 @@ public class BareModelInterchanger {
         SPINModuleRegistry.get().init();
         ontModel = (OntModel) new BareModelLoader().loadKBModel(path,
                 FileUtils.langTurtle);
+        addModel4Inference();
+        ns = getPrefixForXMLNS("");
+    }
+
+    public BareModelInterchanger(String path, Map<String, String> paths) {
+        SPINModuleRegistry.get().init();
+        ontModel = (OntModel) new BareModelLoader().loadKBModel(path,
+                FileUtils.langTurtle, paths);
         addModel4Inference();
         ns = getPrefixForXMLNS("");
     }

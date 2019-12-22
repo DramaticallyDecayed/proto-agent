@@ -12,12 +12,15 @@ public class SASHierarchyProcessor extends SASProcessor {
         super(levelHolder);
     }
 
-    public void process() {
+    public boolean process() {
+        boolean hasResult = false;
         for (Level level : getLevelHolder().getLevels()) {
             if (!level.getNodesToBeProcessed().isEmpty()) {
                 level.getNodesToBeProcessed().forEach(Node::process);
+                hasResult = true;
                 level.getNodesToBeProcessed().clear();
             }
         }
+        return hasResult;
     }
 }

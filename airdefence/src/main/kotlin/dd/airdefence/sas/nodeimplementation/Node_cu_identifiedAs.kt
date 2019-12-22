@@ -3,6 +3,7 @@ package dd.airdefence.sas.nodeimplementation
 import dd.airdefence.sas.computation.node.Node_cu_identifiedAs
 import dd.airdefence.sas.objectproperty.IdentifiedAs
 import dd.airdefence.sas.worldentity.*
+import dd.airdefence.simulation.GlobalArtist
 import dd.sas.computation.CalculationResult
 import dd.sas.computation.Level
 import org.slf4j.LoggerFactory
@@ -41,7 +42,7 @@ class Node_cu_identifiedAs(level: Level) : Node_cu_identifiedAs(level) {
                             identifiedAsList.add(identifiedReconnaissanceAircraft)
                             identifiedAircraftList.add(identified)
                         }
-                        !in 1..49 -> {
+                        !in 1..50 -> {
                             LOG.debug("Detect transport aircraft!")
 
                             val identifiedTransportAircraft = IdentifiedAs()
@@ -57,11 +58,13 @@ class Node_cu_identifiedAs(level: Level) : Node_cu_identifiedAs(level) {
 
                 }
             this.identifiedAsList
-
+            visualize()
             CalculationResult.POSITIVE
         } else
             CalculationResult.UNKNOWN
     }
+
+    private fun visualize() = GlobalArtist.drawHierarchy(NAME, level.number, subscribers.map { it.name() })
 
     private fun buildAircraft(src:UnknownAircraft, dst: IdentifiedAircraft) =
         dst.also {

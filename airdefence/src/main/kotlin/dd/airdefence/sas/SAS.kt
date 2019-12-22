@@ -1,6 +1,5 @@
 package dd.airdefence.sas
 
-import dd.airdefence.perception.FilePerception
 import dd.airdefence.implementation.Perceptor2SASAdapterImpl
 import dd.airdefence.ontology.OntologyHandler
 import dd.airdefence.perception.APerception
@@ -16,12 +15,12 @@ class SAS(val perception: APerception) {
         sas.cycle()
     }
 
-    fun cycle(){
+    fun cycle() {
 //        while (true) {
-            perception.cycle()
-            adapter.importantObjectList = perception.importantObjects
-            adapter.unknownAircraftList = perception.unknownAircrafts
-            sas.cycle()
+        perception.cycle()
+        adapter.importantObjectList = perception.importantObjects
+        adapter.unknownAircraftList = perception.unknownAircrafts
+        sas.cycle()
 //        }
     }
 

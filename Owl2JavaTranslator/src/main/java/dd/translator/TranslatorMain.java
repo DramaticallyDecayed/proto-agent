@@ -19,8 +19,14 @@ public class TranslatorMain {
         new WorldVirtualEntityInterfaceGenerator(psg).generate();
         new WorldActualEntityInterfaceGenerator(psg).generate();
         new WorldEntityClassGenerator(psg).generate();
-        new ObjectPropertyGenerator(psg).generate();
+
+        ////new ObjectPropertyGenerator(psg).generate();
+
+        new ObjectPropertyFromTemplateGenerator(psg).generate();
         new GenericNodeFlowGenerator(psg).generate();
+
+        ////new GenericNodeGenerator(psg).generate();
+
         new GenerativeInitialExtender(psg).generate();
         new AssociativePlainNodeExtender(psg).generate();
         new AssociativeRefiningNodeExtender(psg).generate();

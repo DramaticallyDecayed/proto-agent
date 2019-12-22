@@ -1,11 +1,14 @@
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.reasoner.Reasoner;
-import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
-import com.hp.hpl.jena.reasoner.rulesys.Rule;
-import com.hp.hpl.jena.util.FileUtils;
-import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
+
 import dd.ontologyinterchanger.ModelLoadingUtinls;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.util.FileUtils;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 import org.junit.Test;
 
 import java.nio.file.Path;

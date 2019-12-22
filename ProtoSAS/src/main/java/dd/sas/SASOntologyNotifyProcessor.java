@@ -20,14 +20,17 @@ public class SASOntologyNotifyProcessor extends SASProcessor {
     }
 
     @Override
-    public void process() {
+    public boolean process() {
+        boolean hasResult = false;
         for (Level level : getLevelHolder().getLevels()) {
             if (!level.getNodesToBeActivated().isEmpty()) {
                 level.getNodesToBeActivated().forEach(this::activateNodeInOntology);
                 level.getNodesToBeActivated().forEach(node -> refineCalculationHierarchy(node));
+                hasResult = true;
                 level.getNodesToBeActivated().clear();
             }
         }
+        return hasResult;
     }
 
     private void activateNodeInOntology(Node node) {
@@ -42,7 +45,7 @@ public class SASOntologyNotifyProcessor extends SASProcessor {
     private void refineCalculationHierarchy(Node node) {
         SelectQueryHolder sqh = (SelectQueryHolder) executer
                 .executeQuery(QueryFabric.collectNodesToBeRefined(node.name()));
-        if(!sqh.isEmpty()) {
+        if (!sqh.isEmpty()) {
             sqh.asStream().forEach(result -> addCalculationLink(node, (Integer) result[0], (String) result[1]));
         }
     }

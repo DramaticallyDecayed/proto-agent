@@ -7,14 +7,14 @@ import dd.sas.computation.Node;
 import dd.sas.owlinterplay.QueryFabric;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.stream.Collectors;
 import java.util.List;
+
 /**
  * Created by Sergey on 30.05.2016.
  */
 public class SASOntologyProcessor extends SASProcessor {
 
-    public final static String PACKAGE_PREFIX = "dd.soccer.sas";
+    public final static String PACKAGE_PREFIX = "dd.airdefence.sas";//"dd.union.sas";//"dd.smda.sas";//"dd.soccer.sas";
     private final static String NODE_CUSTOM_IMPL_PACKAGE = PACKAGE_PREFIX + "." + "nodeimplementation";
     private final static String NODE_DEFAULG_IMPL_PACKAGE = PACKAGE_PREFIX + "." + "computation.node";
 
@@ -26,20 +26,24 @@ public class SASOntologyProcessor extends SASProcessor {
     }
 
     @Override
-    public void process() {
-        if(queryExecuter.isArmed()) {
+    public boolean process() {
+        if (queryExecuter.isArmed()) {
             System.out.println("-------------- Ontology cycle start ---------------");
-            extendCalculationHierarchy();
+            boolean extended = extendCalculationHierarchy();
             queryExecuter.disarm();
             System.out.println("-------------- Ontology cycle end---------------");
+            return extended;
+        } else{
+            return false;
         }
     }
 
-    private void extendCalculationHierarchy() {
+    private boolean extendCalculationHierarchy() {
         queryExecuter.runInference();
         addNewLevels(getLevelHolder());
-        addNewNodes();
+        boolean hasAdded = addNewNodes();
         queryExecuter.commitResults();
+        return hasAdded;
     }
 
     private void addNewLevels(LevelHolder levelHolder) {
@@ -59,14 +63,18 @@ public class SASOntologyProcessor extends SASProcessor {
         return level;
     }
 
-    private void addNewNodes() {
+    private Boolean addNewNodes() {
         SelectQueryHolder sqh = (SelectQueryHolder) queryExecuter
                 .executeQueryOnInference(QueryFabric.collectNodesWithLevel());
         if (!sqh.isEmpty()) {
             sqh.asStream()
                     .map(result -> createNodeInstance((String) result[0], (String) result[1]))
                     .map(node -> subscribeNode((Node) node))
-                    .collect(Collectors.toList());
+                    .forEach(node -> node.process());
+//                    .collect(Collectors.toList());
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -80,7 +88,7 @@ public class SASOntologyProcessor extends SASProcessor {
             Class c = adapter.getClass().getSuperclass();
             node.setDonor(adapter, c);
         } else {
-            for(String donorName : (List<String>)sqh.getDisk("donor")){
+            for (String donorName : (List<String>) sqh.getDisk("donor")) {
                 subscribeNode(node, donorName);
             }
             node.processNode();
@@ -88,10 +96,10 @@ public class SASOntologyProcessor extends SASProcessor {
         return node;
     }
 
-    private void subscribeNode(Node node, String donorName){
+    private void subscribeNode(Node node, String donorName) {
         SelectQueryHolder sqh = (SelectQueryHolder) queryExecuter
                 .executeQuery(QueryFabric.findNodeLevelNumber(donorName));
-        Integer levelNum = (Integer)sqh.getTheFirstResult();
+        Integer levelNum = (Integer) sqh.getTheFirstResult();
         Node donor = getLevelHolder().getLevel(levelNum).retrieveNode(donorName);
         donor.subscribe(node);
         donor.pushAsDonor(node);

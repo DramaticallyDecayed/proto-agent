@@ -56,7 +56,7 @@ public class GenerativeInitialExtender extends ProgramElementGenerator {
         String derivativeClassName = ProgramGenerationUtils
                 .composeName(ProgramGenerationUtils.makeFirsLetterUp(derivativeName));
         JDefinedClass derivativeClass = getPsg().getCm()._getClass(derivativeClassName + "C");
-        jdc.method(JMod.PRIVATE, derivativeClass, "create" + derivativeName)
+        jdc.method(JMod.PUBLIC, derivativeClass, "create" + derivativeName)
                 .body()
                 ._return(JExpr._new(derivativeClass));
         return jdc;

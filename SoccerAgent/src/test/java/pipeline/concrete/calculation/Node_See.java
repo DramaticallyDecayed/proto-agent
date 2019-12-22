@@ -1,8 +1,8 @@
 package pipeline.concrete.calculation;
 
 
-import dd.sas.pipeline.calculation.structure.nodes.associativenodes.AssociativePlainNode;
-import dd.sas.pipeline.calculation.structure.flows.associativeflows.AssociativePlainFlow;
+import dd.sas.pipeline.calculation.structures.nodes.associativenodes.AssociativePlainNode;
+import dd.sas.pipeline.calculation.structures.flows.associativeflows.AssociativePlainFlow;
 import pipeline.concrete.worldmodel.*;
 
 /**

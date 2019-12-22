@@ -1,11 +1,12 @@
 package dd.airdefence.sas.nodeimplementation
 
 import dd.airdefence.sas.computation.node.Node_cu_UnknownAircraft
+import dd.airdefence.simulation.GlobalArtist
 import dd.sas.computation.CalculationResult
 import dd.sas.computation.Level
 import org.slf4j.LoggerFactory
 
-class Node_cu_UnknownAircraft (level: Level) : Node_cu_UnknownAircraft(level) {
+class Node_cu_UnknownAircraft(level: Level) : Node_cu_UnknownAircraft(level) {
 
     private val LOG = LoggerFactory.getLogger(Node_cu_UnknownAircraft::class.java)
 
@@ -13,9 +14,14 @@ class Node_cu_UnknownAircraft (level: Level) : Node_cu_UnknownAircraft(level) {
         unknownAircraftList.forEach {
             LOG.debug("$NAME receive from perception system UnknownAircraft: ${it.x}")
         }
-        return if(unknownAircraftList.isEmpty())
+        return if (unknownAircraftList.isEmpty())
             CalculationResult.UNKNOWN
-        else
+        else {
+            visualize()
             CalculationResult.POSITIVE
+        }
     }
+
+    private fun visualize() = GlobalArtist.drawHierarchy(NAME, level.number, subscribers.map { it.name() })
+
 }

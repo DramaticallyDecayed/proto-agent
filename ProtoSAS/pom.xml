@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>dramatically.decayed</groupId>
-            <artifactId>proto-perception</artifactId>
+            <artifactId>proto-dd.union.perception</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

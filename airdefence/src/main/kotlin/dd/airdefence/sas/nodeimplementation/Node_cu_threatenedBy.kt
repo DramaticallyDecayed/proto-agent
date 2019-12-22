@@ -57,6 +57,6 @@ class Node_cu_threatenedBy(level: Level) : Node_cu_threatenedBy(level) {
                         produceDanger.domain.y + Node_cu_AircraftGroup.DISTANCE_TO_BE_GROUP
                     )
             }
-
+        GlobalArtist.drawHierarchy(NAME, level.number, subscribers.map { it.name() })
     }
 }

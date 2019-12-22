@@ -1,12 +1,14 @@
 package dd.translator;
 
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.util.FileUtils;
 import com.sun.codemodel.*;
 import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QuieringUtils;
+import dd.translator.programgeneration.ProgramStructureGenerator;
+
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.util.FileUtils;
 import org.topbraid.spin.system.SPINModuleRegistry;
 
 import java.io.File;
@@ -30,7 +32,7 @@ public class Translator {
 
 
         JCodeModel cm = new JCodeModel();
-        String packageName = "dd.soccer.sas.computation.generated";
+        String packageName = ProgramStructureGenerator.PACKAGE_PREFIX + ".computation.generated";
 
 
         JDefinedClass[] classes = new JDefinedClass[map.values().size() + 1];
@@ -206,14 +208,14 @@ public class Translator {
     private static Class loadClassByName(String str) {
         Class c = null;
         try {
-            String className = "dd.soccer.sas.presentation.entities." + str;
+            String className = ProgramStructureGenerator.PACKAGE_PREFIX + ".presentation.entities." + str;
             c = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            String className = "dd.soccer.perception.perceptingobjects." + str;
+            String className = ProgramStructureGenerator.PACKAGE_PREFIX + ".dd.airdefence.perception.perceptingobjects." + str;
             try {
                 c = Class.forName(className);
             } catch (ClassNotFoundException e1) {
-                className = "dd.soccer.sas.presentation.soccerrelations." + str;
+                className = ProgramStructureGenerator.PACKAGE_PREFIX + ".presentation.soccerrelations." + str;
                 try {
                     c = Class.forName(className);
                 } catch (ClassNotFoundException e2) {
@@ -229,9 +231,9 @@ public class Translator {
                 ontModel,
                 "SELECT ?cd ?levelNumber " +
                         "WHERE {" +
-                        "?cd a core:ComputationUnit ." +
-                        "?cd core:level ?level ." +
-                        "?level core:number ?levelNumber ." +
+                        "?cd a core2ed:ComputationUnit ." +
+                        "?cd core2ed:level ?level ." +
+                        "?level core2ed:number ?levelNumber ." +
                         "} ORDER BY ?levelNumber"
         );
         Map<String, Integer> cd2levelMapping = new HashMap<>();

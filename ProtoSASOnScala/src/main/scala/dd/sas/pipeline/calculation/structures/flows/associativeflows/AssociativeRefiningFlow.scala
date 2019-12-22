@@ -2,9 +2,11 @@ package dd.sas.pipeline.calculation.structures.flows.associativeflows
 
 import java.util.function.BiFunction
 
+import dd.sas.pipeline.calculation.result.{Answer, PositiveAnswer}
 import dd.sas.pipeline.calculation.structures.flows.Flow
 import dd.sas.pipeline.calculation.structures.nodes.Node
 import dd.sas.pipeline.worldmodel.{Relation, WorldObject}
+import domain.worldmodel.worldobjects.Nothing
 
 /**
   * Created by Sergey on 12.10.2016.
@@ -28,6 +30,10 @@ class AssociativeRefiningFlow
       customProcessActivated()
     }
   }
+
+//  def check(a1 : Answer[Relation[D,M]], a2: Answer[Relation[M,R]]) : Boolean = (a1, a2)  match {
+//    //case (PositiveAnswer(r1),PositiveAnswer(r2)) => true
+//  }
 
   def customProcessActivated(): Unit = {
     result = for {

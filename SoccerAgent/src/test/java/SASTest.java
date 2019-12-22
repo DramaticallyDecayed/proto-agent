@@ -3,8 +3,8 @@ import dd.ontologypart.OntologyHandler;
 import dd.sas.SAS;
 import dd.sas.computation.WrappingGetter;
 import dd.sas.presentation.WorldEntity;
-import dd.soccer.perception.perceptingobjects.Line;
 import dd.soccer.perception.perceptingobjects.BodyState;
+import dd.soccer.perception.perceptingobjects.Line;
 import dd.soccer.perception.perceptingobjects.NavigatingLandmark;
 import dd.soccer.sas.Perceptor2SASAdapterImpl;
 import dd.soccer.sas.computation.node.Node_cu_Ball;
@@ -23,10 +23,10 @@ import java.util.Map;
  */
 public class SASTest {
 
-    public static void setLoggingLevel(Level level) {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(level);
-    }
+//    public static void setLoggingLevel(Level level) {
+//        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+//        root.setLevel(level);
+//    }
 
     @Test
     public void testSeparateIdeas() {
@@ -68,7 +68,7 @@ public class SASTest {
     @Test
     public void genericSASTest() {
 
-        setLoggingLevel(Level.OFF);
+//        setLoggingLevel(Level.OFF);
 
         OntologyHandler ontologyHandler = new OntologyHandler();
         ontologyHandler.arm();

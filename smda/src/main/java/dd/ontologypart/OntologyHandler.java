@@ -1,9 +1,9 @@
 package dd.ontologypart;
 
-import com.hp.hpl.jena.rdf.model.Model;
 import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QueryExecuter;
 import dd.ontologyinterchanger.QueryHolder;
+import org.apache.jena.rdf.model.Model;
 
 /**
  * Created by Sergey on 06.02.2017.

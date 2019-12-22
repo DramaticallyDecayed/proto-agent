@@ -12,20 +12,21 @@ public class SAS {
     private SASProcessor ontologyNotify;
     private SASProcessor ontologyProcessor;
 
-    public SAS(QueryExecuter queryExecuter){
+    public SAS(QueryExecuter queryExecuter) {
         levelHolder = new LevelHolder();
         hierarchy = new SASHierarchyProcessor(levelHolder);
         ontologyNotify = new SASOntologyNotifyProcessor(levelHolder, queryExecuter);
         ontologyProcessor = new SASOntologyProcessor(levelHolder, queryExecuter);
     }
 
-    public void cycle(){
+    public void cycle() {
         hierarchy.process();
-        ontologyNotify.process();
-        ontologyProcessor.process();
+        do {
+            System.out.println("Hierarchy update cycle...");
+        } while (ontologyNotify.process() || ontologyProcessor.process());
     }
 
-    public LevelHolder getLevelHolder(){
+    public LevelHolder getLevelHolder() {
         return levelHolder;
     }
 }

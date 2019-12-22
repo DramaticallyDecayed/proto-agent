@@ -10,7 +10,10 @@ import java.io.IOException;
  */
 public class ProgramStructureGenerator {
 
-    public final static String PACKAGE_PREFIX = "dd.soccer.sas";
+    //public final static String PACKAGE_PREFIX = "dd.smda.sas";
+    //public final static String PACKAGE_PREFIX = "dd.tcc.sas";
+    //public final static String PACKAGE_PREFIX = "dd.union.sas";
+    public final static String PACKAGE_PREFIX = "dd.airdefence.sas";
 
     private final static String OUTPUT_FOLDER_PATH = ".\\Owl2JavaTranslator\\target\\generated-classes";
 

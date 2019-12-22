@@ -89,5 +89,6 @@ class Node_cu_formIdentifiedGroup(level: Level) : Node_cu_formIdentifiedGroup(le
                     )
                 }
             }
+        GlobalArtist.drawHierarchy(NAME, level.number, subscribers.map { it.name() })
     }
 }

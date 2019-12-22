@@ -6,6 +6,11 @@ import dd.ontologyinterchanger.SelectQueryHolder;
  * Created by Sergey on 14.05.2016.
  */
 public final class SelectQueryFabric {
+
+    //private static final String DOMAIN_PREFIX = "parameterized-system:";
+    private static final String DOMAIN_PREFIX = ":";
+    private static final String CM_PREFIX = ":";
+
     private SelectQueryFabric() {
     }
 
@@ -36,7 +41,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?attr ?type " +
                         "WHERE {" +
-                        "BIND(:" + className + " AS ?c) ." +
+                        "BIND(" + DOMAIN_PREFIX + className + " AS ?c) ." +
                         "?attr rdfs:domain ?c ." +
                         "?attr a owl:DatatypeProperty ." +
                         "?attr rdfs:range ?type" +
@@ -48,7 +53,7 @@ public final class SelectQueryFabric {
     public static SelectQueryHolder collectElaborations4Interface(String interfaceName) {
         return new SelectQueryHolder(
                 "SELECT ?c {" +
-                        ":" + interfaceName + " core2ed:elaboratedWith ?c" +
+                        DOMAIN_PREFIX + interfaceName + " core2ed:elaboratedWith ?c" +
                         "}"
         );
     }
@@ -58,11 +63,11 @@ public final class SelectQueryFabric {
                 "SELECT ?sc " +
                         "WHERE {" +
                         "OPTIONAL{" +
-                        ":" + className + " rdfs:subClassOf* ?sc ." +
+                        DOMAIN_PREFIX + className + " rdfs:subClassOf* ?sc ." +
                         "?sc rdfs:subClassOf core2ed:ModelEntity ." +
                         "}" +
                         "OPTIONAL{" +
-                        ":" + className + " rdfs:subClassOf* ?sc ." +
+                        DOMAIN_PREFIX + className + " rdfs:subClassOf* ?sc ." +
                         "?sc rdfs:subClassOf core2ed:DesignEntity ." +
                         "}" +
                         "}"
@@ -74,7 +79,7 @@ public final class SelectQueryFabric {
                 "SELECT DISTINCT ?pc " +
                         "WHERE {" +
                         "?coreClasses rdfs:subClassOf core2ed:WorldEntity ." +
-                        ":" + className + " rdfs:subClassOf+ ?pc ." +
+                        DOMAIN_PREFIX + className + " rdfs:subClassOf+ ?pc ." +
                         "?pc rdfs:subClassOf+ ?coreClasses." +
                         "}"
         );
@@ -129,7 +134,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?f " +
                         "WHERE {" +
-                        "BIND(:" + name + " AS ?r) ." +
+                        "BIND(" + DOMAIN_PREFIX + name + " AS ?r) ." +
                         "   ?r rdfs:subPropertyOf+ core2ed:world ." +
                         "   ?r a owl:ObjectProperty ." +
                         "   ?r rdfs:" + feature + " ?f ." +
@@ -141,7 +146,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?donor ?base ?type " +
                         "WHERE {" +
-                        "   BIND(:" + name + " AS ?nd) ." +
+                        "   BIND(" + CM_PREFIX + name + " AS ?nd) ." +
                         "   ?nd core2ed:hasBase ?base ." +
                         "   ?nd core2ed:dependOn ?donor ." +
                         "   ?donor core2ed:hasDerivative ?base ." +
@@ -154,7 +159,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?donor ?fbase ?cbase ?type " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) . " +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) . " +
                         "   ?nd core2ed:dependOn ?donor . " +
                         "   ?donor core2ed:hasDerivative ?cbase . " +
                         "   ?nd core2ed:hasBase ?base ." +
@@ -169,7 +174,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?derivative ?type " +
                         "WHERE { " +
-                        "   BIND(:" + name + " AS ?nd) ." +
+                        "   BIND(" + CM_PREFIX + name + " AS ?nd) ." +
                         "   ?nd core2ed:hasDerivative ?derivative ." +
                         "   ?derivative rdf:type ?type ." +
                         "}"
@@ -180,7 +185,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?r " +
                         "WHERE{ " +
-                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   BIND(" + DOMAIN_PREFIX + relationName + " AS ?r) ." +
                         "   ?r rdfs:subPropertyOf* core2ed:associative ." +
                         "}"
         );
@@ -220,8 +225,8 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?f " +
                         "WHERE { " +
-                        " BIND(:" + donorName + " AS ?nd) ." +
-                        " BIND(:" + derivativeName + " AS ?r) ." +
+                        " BIND(" + CM_PREFIX + donorName + " AS ?nd) ." +
+                        " BIND(" + DOMAIN_PREFIX + derivativeName + " AS ?r) ." +
                         " ?r rdfs:" + feature + " ?generic ." +
                         " ?nd core2ed:hasBase ?f. " +
                         " ?f rdfs:subClassOf* ?generic ." +
@@ -256,8 +261,8 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?first ?second " +
                         "WHERE { " +
-                        "   BIND(:" + nodeName + " AS ?nd)" +
-                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd)" +
+                        "   BIND(" + DOMAIN_PREFIX + relationName + " AS ?r) ." +
                         "   ?r owl:propertyChainAxiom ?axiom ." +
                         "   ?nd core2ed:hasBase ?b1 ." +
                         "   ?nd core2ed:hasBase ?b2 ." +
@@ -272,7 +277,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?first ?second " +
                         "WHERE { " +
-                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   BIND(" + DOMAIN_PREFIX + relationName + " AS ?r) ." +
                         "   ?r owl:propertyChainAxiom ?axiom ." +
                         "   ?axiom rdf:first ?first ." +
                         "   ?axiom rdf:rest/rdf:first ?second ." +
@@ -284,8 +289,8 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?r ?inverser " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
-                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
+                        "   BIND(" + DOMAIN_PREFIX + relationName + " AS ?r) ." +
                         "   ?nd core2ed:hasDerivative ?inverser ." +
                         "   ?r owl:inverseOf ?inverser ." +
                         "}"
@@ -295,7 +300,7 @@ public final class SelectQueryFabric {
     public static SelectQueryHolder findDisjointRelationDerivative(String nodeName, String relationName) {
         return new SelectQueryHolder(
                 "SELECT ?dd WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
                         "   ?nd core2ed:hasDerivative :" + relationName + " ." +
                         "   ?dd owl:propertyDisjointWith :" + relationName + " ." +
                         "} "
@@ -306,7 +311,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?r " +
                         "WHERE {" +
-                        " BIND(:" + relationName + " AS ?inverser) ." +
+                        " BIND(" + DOMAIN_PREFIX + relationName + " AS ?inverser) ." +
                         " ?r owl:inverseOf ?inverser ." +
                         "}"
         );
@@ -327,8 +332,8 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?r ?base ?second " +
                         "WHERE { " +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
-                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
+                        "   BIND(" + DOMAIN_PREFIX + relationName + " AS ?r) ." +
                         "   ?r owl:propertyChainAxiom ?axiom ." +
                         "   ?axiom rdf:first ?base ." +
                         "   ?axiom rdf:rest/rdf:first ?second ." +
@@ -341,8 +346,8 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?r ?base " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
-                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
+                        "   BIND(" + DOMAIN_PREFIX + relationName + " AS ?r) ." +
                         "   ?nd core2ed:hasBase ?base." +
                         "   ?d owl:propertyChainAxiom ?axiom ." +
                         "   ?axiom rdf:first ?base ." +
@@ -356,8 +361,8 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
-                        "   BIND(:" + relationName + " AS ?r) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
+                        "   BIND(" + DOMAIN_PREFIX + relationName + " AS ?r) ." +
                         "   ?nd core2ed:hasDerivative ?c ." +
                         "   ?c a owl:Class ." +
                         "}"
@@ -380,7 +385,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?r ?b " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
                         "   ?nd core2ed:hasDerivative ?r ." +
                         "   ?r a owl:ObjectProperty ." +
                         "   ?nd core2ed:hasBase ?b ." +
@@ -393,7 +398,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?c " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
                         "   ?nd core2ed:hasDerivative ?c ." +
                         "   ?c a owl:Class ." +
                         "}"
@@ -427,7 +432,7 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT ?base ?type " +
                         "WHERE {" +
-                        "   BIND(:" + nodeName + " AS ?nd) ." +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?nd) ." +
                         "   ?nd core2ed:implement ?cu ." +
                         "   ?cu core2ed:hasBase ?base ." +
                         "   ?base rdf:type ?type ." +
@@ -438,7 +443,7 @@ public final class SelectQueryFabric {
     public static SelectQueryHolder collectOutPropertyFlows(String nodeName) {
         return new SelectQueryHolder("SELECT ?d ?p ?r " +
                 "WHERE { " +
-                "    BIND(:" + nodeName + " AS ?node) ." +
+                "    BIND(" + CM_PREFIX + nodeName + " AS ?node) ." +
                 "   ?node core2ed:outFlow ?outFlow ." +
                 "   ?outFlow core2ed:domainPropertyOfFlow ?d ." +
                 "   ?outFlow core2ed:rangePropertyOfFlow ?r ." +
@@ -450,7 +455,7 @@ public final class SelectQueryFabric {
     public static SelectQueryHolder collectOutObjectFlows(String nodeName) {
         return new SelectQueryHolder("SELECT ?obj " +
                 "WHERE { " +
-                "   BIND(:" + nodeName + " AS ?node) ." +
+                "   BIND(" + CM_PREFIX + nodeName + " AS ?node) ." +
                 "   ?node core2ed:outFlow ?outFlow ." +
                 "   ?outFlow core2ed:objectOfFlow ?obj ." +
                 "}");
@@ -460,10 +465,10 @@ public final class SelectQueryFabric {
         return new SelectQueryHolder(
                 "SELECT DISTINCT ?methodName " +
                         "WHERE{ " +
-                        "   BIND(:" + nodeName + " AS ?node) . " +
+                        "   BIND(" + CM_PREFIX + nodeName + " AS ?node) . " +
                         "   ?node core2ed:outFlow ?outFlow . " +
                         "   ?outFlow core2ed:inFlow ?inFlow . " +
-                        "   :" + donorName + " core2ed:outFlow ?inFlow ." +
+                        "   " + CM_PREFIX + donorName + " core2ed:outFlow ?inFlow ." +
                         "   OPTIONAL{" +
                         "       ?inFlow core2ed:domainPropertyOfFlow ?d ." +
                         "       ?inFlow core2ed:rangePropertyOfFlow ?r ." +
@@ -482,11 +487,11 @@ public final class SelectQueryFabric {
         );
     }
 
-    public static SelectQueryHolder collectNodeInFlows(String nodeName){
+    public static SelectQueryHolder collectNodeInFlows(String nodeName) {
         return new SelectQueryHolder(
                 "SELECT DISTINCT ?inFlow ?entity ?type " +
                         "WHERE {" +
-                        "    BIND(:" + nodeName + " AS ?node) ." +
+                        "    BIND(" + CM_PREFIX + nodeName + " AS ?node) ." +
                         "   ?node core2ed:outFlow ?outFlow ." +
                         "   ?outFlow core2ed:inFlow ?inFlow ." +
                         "   {?inFlow core2ed:objectOfFlow ?entity}" +

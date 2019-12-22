@@ -4,10 +4,9 @@ import dd.ontologyinterchanger.BareModelInterchanger;
 import dd.ontologyinterchanger.QueryExecuter;
 import dd.ontologyinterchanger.QueryHolder;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 
-import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OntologyHandler implements QueryExecuter {
 
@@ -18,8 +17,14 @@ public class OntologyHandler implements QueryExecuter {
     private final static String ONTOLOGY_FILE_NAME = "airdefence.ttl";
     private final static String CORE_ONTOLOGY_NAME = "core2ed";
 
-    public OntologyHandler(){
-        bmi = new BareModelInterchanger(getResourceName());
+    public OntologyHandler() {
+        Map paths = new HashMap<String, String>();
+        paths.put("sp.ttl", "TURTLE");
+        paths.put("spin.ttl", "TURTLE");
+        paths.put("spl.spin.ttl", "TURTLE");
+        paths.put(CORE_ONTOLOGY_NAME + ".rdf", "RDF/XML");
+
+        bmi = new BareModelInterchanger(getResourceName(), paths);
         importOntologyNS = bmi.getPrefixForXMLNS(CORE_ONTOLOGY_NAME);
     }
 
@@ -28,14 +33,7 @@ public class OntologyHandler implements QueryExecuter {
     }
 
     @Override
-    public QueryHolder executeQueryOnInference(QueryHolder queryHolder){
-
-
-        try {
-            RDFDataMgr.write(new FileOutputStream(new File("out.ttl")), bmi.getOntModel(), Lang.TURTLE);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    public QueryHolder executeQueryOnInference(QueryHolder queryHolder) {
         return bmi.excuteQueryOnInferenced(queryHolder);
     }
 

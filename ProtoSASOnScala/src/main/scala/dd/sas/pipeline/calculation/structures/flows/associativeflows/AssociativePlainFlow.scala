@@ -2,6 +2,7 @@ package dd.sas.pipeline.calculation.structures.flows.associativeflows
 
 import java.util.function.BiFunction
 
+import dd.sas.pipeline.calculation.result.Answer
 import dd.sas.pipeline.calculation.structures.flows.Flow
 import dd.sas.pipeline.calculation.structures.flows.generativeflows.ObjectFlow
 import dd.sas.pipeline.calculation.structures.nodes.Node
@@ -17,6 +18,7 @@ class AssociativePlainFlow[D <: WorldObject, R <: WorldObject, S <: Relation[D, 
   private var rangeFlow: ObjectFlow[R] = _
   private var result: List[S] = _
 
+  //need this method cuz we derive node when there are some flows, but not all of them
   private var customProcessVar: () => Unit = () => {
     if(domainFlow != null && rangeFlow != null){
       customProcessVar = customProcessActivated

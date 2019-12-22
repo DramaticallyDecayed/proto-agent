@@ -30,14 +30,14 @@ import java.util.logging.Logger;
 public class LightweightAgent {
     private static Logger logger = Logger.getLogger(LightweightAgent.class.getName());
 
-    public static void setLoggingLevel(ch.qos.logback.classic.Level level) {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+    public static void setLoggingLevel(Level level) {
+        Logger root = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         root.setLevel(level);
     }
 
     public static void main(String... args) throws SocketException, UnknownHostException, FileNotFoundException, InterruptedException {
 
-        setLoggingLevel(ch.qos.logback.classic.Level.OFF);
+        setLoggingLevel(Level.OFF);
 //        LevelHolder levelHolder = new LevelHolder();
 //        LevelNodeInitializer.init(levelHolder);
 //        LightweightLevel level_1 = levelHolder.getLevel(0);

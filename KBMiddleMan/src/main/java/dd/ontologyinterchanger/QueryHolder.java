@@ -1,6 +1,7 @@
 package dd.ontologyinterchanger;
 
-import com.hp.hpl.jena.rdf.model.Model;
+
+import org.apache.jena.rdf.model.Model;
 
 /**
  * Created by Sergey on 14.05.2016.

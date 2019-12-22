@@ -45,14 +45,17 @@ public abstract class Node implements Processable, Activable {
     }
 
     @Override
-    public void process() {
+    public boolean process() {
+        boolean hasResult = false;
         dropDerivative();
         pullData();
         CalculationResult result  = customProcess();
         if (result == CalculationResult.POSITIVE || result == CalculationResult.NEGATIVE) {
             activate();
+            hasResult = true;
         }
         dropBases();
+        return hasResult;
     }
 
     public void activateNode() {

@@ -5,7 +5,7 @@ package dd.translator.programgeneration;
  */
 public final class NameService {
 
-    public final static String PACKAGE_PREFIX = "dd.soccer.sas";
+    public final static String PACKAGE_PREFIX = ProgramStructureGenerator.PACKAGE_PREFIX;
     private final static String NODE_PACKAGE = PACKAGE_PREFIX + "." + "computation.node";
     private final static String WORLD_ENTITY_PACKAGE = PACKAGE_PREFIX + "." + "worldentity";
     private final static String OBJECT_PROPERTY_PACKAGE = PACKAGE_PREFIX + "." + "objectproperty";

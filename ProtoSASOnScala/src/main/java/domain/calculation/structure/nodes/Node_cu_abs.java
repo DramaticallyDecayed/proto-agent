@@ -5,10 +5,7 @@ import dd.sas.pipeline.calculation.structures.flows.associativeflows.Associative
 import dd.sas.pipeline.calculation.structures.nodes.Node;
 import domain.calculation.processors.AbsProcessor;
 import domain.worldmodel.relations.Abs;
-import domain.worldmodel.relations.See;
-import domain.worldmodel.worldobjects.Ball;
 import domain.worldmodel.worldobjects.CoordinateCenter;
-import domain.worldmodel.worldobjects.Ego;
 import domain.worldmodel.worldobjects.Landmark;
 
 /**
