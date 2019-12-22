@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:spin="http://spinrdf.org/spin#"
+    xmlns="http://dramaticallydecayed.com/soccer#"
+    xmlns:sp="http://spinrdf.org/sp#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:arg="http://spinrdf.org/arg#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:spl="http://spinrdf.org/spl#"
+    xmlns:core="http://dramaticallydecayed.com/core#"
+  xml:base="http://dramaticallydecayed.com/soccer">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="https://raw.githubusercontent.com/DramaticallyDecayed/KBBase/master/KBBase/core.rdf"/>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+  </owl:Ontology>
+  <owl:Class rdf:ID="Player">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Perception"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Percepted"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Goal">
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Percepted"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Landmark"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Perception">
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Object"/>
+  </owl:Class>
+  <owl:Class rdf:ID="EgoAbsolute">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Ego"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Line">
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Percepted"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Landmark"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Ego">
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Object"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Landmark">
+    <rdfs:subClassOf rdf:resource="#Perception"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Flag">
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Percepted"/>
+    <rdfs:subClassOf rdf:resource="#Landmark"/>
+  </owl:Class>
+  <owl:Class rdf:ID="IdentifiedPlayer">
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Object"/>
+  </owl:Class>
+  <owl:Class rdf:ID="BodyState">
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Percepted"/>
+    <rdfs:subClassOf rdf:resource="#Perception"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Ball">
+    <rdfs:subClassOf rdf:resource="#Perception"/>
+    <rdfs:subClassOf rdf:resource="http://dramaticallydecayed.com/core#Percepted"/>
+  </owl:Class>
+  <owl:ObjectProperty rdf:ID="seeLandmark">
+    <rdfs:subPropertyOf rdf:resource="http://dramaticallydecayed.com/core#associative"/>
+    <rdfs:range rdf:resource="#Line"/>
+    <rdfs:domain rdf:resource="#Ego"/>
+    <rdfs:range rdf:resource="#Flag"/>
+    <rdfs:range rdf:resource="#Goal"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="beBase4Ego">
+    <rdfs:domain rdf:resource="#BodyState"/>
+    <rdfs:subPropertyOf rdf:resource="http://dramaticallydecayed.com/core#generative"/>
+    <rdfs:range rdf:resource="#Ego"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="identifiedAs">
+    <rdfs:range rdf:resource="#IdentifiedPlayer"/>
+    <rdfs:domain rdf:resource="#Player"/>
+    <rdfs:subPropertyOf rdf:resource="http://dramaticallydecayed.com/core#generative"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="subClassOfEgo">
+    <rdfs:subPropertyOf rdf:resource="http://dramaticallydecayed.com/core#generative"/>
+    <rdfs:range rdf:resource="#EgoAbsolute"/>
+    <rdfs:domain rdf:resource="#seeLandmark"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="ownsBall">
+    <rdfs:domain rdf:resource="#Player"/>
+    <rdfs:subPropertyOf rdf:resource="http://dramaticallydecayed.com/core#associative"/>
+    <rdfs:domain rdf:resource="#EgoAbsolute"/>
+    <rdfs:range rdf:resource="#Ball"/>
+  </owl:ObjectProperty>
+  <core:CUGeneration rdf:about="http://dramaticallydecayed.com/core#CalculationDependencyGeneration_1"/>
+  <core:RelationMaterialization rdf:about="http://dramaticallydecayed.com/core#RelationMareialization_1"/>
+  <core:LevelGeneration rdf:ID="LevelGeneration_1"/>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->
