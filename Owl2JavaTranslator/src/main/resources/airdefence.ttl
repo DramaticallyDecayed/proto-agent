@@ -16,6 +16,11 @@
   rdf:type owl:Ontology ;
   owl:versionInfo "Created with TopBraid Composer" ;
 .
+<http://dramaticallydecayed.com/airdefence>
+  rdf:type owl:Ontology ;
+  owl:imports <core2ed.rdf> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
 :AircraftGroup
   rdf:type owl:Class ;
   rdfs:label "Группа" ;
