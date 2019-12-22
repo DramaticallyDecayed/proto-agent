@@ -6,13 +6,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.RDF;
 import org.topbraid.spin.arq.ARQFactory;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Created by Sergey on 22.11.2015.
